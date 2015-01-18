@@ -66,10 +66,12 @@ class ItemBlockMain(block: Block) extends ItemBlock(block) {
     for (meta <- 0 to (if (metadata != null) metadata.length - 1 else 0)) list.asInstanceOf[java.util.List[ItemStack]].add(new ItemStack(item, 1, meta))
   }
   override def registerIcons(register: IIconRegister) {
-    if (metadata == null) itemIcon = register.registerIcon(block.asInstanceOf[BlockMain].getModID + ":" + getUnlocalizedName().substring(5))
-    else {
-      iconBuffer = new Array[IIcon](metadata.length)
-      for (x <- 0 to metadata.length - 1) iconBuffer(x) = register.registerIcon(block.asInstanceOf[BlockMain].getModID + ":" + metadata(x).toString)
+    if(block.asInstanceOf[BlockMain].icon){
+      if (metadata == null) itemIcon = register.registerIcon(block.asInstanceOf[BlockMain].getModID + ":" + getUnlocalizedName().substring(5))
+      else {
+        iconBuffer = new Array[IIcon](metadata.length)
+        for (x <- 0 to metadata.length - 1) iconBuffer(x) = register.registerIcon(block.asInstanceOf[BlockMain].getModID + ":" + metadata(x).toString)
+      }  
     }
   }
 }

@@ -1,4 +1,4 @@
-package com.rikmuld.camping.misc
+package com.rikmuld.corerm.misc
 
 import net.minecraft.block.Block
 import scala.collection.mutable.HashMap

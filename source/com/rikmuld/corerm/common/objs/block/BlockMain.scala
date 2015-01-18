@@ -24,7 +24,7 @@ import com.rikmuld.corerm.core.ObjRegistry
 import com.rikmuld.corerm.core.ModInfo
 import net.minecraft.creativetab.CreativeTabs
 
-class BlockMain(infoClass: Class[_], tab:CreativeTabs, modId:String, material: Material, itemBlock: Class[ItemBlock], useSides: Boolean, icon: Boolean) extends BlockContainer(material) {
+class BlockMain(infoClass: Class[_], tab:CreativeTabs, modId:String, material: Material, itemBlock: Class[ItemBlock], useSides: Boolean, var icon: Boolean) extends BlockContainer(material) {
   val info = infoClass.asInstanceOf[Class[ObjInfo]].newInstance
   val metadata: Array[String] = info.NAME_META
 
@@ -32,7 +32,7 @@ class BlockMain(infoClass: Class[_], tab:CreativeTabs, modId:String, material: M
 
   setBlockName(info.NAME)
   setCreativeTab(tab)
-  if (metadata != null) ObjRegistry.register(this, info.NAME, itemBlock) else ObjRegistry.register(this, info.NAME)
+  if (itemBlock != null) ObjRegistry.register(this, info.NAME, itemBlock) else ObjRegistry.register(this, info.NAME)
 
   def this(infoClass: Class[_], tab:CreativeTabs, modId:String, material: Material) = this(infoClass, tab, modId,  material, null, false, true)
   def this(infoClass: Class[_], tab:CreativeTabs, modId:String, material: Material, useSides: Boolean, icon: Boolean) = this(infoClass, tab, modId, material, null, useSides, icon)

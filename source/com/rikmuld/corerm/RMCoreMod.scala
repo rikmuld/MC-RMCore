@@ -13,7 +13,7 @@ import com.rikmuld.corerm.core.ObjRegistry
 import com.rikmuld.corerm.core.MiscRegistry
 
 @Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME, version = ModInfo.MOD_VERSION, dependencies = ModInfo.MOD_DEPENDENCIES, modLanguage = ModInfo.MOD_LANUAGE)
-object CampingMod {
+object RMCoreMod {
 
   @SidedProxy(clientSide = ModInfo.MOD_CLIENT_PROXY, serverSide = ModInfo.MOD_SERVER_PROXY)
   var proxy: ProxyServer = null
