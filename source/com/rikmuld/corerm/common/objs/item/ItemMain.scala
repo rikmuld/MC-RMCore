@@ -49,7 +49,6 @@ class ItemBlockMain(block: Block) extends ItemBlock(block) {
   var iconBuffer: Array[IIcon] = null
 
   setHasSubtypes(metadata != null)
-  setCreativeTab(block.getCreativeTabToDisplayOn)
 
   def this(block: Block, infoClass: Class[_]) {
     this(block);
