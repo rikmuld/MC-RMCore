@@ -59,7 +59,7 @@ class ItemBlockMain(block: Block) extends ItemBlock(block) {
 
   override def getMetadata(damageValue: Int): Int = damageValue
   override def getUnlocalizedName(stack: ItemStack): String = if (metadata == null) getUnlocalizedName else metadata(stack.getItemDamage)
-  override def getIconFromDamage(meta: Int): IIcon = if (metadata != null) iconBuffer(meta) else itemIcon
+  override def getIconFromDamage(meta: Int): IIcon = if(block.asInstanceOf[BlockMain].icon) if (metadata != null) iconBuffer(meta) else itemIcon else null
   @SideOnly(Side.CLIENT)
   override def getSubItems(item: Item, tab: CreativeTabs, list: List[_]) = {
     for (meta <- 0 to (if (metadata != null) metadata.length - 1 else 0)) list.asInstanceOf[java.util.List[ItemStack]].add(new ItemStack(item, 1, meta))

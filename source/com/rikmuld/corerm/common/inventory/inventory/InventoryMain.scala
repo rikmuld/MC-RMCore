@@ -145,9 +145,7 @@ class InventoryItemMain(stack: ItemStack, var player: EntityPlayer, size: Int, v
     if (player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item) this.setNBT(player.getCurrentEquippedItem)
   }
   def setNBT(item: ItemStack) = item.setTagCompound(tag)
-  def writeToNBT(tag: NBTTagCompound) {
-    println("BIE!")
-    
+  def writeToNBT(tag: NBTTagCompound) {    
     val inventory = new NBTTagList()
     for (slot <- 0 until inventoryContents.length if inventoryContents(slot) != null) {
       val Slots = new NBTTagCompound()

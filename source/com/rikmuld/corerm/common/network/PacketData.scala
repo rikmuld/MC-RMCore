@@ -44,6 +44,8 @@ class TileData(var id: Int, var x: Int, var y: Int, var z: Int, tileData: Seq[In
       for (j <- 0 until 4) wrap(j) = data(j + (i * 4))
       intData(i) = ByteBuffer.wrap(wrap).getInt
     }
-    if (player.worldObj.getTileEntity(x, y, z) != null) player.worldObj.getTileEntity(x, y, z).asInstanceOf[TileEntityMain].setTileData(id, intData)
+    if (player!=null&&player.worldObj!=null&&player.worldObj.getTileEntity(x, y, z) != null&&player.worldObj.getTileEntity(x, y, z).isInstanceOf[TileEntityMain]){
+      player.worldObj.getTileEntity(x, y, z).asInstanceOf[TileEntityMain].setTileData(id, intData) 
+    }
   }
 }

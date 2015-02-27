@@ -7,7 +7,7 @@ import net.minecraft.inventory.Container
 import net.minecraft.client.gui.FontRenderer
 
 abstract class GuiContainerMain(container: Container) extends GuiContainer(container) {
-  protected override def drawGuiContainerBackgroundLayer(f: Float, i: Int, j: Int) {
+  protected override def drawGuiContainerBackgroundLayer(partialTick: Float, mouseX: Int, mouseY: Int) {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
     mc.renderEngine.bindTexture(new ResourceLocation(getTexture))
     drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize)
