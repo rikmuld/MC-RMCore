@@ -1,10 +1,11 @@
 package com.rikmuld.corerm.client.gui
 
-import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
+
+import net.minecraft.client.gui.FontRenderer
 import net.minecraft.client.gui.inventory.GuiContainer
 import net.minecraft.inventory.Container
-import net.minecraft.client.gui.FontRenderer
+import net.minecraft.util.ResourceLocation
 
 abstract class GuiContainerMain(container: Container) extends GuiContainer(container) {
   protected override def drawGuiContainerBackgroundLayer(partialTick: Float, mouseX: Int, mouseY: Int) {
