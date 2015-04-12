@@ -57,7 +57,9 @@ object Rotation {
     if (hasRotation(block)) {
       getRotationType(block)(world, x, y, z, block)
       true
-    } else if (world.getTileEntity(x, y, z).isInstanceOf[TileEntityWithRotation]) world.getTileEntity(x, y, z).asInstanceOf[TileEntityWithRotation].cycleRotation()
+    } else if (world.getTileEntity(x, y, z).isInstanceOf[TileEntityWithRotation]&&world.getTileEntity(x, y, z).asInstanceOf[TileEntityWithRotation].getCanChangeRotation) {
+      world.getTileEntity(x, y, z).asInstanceOf[TileEntityWithRotation].cycleRotation()
+    }
     false
   }
   private def getRotationType(block: Block): Rotation = block match {

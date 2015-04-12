@@ -41,6 +41,7 @@ class TileEntityWithRotation extends TileEntityMain {
       sendTileData(0, true, this.rotation)
     }
   }
+  def getCanChangeRotation = true
   override def setTileData(id: Int, data: Array[Int]) {
     if (id == 0) {
       rotation = data(0)

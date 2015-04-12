@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.block.Block
 import net.minecraft.init.Blocks
 import scala.collection.mutable.WrappedArray
+import com.rikmuld.corerm.core.CoreUtils.WrappedArrayUtils
 
 trait SlotWithNoPickup extends Slot {
   override def canTakeStack(par1EntityPlayer: EntityPlayer): Boolean = false
@@ -34,21 +35,29 @@ trait SlotWithItemsNot extends Slot {
   }
 }
 
-class SlotItemsNot(inv: IInventory, id: Int, x: Int, y: Int, stacks: AnyRef*) extends Slot(inv, id, x, y) with SlotWithItemsNot {
+class SlotItemsNot(inv: IInventory, id: Int, x: Int, y: Int, stacks: Any*) extends Slot(inv, id, x, y) with SlotWithItemsNot {
   setStacks(stacks)
 }
 
 trait SlotWithItemsOnly extends Slot {
   var alowedStacks: ListBuffer[Any] = new ListBuffer[Any]()
 
-  def setStacks(stacks: AnyRef*) = for (stack <- stacks) alowedStacks.append(stack)
+  def setStacks(stacks: Any*) {
+    for (stack <- stacks) {
+      if(stack.isInstanceOf[WrappedArray[_]]) {
+        for(st <- stack.asInstanceOf[WrappedArray[_]].unwrap)alowedStacks.append(st)
+      }
+      else alowedStacks.append(stack)
+    }
+  }
   def setStacks(stacks:Set[Any]) = for (id <- stacks) alowedStacks.append(id)
   override def isItemValid(is: ItemStack): Boolean = {
     var flag = false
     for (st <- alowedStacks) {
-      val stack = if(st.isInstanceOf[WrappedArray[_]]) st.asInstanceOf[WrappedArray[_]](0) else st
-      if (stack.isInstanceOf[ItemStack] && stack.asInstanceOf[ItemStack].isItemEqual(is)) flag = true
-      else if (stack.isInstanceOf[Item] && is.getItem.equals(stack)) flag = true
+      println(st)
+      
+      if (st.isInstanceOf[ItemStack] && st.asInstanceOf[ItemStack].isItemEqual(is)) flag = true
+      else if (st.isInstanceOf[Item] && is.getItem.equals(st)) flag = true
     }
     if (alowedStacks.size == 0) true else flag == true
   }

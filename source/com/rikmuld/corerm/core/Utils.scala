@@ -25,6 +25,8 @@ import net.minecraftforge.common.util.ForgeDirection
 import net.minecraftforge.oredict.OreDictionary
 import scala.collection.JavaConversions._
 import net.minecraftforge.common.util.Constants
+import scala.collection.mutable.WrappedArray
+import scala.collection.mutable.ListBuffer
 
 object CoreUtils {
   var startEntityId = 300
@@ -207,6 +209,17 @@ object CoreUtils {
       val returnNumbers = Array.ofDim[Int](numbers.length)
       for (i <- 0 until numbers.length) returnNumbers(i) = -numbers(i)
       returnNumbers
+    }
+  }
+  
+  implicit class WrappedArrayUtils(wrap:WrappedArray[_]) {
+    def unwrap:ListBuffer[Any] = {
+      val retArr = new ListBuffer[Any]
+      for(arr <- wrap){
+        if(arr.isInstanceOf[WrappedArray[_]])retArr.append(arr.asInstanceOf[WrappedArray[_]].unwrap)
+        else retArr.append(arr)
+      }
+      retArr
     }
   }
 
