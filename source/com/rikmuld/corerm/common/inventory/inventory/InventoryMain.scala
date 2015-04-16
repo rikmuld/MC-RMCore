@@ -79,7 +79,7 @@ class InventoryPlayerMain(player: EntityPlayer, size: Int) extends IInventory {
   override def markDirty() {}
 }
 
-class InventoryItemMain(stack: ItemStack, var player: EntityPlayer, size: Int, var stackSize: Int) extends IInventory {
+class InventoryItemMain(stack: ItemStack, var player: EntityPlayer, size: Int, var stackSize: Int, toEquipped:Boolean) extends IInventory {
   if (stack.hasTagCompound() == false) stack.setTagCompound(new NBTTagCompound())
 
   private var inventoryContents: Array[ItemStack] = new Array[ItemStack](size)
@@ -94,7 +94,7 @@ class InventoryItemMain(stack: ItemStack, var player: EntityPlayer, size: Int, v
         itemstack = inventoryContents(slot)
         inventoryContents(slot) = null
         this.writeToNBT(tag)
-        if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item) this.setNBT(player.getCurrentEquippedItem)
+        if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
         itemstack
       } else {
         itemstack = inventoryContents(slot).splitStack(amount)
@@ -102,12 +102,12 @@ class InventoryItemMain(stack: ItemStack, var player: EntityPlayer, size: Int, v
           inventoryContents(slot) = null
         }
         this.writeToNBT(tag)
-        if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item) this.setNBT(player.getCurrentEquippedItem)
+        if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
         itemstack
       }
     } else {
       this.writeToNBT(tag)
-      if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item) this.setNBT(player.getCurrentEquippedItem)
+      if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
       null
     }
   }
@@ -142,7 +142,7 @@ class InventoryItemMain(stack: ItemStack, var player: EntityPlayer, size: Int, v
       stack.stackSize = getInventoryStackLimit
     }
     this.writeToNBT(tag)
-    if (player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item) this.setNBT(player.getCurrentEquippedItem)
+    if (player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
   }
   def setNBT(item: ItemStack) = item.setTagCompound(tag)
   def writeToNBT(tag: NBTTagCompound) {    
