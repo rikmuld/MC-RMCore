@@ -5,126 +5,86 @@ import scala.collection.mutable.HashMap
 import net.minecraft.init.Blocks
 import scala.actors.threadpool.Arrays
 import net.minecraft.world.World
-import com.rikmuld.corerm.common.objs.tile.TileEntityWithRotation
+import com.rikmuld.corerm.objs.RMTileWithRot
+import net.minecraft.util.BlockPos
+import net.minecraft.block.state.BlockState
+import net.minecraft.block.state.IBlockState
+import net.minecraft.block.properties.IProperty
+import net.minecraft.block.BlockFurnace
+import com.rikmuld.corerm.misc.WorldBlock._
+import net.minecraft.block.BlockPistonBase
 
 object Rotation {
-
-  private type Rotation = (World, Int, Int, Int, Block) => _
-  private type RotationMeta = (World, Int, Int, Int, Block) => Array[Int]
-
-  val blocksRot: HashMap[Block, List[Int]] = HashMap(
-    (Blocks.brick_stairs -> List(8, 1, 0)),
-    (Blocks.acacia_stairs -> List(8, 1, 0)),
-    (Blocks.dark_oak_stairs -> List(8, 1, 0)),
-    (Blocks.stone_stairs -> List(8, 1, 0)),
-    (Blocks.stone_brick_stairs -> List(8, 1, 0)),
-    (Blocks.nether_brick_stairs -> List(8, 1, 0)),
-    (Blocks.quartz_stairs -> List(8, 1, 0)),
-    (Blocks.sandstone_stairs -> List(8, 1, 0)),
-    (Blocks.birch_stairs -> List(8, 1, 0)),
-    (Blocks.jungle_stairs -> List(8, 1, 0)),
-    (Blocks.oak_stairs -> List(8, 1, 0)),
-    (Blocks.spruce_stairs -> List(8, 1, 0)),
-    (Blocks.chest -> List(6, 1, 2)),
-    (Blocks.trapped_chest -> List(6, 1, 2)),
-    (Blocks.log -> List(16, 4, -1)),
-    (Blocks.log2 -> List(16, 4, -1)),
-    (Blocks.pumpkin -> List(4, 1, 0)),
-    (Blocks.dispenser -> List(6, 1, 0)),
-    (Blocks.dropper -> List(6, 1, 0)),
-    (Blocks.piston -> List(-1, -1, -1)),
-    (Blocks.sticky_piston -> List(-1, -1, -1)),
-    (Blocks.ender_chest -> List(6, 1, 2)),
-    (Blocks.anvil -> List(-1, -1, -1)),
-    (Blocks.standing_sign -> List(16, 1, 0)),
-    (Blocks.lit_pumpkin -> List(4, 1, 0)),
-    (Blocks.powered_comparator -> List(-1, -1, -1)),
-    (Blocks.powered_repeater -> List(-1, -1, -1)),
-    (Blocks.unpowered_comparator -> List(-1, -1, -1)),
-    (Blocks.unpowered_repeater -> List(-1, -1, -1)),
-    (Blocks.furnace -> List(6, 1, 2)),
-    (Blocks.lit_furnace -> List(6, 1, 2)),
-    (Blocks.fence_gate -> List(-1, -1, -1)))
-
+  private type RotData = (Int, Int, Int)
+  private type Rotation = (IMLazyBlockData) => Boolean
+  
+  val blocksRot: HashMap[Block, Either[Rotation, RotData]] = HashMap(
+      Blocks.furnace -> Right((6, 2, 1)),
+      Blocks.lit_furnace -> Right((6, 2, 1)),
+      Blocks.oak_stairs -> Right((8, 0, 1)),
+      Blocks.stone_stairs -> Right((8, 0, 1)),
+      Blocks.brick_stairs -> Right((8, 0, 1)),
+      Blocks.stone_brick_stairs -> Right((8, 0, 1)),
+      Blocks.nether_brick_stairs -> Right((8, 0, 1)),
+      Blocks.sandstone_stairs -> Right((8, 0, 1)),
+      Blocks.spruce_stairs -> Right((8, 0, 1)),
+      Blocks.birch_stairs -> Right((8, 0, 1)),
+      Blocks.jungle_stairs -> Right((8, 0, 1)),
+      Blocks.quartz_stairs -> Right((8, 0, 1)),
+      Blocks.acacia_stairs -> Right((8, 0, 1)),
+      Blocks.dark_oak_stairs -> Right((8, 0, 1)),
+      Blocks.red_sandstone_stairs -> Right((8, 0, 1)),
+      Blocks.chest -> Right((6, 2, 1)),
+      Blocks.trapped_chest -> Right((6, 2, 1)),
+      Blocks.ender_chest -> Right((6, 2, 1)),
+      Blocks.dispenser -> Right((6, 0, 1)),
+      Blocks.dropper -> Right((6, 0, 1)),
+      Blocks.pumpkin -> Right((4, 0, 1)),
+      Blocks.lit_pumpkin -> Right((4, 0, 1)),
+      Blocks.standing_sign -> Right((16, 0, 1)),
+      Blocks.log -> Right((16, -1, 4)),
+      Blocks.log2 -> Right((16, -1, 4)),
+      Blocks.acacia_fence_gate -> Right((-4, -1, 1)),
+      Blocks.oak_fence_gate -> Right((-4, -1, 1)),
+      Blocks.birch_fence_gate -> Right((-4, -1, 1)),
+      Blocks.jungle_fence_gate -> Right((-4, -1, 1)),
+      Blocks.dark_oak_fence_gate -> Right((-4, -1, 1)),
+      Blocks.spruce_fence_gate -> Right((-4, -1, 1)),
+      Blocks.powered_comparator -> Right((-4, -1, 1)),
+      Blocks.unpowered_comparator -> Right((-4, -1, 1)),
+      Blocks.powered_repeater -> Right((-4, -1, 1)),
+      Blocks.unpowered_repeater -> Right((-4, -1, 1)),
+      Blocks.anvil -> Right((-2, -1, 1)),
+      Blocks.piston -> Left(rotPiston),
+      Blocks.sticky_piston -> Left(rotPiston)
+  )
+  
   def hasRotation(block: Block): Boolean = blocksRot.contains(block)
-  private def getList(start: Int, end: Int): Array[Int] = {
-    val list = new Array[Int](end - start)
-    for (i <- 0 to list.length - 2) list(i) = start + i
-    list
+  def rotateBlock(world: World, pos:BlockPos): Boolean = {
+    val blockData = (world, pos, world.getBlockState(pos))
+    
+    if (hasRotation(blockData.block)) {
+      val typ = blocksRot(blockData.block)
+      if(typ.isLeft) typ.left.get(blockData) else rotSimple(typ.right.get, blockData)
+    } else if (world.getTileEntity(pos).isInstanceOf[RMTileWithRot]&&world.getTileEntity(pos).asInstanceOf[RMTileWithRot].getCanChangeRotation) {
+      world.getTileEntity(pos).asInstanceOf[RMTileWithRot].cycleRotation
+    } else false
+    
   }
-  def rotateBlock(world: World, x: Int, y: Int, z: Int): Boolean = {
-    val block = world.getBlock(x, y, z)
-    if (hasRotation(block)) {
-      getRotationType(block)(world, x, y, z, block)
-      true
-    } else if (world.getTileEntity(x, y, z).isInstanceOf[TileEntityWithRotation]&&world.getTileEntity(x, y, z).asInstanceOf[TileEntityWithRotation].getCanChangeRotation) {
-      world.getTileEntity(x, y, z).asInstanceOf[TileEntityWithRotation].cycleRotation()
-    }
-    false
+  def rotSimple(rotData:RotData, blockData:IMLazyBlockData):Boolean = blockData.setState(blockData.newState(rotData.nextStep(blockData.meta)))
+  def rotPiston(blockData:IMLazyBlockData):Boolean = { 
+    blockData.clearBlock
+    blockData.notifyWorld
+        
+    rotSimple(if(blockData.meta >= 8) (6, if(blockData.meta + 1 < 14) (blockData.meta - 2) % 6 + 1  else 0, 1) else (6, 0, 1), blockData)
   }
-  private def getRotationType(block: Block): Rotation = block match {
-    case Blocks.anvil => rotAnvil
-    case Blocks.piston | Blocks.sticky_piston => rotPistion
-    case Blocks.fence_gate | Blocks.powered_repeater | Blocks.unpowered_repeater | Blocks.powered_comparator | Blocks.unpowered_comparator => rotStateQuad
-    case _ => rotBasic
-  }
-  private def rotPistion(world: World, x: Int, y: Int, z: Int, block: Block) {
-    if (world.getBlockMetadata(x, y, z) > 4) world.setBlockMetadataWithNotify(x, y, z, 0, 2)
-    else world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) + 1, 2)
-    val meta = world.getBlockMetadata(x, y, z)
-
-    world.setBlock(x, y, z, Blocks.air)
-    world.notifyBlocksOfNeighborChange(x, y, z, block)
-    world.setBlock(x, y, z, block, meta, 2)
-    world.notifyBlockOfNeighborChange(x, y, z, block)
-  }
-  private def rotAnvil(world: World, x: Int, y: Int, z: Int, block: Block) {
-    val meta = world.getBlockMetadata(x, y, z)
-    if ((meta == 0) || ((meta % 2) == 0)) world.setBlockMetadataWithNotify(x, y, z, meta + 1, 2)
-    else world.setBlockMetadataWithNotify(x, y, z, meta - 1, 2)
-  }
-  private def rotStateQuad(world: World, x: Int, y: Int, z: Int, block: Block) {
-    val meta = world.getBlockMetadata(x, y, z)
-    if ((meta == 3) || ((meta % 4) == 3)) world.setBlockMetadataWithNotify(x, y, z, meta - 3, 2)
-    else world.setBlockMetadataWithNotify(x, y, z, meta + 1, 2)
-  }
-  private def rotBasic(world: World, x: Int, y: Int, z: Int, block: Block) {
-    val rotData = blocksRot.get(block)
-    if ((world.getBlockMetadata(x, y, z) > rotData.get(0) - 2) && (rotData.get(2).!=(-1))) world.setBlockMetadataWithNotify(x, y, z, rotData.get(2), 2)
-    else world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) + rotData.get(1), 2)
-  }
-  def getMetas(world: World, x: Int, y: Int, z: Int): Array[Int] = {
-    val block = world.getBlock(x, y, z)
-    if (hasRotation(block)) {
-      return getRotationMetaType(block)(world, x, y, z, block)
-    }
-    null
-  }
-  private def getRotationMetaType(block: Block): RotationMeta = block match {
-    case Blocks.anvil => rotMetaAnvil
-    case Blocks.piston | Blocks.sticky_piston => rotMetaPistion
-    case Blocks.fence_gate | Blocks.powered_repeater | Blocks.unpowered_repeater | Blocks.powered_comparator | Blocks.unpowered_comparator => rotMetaStateQuad
-    case Blocks.log | Blocks.log2 => rotMetaLog
-    case _ => rotMetaBasic
-  }
-  private def rotMetaPistion(world: World, x: Int, y: Int, z: Int, block: Block): Array[Int] = getList(0, 6)
-  private def rotMetaAnvil(world: World, x: Int, y: Int, z: Int, block: Block): Array[Int] = {
-    val meta = world.getBlockMetadata(x, y, z)
-    for (i <- 0 to 5 if meta < 2 + i * 2) return getList(i * 2, i * 2 + 2)
-    null
-  }
-  private def rotMetaStateQuad(world: World, x: Int, y: Int, z: Int, block: Block): Array[Int] = {
-    val meta = world.getBlockMetadata(x, y, z)
-    for (i <- 0 to 3 if meta < 4 + i * 4) return getList(i * 4, i * 4 + 4)
-    null
-  }
-  private def rotMetaLog(world: World, x: Int, y: Int, z: Int, block: Block): Array[Int] = {
-    val meta = world.getBlockMetadata(x, y, z)
-    for (i <- 0 to 3 if meta % 4 == i) return Array[Int](i, 4 + i, 8 + i, 12 + i)
-    null
-  }
-  private def rotMetaBasic(world: World, x: Int, y: Int, z: Int, block: Block): Array[Int] = {
-    val rotData = blocksRot.get(block)
-    getList(rotData.get(2), rotData.get(0))
+  
+  implicit class IMRotData(data:RotData) {
+    def max = data._1
+    def min = data._2
+    def step = data._3
+    def getMin(meta:Int) = if(min<0) if(max<0) getMax(meta) + max else meta % step else min
+    def getMax(meta:Int) = if(max<0) Math.abs(max) * (1 + meta / Math.abs(max)) else max
+    def nextStep(meta:Int) = if(meta+step<getMax(meta)) meta + step else getMin(meta)
   }
 }

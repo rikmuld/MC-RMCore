@@ -2,9 +2,10 @@ package com.rikmuld.corerm.misc
 
 import net.minecraft.client.model.PositionTextureVertex
 import net.minecraft.client.model.TexturedQuad
-import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.renderer.Tessellator
-import cpw.mods.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraft.client.renderer.WorldRenderer
 
 class AbstractBox(texWidth: Int, texHeigth: Int, mirror: Boolean, texturerOffsetX: Int, textureOffsetY: Int, var x: Float, var y: Float, var z: Float, width: Int, height: Int, depth: Int, ratio: Float, xScale: Float, yScale: Float, zScale: Float) {
   private val vertexPositions = new Array[PositionTextureVertex](8)
@@ -62,5 +63,5 @@ class AbstractBox(texWidth: Int, texHeigth: Int, mirror: Boolean, texturerOffset
     return this;
   }
   @SideOnly(Side.CLIENT)
-  def render(tessellator: Tessellator) = quadList.foreach(_.draw(tessellator, ratio))
+  def render(render: WorldRenderer) = quadList.foreach(_.draw(render, ratio))
 }
