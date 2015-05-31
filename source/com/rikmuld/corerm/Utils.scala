@@ -27,8 +27,11 @@ import net.minecraftforge.common.util.Constants
 import scala.collection.mutable.WrappedArray
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
+import com.rikmuld.corerm.misc.WorldBlock._
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.BlockPos
+import net.minecraft.entity.EntityLivingBase
+import com.rikmuld.corerm.objs.RMProp
 
 object CoreUtils {
   var startEntityId = 300
@@ -98,6 +101,19 @@ object CoreUtils {
           itemStack.stackSize = 0
         }
       }
+    }
+    def isTouchingBlockSolidForSideOrHasCorrectBounds(pos:BlockPos, side: EnumFacing*): Boolean = {
+      side.foreach { facing =>  
+        val bd = (world, pos.offset(facing))
+        if(bd.block != Blocks.air){
+          if(bd.world.isSideSolid(bd.pos, facing.getOpposite)) return true
+          else {
+            val bounds = bd.block.getBounds(bd.world, bd.pos) 
+            if(bounds != null) return bounds(facing.ordinal) == (if((bounds(facing.ordinal) % 2) == 0) 0.0F else 1.0F)
+          }
+        }
+      }
+      false
     }
     def dropItemsInWorld(stacks: ArrayList[ItemStack], x: Float, y: Float, z: Float, rand: Random) {
       if (!world.isRemote) {
@@ -215,8 +231,32 @@ object CoreUtils {
       retArr
     }
   }
+  
+  implicit class BlockUtils(block:Block){
+    def getBounds(world:World, pos:BlockPos) = {
+      val bd = (world, pos)
+      val bounds = bd.block.getCollisionBoundingBox(bd.world, bd.pos, bd.state) 
+      if(bounds != null) Array(bounds.minY-bd.y, bounds.maxY-bd.y, bounds.maxZ-bd.z, bounds.minZ-bd.z, bounds.minX-bd.x, bounds.maxX-bd.x) else null
+    }
+  }
 
   implicit class IntegerUtils(currNumber: Int) {
     def getScaledNumber(maxNumber: Int, scaledNumber: Int): Float = (currNumber.toFloat / maxNumber.toFloat) * scaledNumber
+    def bitGet(pos:Int, size:Int) = (Math.pow(2, size).toInt - 1) & (currNumber >> pos)
+    def bitPut(pos:Int, data:Int) = currNumber | (data << pos)
+  }
+  
+  implicit class LivingUtils(entity:EntityLivingBase) {
+    def facing:EnumFacing = {
+      val facing = MathHelper.floor_double(((entity.rotationYaw * 4.0F) / 360.0F) + 0.5D) & 3
+      if (facing == EnumFacing.WEST.getHorizontalIndex) EnumFacing.WEST
+      else if (facing == EnumFacing.SOUTH.getHorizontalIndex) EnumFacing.SOUTH
+      else if (facing == EnumFacing.NORTH.getHorizontalIndex) EnumFacing.NORTH
+      else if (facing == EnumFacing.EAST.getHorizontalIndex) EnumFacing.EAST
+      else EnumFacing.NORTH
+    }
+  }
+  implicit class BoolUtils(value:Boolean) {
+    def intValue = if(value) 1 else 0
   }
 }

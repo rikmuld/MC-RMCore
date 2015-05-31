@@ -16,13 +16,11 @@ import com.rikmuld.corerm.network.PacketDataManager
 import com.rikmuld.corerm.network.Handler
 import com.rikmuld.corerm.RMMod._
 import com.rikmuld.corerm.network.TileData
-import com.rikmuld.corerm.objs.RMTileWithRot
 import com.rikmuld.corerm.objs.RMTile
 import com.rikmuld.corerm.network.Handler
 import com.rikmuld.corerm.network.PacketGlobal
 import com.rikmuld.corerm.network.TileData
 import com.rikmuld.corerm.objs.RMTile
-import com.rikmuld.corerm.objs.RMTileWithRot
 
 @Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = MOD_DEPENDENCIES, modLanguage = MOD_LANUAGE)
 object RMMod {
@@ -37,27 +35,26 @@ object RMMod {
 
   @SidedProxy(clientSide = MOD_CLIENT_PROXY, serverSide = MOD_SERVER_PROXY)
   var proxy: ProxyServer = null
-  
+  var network: SimpleNetworkWrapper = _
+
   @EventHandler
   def preInit(event: FMLPreInitializationEvent) {
-    Objs.network = NetworkRegistry.INSTANCE.newSimpleChannel(PACKET_CHANEL)
-    Objs.network.registerMessage(classOf[Handler], classOf[PacketGlobal], 0, Side.SERVER)
-    Objs.network.registerMessage(classOf[Handler], classOf[PacketGlobal], 0, Side.CLIENT)
+    network = NetworkRegistry.INSTANCE.newSimpleChannel(PACKET_CHANEL)
+    network.registerMessage(classOf[Handler], classOf[PacketGlobal], 0, Side.SERVER)
+    network.registerMessage(classOf[Handler], classOf[PacketGlobal], 0, Side.CLIENT)
   }
   @EventHandler
   def Init(event: FMLInitializationEvent) {
     PacketDataManager.registerPacketData(classOf[TileData].asInstanceOf[Class[BasicPacketData]])
     
     GameRegistry.registerTileEntity(classOf[RMTile], MOD_ID + "_coreTile")
-    GameRegistry.registerTileEntity(classOf[RMTileWithRot], MOD_ID + "_withRotation")
     
     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)
   }
   @EventHandler
-  def PosInit(event: FMLPostInitializationEvent) {}
-  
-  object Objs {
-    var network: SimpleNetworkWrapper = _
+  def PosInit(event: FMLPostInitializationEvent) {}  
+  def registerPacket[T <: BasicPacketData](packet:Class[T]){
+    PacketDataManager.registerPacketData(packet.asInstanceOf[Class[BasicPacketData]])
   }
 }
 

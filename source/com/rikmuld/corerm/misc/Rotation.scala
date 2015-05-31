@@ -5,7 +5,6 @@ import scala.collection.mutable.HashMap
 import net.minecraft.init.Blocks
 import scala.actors.threadpool.Arrays
 import net.minecraft.world.World
-import com.rikmuld.corerm.objs.RMTileWithRot
 import net.minecraft.util.BlockPos
 import net.minecraft.block.state.BlockState
 import net.minecraft.block.state.IBlockState
@@ -59,6 +58,7 @@ object Rotation {
       Blocks.sticky_piston -> Left(rotPiston)
   )
   
+  def addRotationBlock(block: Block, data:Either[Rotation, RotData]) = blocksRot(block) = data
   def hasRotation(block: Block): Boolean = blocksRot.contains(block)
   def rotateBlock(world: World, pos:BlockPos): Boolean = {
     val blockData = (world, pos, world.getBlockState(pos))
@@ -66,10 +66,7 @@ object Rotation {
     if (hasRotation(blockData.block)) {
       val typ = blocksRot(blockData.block)
       if(typ.isLeft) typ.left.get(blockData) else rotSimple(typ.right.get, blockData)
-    } else if (world.getTileEntity(pos).isInstanceOf[RMTileWithRot]&&world.getTileEntity(pos).asInstanceOf[RMTileWithRot].getCanChangeRotation) {
-      world.getTileEntity(pos).asInstanceOf[RMTileWithRot].cycleRotation
     } else false
-    
   }
   def rotSimple(rotData:RotData, blockData:IMLazyBlockData):Boolean = blockData.setState(blockData.newState(rotData.nextStep(blockData.meta)))
   def rotPiston(blockData:IMLazyBlockData):Boolean = { 

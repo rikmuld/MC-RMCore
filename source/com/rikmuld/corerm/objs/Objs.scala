@@ -16,10 +16,11 @@ import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemArmor.ArmorMaterial
 import net.minecraft.util.ResourceLocation
 import com.rikmuld.corerm.RMMod
+import scala.collection.mutable.ListBuffer
 
 object PropType extends Enumeration {
   type PropType = Value
-  val NAME,TAB,MATERIAL,HARDNESS,RECISTANCE,SOUND,OPACITY,LIGHT,HARVEST,ITEMBLOCK,MAX_DAMAGE,MAX_STACKSIZE,METADATA,HEAL,SATURATION,WOLFMEAT,ARMORMAT,ARMORTYPE,ARMORTEX,FORCESUBTYPE,GUITRIGGER = Value
+  val NAME,TAB,MATERIAL,HARDNESS,RECISTANCE,SOUND,OPACITY,LIGHT,HARVEST,ITEMBLOCK,MAX_DAMAGE,MAX_STACKSIZE,METADATA,HEAL,SATURATION,WOLFMEAT,ARMORMAT,ARMORTYPE,ARMORTEX,FORCESUBTYPE,GUITRIGGER,TEX_FLAG = Value
 }
 
 class ObjInfo(props:Prop*) {  
@@ -37,7 +38,7 @@ class ObjInfo(props:Prop*) {
     case PropType.OPACITY => block.setLightOpacity(prop.value.asInstanceOf[Int])
     case PropType.LIGHT => block.setLightLevel(prop.value.asInstanceOf[Float])
     case PropType.HARVEST => 
-      val value = prop.value.asInstanceOf[List[String]]
+      val value = prop.value.asInstanceOf[Array[String]]
       block.setHarvestLevel(value(0), value(1).toInt)
     case _ =>
   }
@@ -51,11 +52,11 @@ class ObjInfo(props:Prop*) {
   def register(block:RMCoreBlock, modId:String) {
     if(hasProp(PropType.ITEMBLOCK)) GameRegistry.registerBlock(block, getValue[Class[ItemBlock]](PropType.ITEMBLOCK), getValue[String](PropType.NAME))
     else GameRegistry.registerBlock(block, getValue[String](PropType.NAME))
-    RMMod.proxy.registerRendersFor(Left(block), this, modId)
+    if(!hasProp(PropType.TEX_FLAG))RMMod.proxy.registerRendersFor(Left(block), this, modId)
   }
   def register(item:RMCoreItem, modId:String){
     GameRegistry.registerItem(item, getValue[String](PropType.NAME))
-    RMMod.proxy.registerRendersFor(Right(item), this, modId)
+    if(!hasProp(PropType.TEX_FLAG))RMMod.proxy.registerRendersFor(Right(item), this, modId)
   }
 }
 
@@ -78,7 +79,7 @@ object Properties {
   case class Recistance(resistance:Float) extends Prop(resistance){
     override def getType:PropType.PropType = PropType.RECISTANCE
   }
-  case class SetpSound(sound:SoundType) extends Prop(sound){
+  case class StepSound(sound:SoundType) extends Prop(sound){
     override def getType:PropType.PropType = PropType.SOUND
   }
   case class LightOpacity(opacity:Int) extends Prop(opacity){
@@ -87,7 +88,7 @@ object Properties {
   case class LightLevel(light:Float) extends Prop(light){
     override def getType:PropType.PropType = PropType.LIGHT
   }
-  case class HarvestLevel(tool:String, level:Int) extends Prop(List(tool, level)){
+  case class HarvestLevel(tool:String, level:Int) extends Prop(Array[String](tool, level.toString)){
     override def getType:PropType.PropType = PropType.HARVEST
   }
   case class ItemBl[T <: ItemBlock](item:Class[T]) extends Prop(item){
@@ -126,5 +127,8 @@ object Properties {
   }
   case class GuiTrigger(id:Int) extends Prop(id) {
     override def getType:PropType.PropType = PropType.GUITRIGGER
+  }
+  case class NoTex() extends Prop(null) {
+    override def getType:PropType.PropType = PropType.TEX_FLAG
   }
 }

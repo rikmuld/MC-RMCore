@@ -24,9 +24,9 @@ object PacketDataManager {
 }
 
 object PacketSender {
-  def to(data: BasicPacketData, player: EntityPlayer) = Objs.network.sendTo(new PacketGlobal(data), player.asInstanceOf[EntityPlayerMP])
-  def toServer(data: BasicPacketData) = Objs.network.sendToServer(new PacketGlobal(data))
-  def toClient(data: BasicPacketData) = Objs.network.sendToAll(new PacketGlobal(data))
+  def to(data: BasicPacketData, player: EntityPlayer) = network.sendTo(new PacketGlobal(data), player.asInstanceOf[EntityPlayerMP])
+  def toServer(data: BasicPacketData) = network.sendToServer(new PacketGlobal(data))
+  def toClient(data: BasicPacketData) = network.sendToAll(new PacketGlobal(data))
 }
 
 trait BasicPacketData {

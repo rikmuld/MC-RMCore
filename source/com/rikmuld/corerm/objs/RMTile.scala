@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagList
 import net.minecraftforge.common.util.Constants
 import net.minecraft.util.IChatComponent
 import net.minecraft.util.ChatComponentText
+import net.minecraft.server.gui.IUpdatePlayerListBox
 
 class RMTile extends TileEntity {
   override def readFromNBT(tag: NBTTagCompound) = super.readFromNBT(tag)
@@ -26,6 +27,7 @@ class RMTile extends TileEntity {
     writeToNBT(compound);
     new S35PacketUpdateTileEntity(new BlockPos(this.pos.getX, this.pos.getY, this.pos.getZ), 1, compound);
   }
+  def bd = (worldObj, pos)
   override def onDataPacket(net: NetworkManager, packet: S35PacketUpdateTileEntity) = readFromNBT(packet.getNbtCompound());
   def setTileData(id: Int, data: Array[Int]) {}
   def sendTileData(id: Int, client: Boolean, data: Int*) {
@@ -34,39 +36,7 @@ class RMTile extends TileEntity {
   }
 }
 
-class RMTileWithRot extends RMTile {
-  //TODO: CHANGE IF NEEDED FOR NEW MODEL SYSTEM, MAKE ADD ROTATION TO BLOCKSTATE ETC.... DO IF MAKE BLOCK_WITH_ROTATION
-  
-  var rotation: Int = _
-
-  def cycleRotation:Boolean = setRotation(if (rotation < 3) rotation + 1 else 0)
-  def setRotation(rotation: Int):Boolean = {
-    if (!getWorld.isRemote) {
-      this.rotation = rotation
-      sendTileData(0, true, this.rotation)
-      true
-    } else false
-  }
-  def getCanChangeRotation = true
-  override def setTileData(id: Int, data: Array[Int]) {
-    if (id == 0) {
-      rotation = data(0)
-      getWorld.notifyNeighborsOfStateChange(new BlockPos(pos.getX, pos.getY, pos.getZ), Blocks.air)
-      getWorld.notifyNeighborsOfStateChange(new BlockPos(pos.getX, pos.getY, pos.getZ), Blocks.air)
-      getWorld.markBlockForUpdate(new BlockPos(pos.getX, pos.getY, pos.getZ))
-    }
-  }
-  override def writeToNBT(tag: NBTTagCompound) {
-    super.writeToNBT(tag)
-    tag.setInteger("rotation", rotation)
-  }
-  override def readFromNBT(tag: NBTTagCompound) {
-    super.readFromNBT(tag)
-    rotation = tag.getInteger("rotation")
-  }
-}
-
-abstract trait TileEntityWithInventory extends TileEntity with IInventory {
+abstract trait WithTileInventory extends TileEntity with IInventory {
   var inventoryContents: Array[ItemStack] = new Array[ItemStack](getSizeInventory)
 
   override def decrStackSize(slot: Int, amount: Int): ItemStack = {
