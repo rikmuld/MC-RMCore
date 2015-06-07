@@ -18,6 +18,8 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.entity.player.EntityPlayer
 import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.objs.PropType._
+import net.minecraft.inventory.IInventory
+import com.rikmuld.corerm.misc.WorldBlock._
 
 class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
   info.register(this, modId)
@@ -31,6 +33,10 @@ abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContain
   def getInfo:ObjInfo = info
   override def createNewTileEntity(world:World, meta:Int):RMTile = new RMTile
   override def getRenderType = 3
+  override def breakBlock(world:World, pos:BlockPos, state:IBlockState) {
+    if((world, pos).tile.isInstanceOf[IInventory])world.dropBlockItems(pos, new Random())
+    super.breakBlock(world, pos, state)
+  }
 }
 
 trait RMCoreBlock extends Block {
@@ -41,12 +47,12 @@ trait RMCoreBlock extends Block {
   override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
     if(!world.isRemote){
       if (getInfo.hasProp(GUITRIGGER)) {
-        val gui = getInfo.getProp[Properties.GuiTrigger](GUITRIGGER)
-        player.openGui(RMMod, gui.value.asInstanceOf[Int], world, pos.getX, pos.getY, pos.getZ)
+        openGui((world, pos), player, getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[Int])
         true
       } else false
     } else true  
   }
+  def openGui(bd:BlockData, player:EntityPlayer, id:Int) = player.openGui(RMMod, id, bd.world, bd.x, bd.y, bd.z)
 }
 
 trait WithInstable extends Block {

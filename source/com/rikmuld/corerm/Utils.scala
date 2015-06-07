@@ -88,11 +88,8 @@ object CoreUtils {
           val dX = (rand.nextFloat() * 0.8F) + 0.1F
           val dY = (rand.nextFloat() * 0.8F) + 0.1F
           val dZ = (rand.nextFloat() * 0.8F) + 0.1F
-          val entityItem = new EntityItem(world, x + dX, y + dY, z + dZ, new ItemStack(itemStack.getItem,
-            itemStack.stackSize, itemStack.getItemDamage))
-          if (itemStack.hasTagCompound()) {
-            entityItem.getEntityItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
-          }
+          val entityItem = new EntityItem(world, x + dX, y + dY, z + dZ, new ItemStack(itemStack.getItem, itemStack.stackSize, itemStack.getItemDamage))
+          if (itemStack.hasTagCompound()) entityItem.getEntityItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
           val factor = 0.05F
           entityItem.motionX = rand.nextGaussian() * factor
           entityItem.motionY = (rand.nextGaussian() * factor) + 0.2F
@@ -197,6 +194,7 @@ object CoreUtils {
       inventory
     }
     def containsItem(item: Item): Boolean = stacks.find(_.getItem == item).map(_ => true).getOrElse(false)
+    def containsStack(stack: ItemStack): Boolean = stacks.find(_.isItemEqual(stack)).map(_ => true).getOrElse(false)
   }
 
   implicit class ItemStackUtils(item: ItemStack) {

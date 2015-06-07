@@ -25,7 +25,6 @@ trait SlotWithItemsNot extends Slot {
   def setStacks(stacks:Set[Any]) = for (id <- stacks) alowedStacks.append(id)
   override def isItemValid(is: ItemStack): Boolean = {
     var flag = false
-    println(is)
     alowedStacks.foreach(st => {
       val stack = if(st.isInstanceOf[WrappedArray[_]]) st.asInstanceOf[WrappedArray[_]](0) else st
       if (stack.isInstanceOf[ItemStack] && !stack.asInstanceOf[ItemStack].isItemEqual(is)) flag = true 
@@ -53,9 +52,7 @@ trait SlotWithItemsOnly extends Slot {
   def setStacks(stacks:Set[Any]) = for (id <- stacks) alowedStacks.append(id)
   override def isItemValid(is: ItemStack): Boolean = {
     var flag = false
-    for (st <- alowedStacks) {
-      println(st)
-      
+    for (st <- alowedStacks) {      
       if (st.isInstanceOf[ItemStack] && st.asInstanceOf[ItemStack].isItemEqual(is)) flag = true
       else if (st.isInstanceOf[Item] && is.getItem.equals(st)) flag = true
     }
@@ -68,13 +65,13 @@ class SlotItemsOnly(inv: IInventory, id: Int, x: Int, y: Int, stacks: AnyRef*) e
 }
 
 trait SlotWithOnlyItem extends Slot {
-  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) == Blocks.air
+  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) == null
 }
 
 class SlotOnlyItems(inv: IInventory, id: Int, x: Int, y: Int) extends Slot(inv, id, x, y) with SlotWithOnlyItem {}
 
 trait SlotWithOnlyBlock extends Slot {
-  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) != Blocks.air
+  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) != null
 }
 
 class SlotOnlyBlocks(inv: IInventory, id: Int, x: Int, y: Int) extends Slot(inv, id, x, y) with SlotWithOnlyBlock {}

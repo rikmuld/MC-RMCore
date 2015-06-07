@@ -24,7 +24,7 @@ class ProxyServer extends IGuiHandler {
 
   def getServerGuiElement(id: Int, player: EntityPlayer, world: World, x: Int, y: Int, z: Int): Object = {
     try {
-      guis(id)._1.getConstructor(classOf[EntityPlayer], classOf[IInventory]).newInstance(player, world.getTileEntity(new BlockPos(x, y, z))).asInstanceOf[Container];
+      (Option(guis(id)._1) map (gui => gui.getConstructor(classOf[EntityPlayer], classOf[IInventory]).newInstance(player, world.getTileEntity(new BlockPos(x, y, z))).asInstanceOf[Container])).getOrElse(null)
     } catch {
       case e: NoSuchMethodException => guis(id)._1.getConstructor(classOf[EntityPlayer]).newInstance(player).asInstanceOf[Container];
     }

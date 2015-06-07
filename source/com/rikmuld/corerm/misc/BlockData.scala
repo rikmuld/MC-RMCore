@@ -6,6 +6,7 @@ import net.minecraft.world.World
 import com.rikmuld.corerm.CoreUtils._
 import java.util.Random
 import net.minecraft.util.EnumFacing
+import net.minecraft.world.IBlockAccess
 
 object WorldBlock {
   type BlockData = (World, BlockPos)
@@ -43,6 +44,7 @@ object WorldBlock {
     def newState(meta:Int) = block.getStateFromMeta(meta)
     def notifyWorld = world.notifyNeighborsOfStateChange(pos, block)
     def update = world.markBlockForUpdate(pos)
+    def updateRender = world.markBlockRangeForRenderUpdate(relPos(-1, -1, -1), relPos(1, 1, 1))
     def clearBlock = world.setBlockToAir(pos)
     def dropInvItems = world.dropBlockItems(pos, new Random)
     def isReplaceable = block.isReplaceable(world, pos) 

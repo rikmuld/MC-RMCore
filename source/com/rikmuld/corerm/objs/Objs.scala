@@ -20,7 +20,7 @@ import scala.collection.mutable.ListBuffer
 
 object PropType extends Enumeration {
   type PropType = Value
-  val NAME,TAB,MATERIAL,HARDNESS,RECISTANCE,SOUND,OPACITY,LIGHT,HARVEST,ITEMBLOCK,MAX_DAMAGE,MAX_STACKSIZE,METADATA,HEAL,SATURATION,WOLFMEAT,ARMORMAT,ARMORTYPE,ARMORTEX,FORCESUBTYPE,GUITRIGGER,TEX_FLAG = Value
+  val NAME,TAB,MATERIAL,HARDNESS,RECISTANCE,SOUND,OPACITY,LIGHT,HARVEST,ITEMBLOCK,MAX_DAMAGE,MAX_STACKSIZE,METADATA,HEAL,SATURATION,WOLFMEAT,ARMORMAT,ARMORTYPE,ARMORTEX,FORCESUBTYPE,GUITRIGGER = Value
 }
 
 class ObjInfo(props:Prop*) {  
@@ -52,11 +52,11 @@ class ObjInfo(props:Prop*) {
   def register(block:RMCoreBlock, modId:String) {
     if(hasProp(PropType.ITEMBLOCK)) GameRegistry.registerBlock(block, getValue[Class[ItemBlock]](PropType.ITEMBLOCK), getValue[String](PropType.NAME))
     else GameRegistry.registerBlock(block, getValue[String](PropType.NAME))
-    if(!hasProp(PropType.TEX_FLAG))RMMod.proxy.registerRendersFor(Left(block), this, modId)
+    RMMod.proxy.registerRendersFor(Left(block), this, modId)
   }
   def register(item:RMCoreItem, modId:String){
     GameRegistry.registerItem(item, getValue[String](PropType.NAME))
-    if(!hasProp(PropType.TEX_FLAG))RMMod.proxy.registerRendersFor(Right(item), this, modId)
+    RMMod.proxy.registerRendersFor(Right(item), this, modId)
   }
 }
 
@@ -127,8 +127,5 @@ object Properties {
   }
   case class GuiTrigger(id:Int) extends Prop(id) {
     override def getType:PropType.PropType = PropType.GUITRIGGER
-  }
-  case class NoTex() extends Prop(null) {
-    override def getType:PropType.PropType = PropType.TEX_FLAG
   }
 }

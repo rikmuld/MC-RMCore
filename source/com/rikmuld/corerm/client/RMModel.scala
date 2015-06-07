@@ -37,25 +37,25 @@ class RMModel extends ModelBase {
     boxes(name) = box
   }
   def renderAll {
-    renderAll(1)
+    renderAll(null, 1)
   }
-  def renderAll(scale:Float) {
+  def renderAll(entity:Entity, scale:Float) {
     boxes.foreach {box => queue.append(box._2)}
-    render(null, 0, 0, 0, 0, 0, scale)
+    render(entity, 0, 0, 0, 0, 0, scale)
   }
   def renderOnly(names:String*) {
-    renderOnly(1, names:_*)
+    renderOnly(null, 1, names:_*)
   }
-  def renderOnly(scale:Float, names:String*){
+  def renderOnly(entity:Entity, scale:Float, names:String*){
     boxes.foreach {box => if(names.contains(box._1))queue.append(box._2)}
-    render(null, 0, 0, 0, 0, 0, scale)
+    render(entity, 0, 0, 0, 0, 0, scale)
   }
   def renderExcept(names:String*) {
-    renderExcept(1, names:_*)
+    renderExcept(null, 1, names:_*)
   }
-  def renderExcept(scale:Float, names:String*){
+  def renderExcept(entity:Entity, scale:Float, names:String*){
     boxes.foreach {box => if(!names.contains(box._1))queue.append(box._2)}
-    render(null, 0, 0, 0, 0, 0, scale)
+    render(entity, 0, 0, 0, 0, 0, scale)
   }
   def getBox(name:String) = boxes(name)
   def applyGl() {}

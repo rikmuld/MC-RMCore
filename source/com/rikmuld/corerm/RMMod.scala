@@ -21,12 +21,15 @@ import com.rikmuld.corerm.network.Handler
 import com.rikmuld.corerm.network.PacketGlobal
 import com.rikmuld.corerm.network.TileData
 import com.rikmuld.corerm.objs.RMTile
+import com.rikmuld.corerm.tabbed.TabSwitch
+import com.rikmuld.corerm.bounds.TileBounds
+import com.rikmuld.corerm.bounds.BoundsData
 
 @Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = MOD_DEPENDENCIES, modLanguage = MOD_LANUAGE)
 object RMMod {
   final val MOD_ID = "corerm"
   final val MOD_NAME = "RikMuld's Core"
-  final val MOD_VERSION = "1.1"
+  final val MOD_VERSION = "1.2"
   final val MOD_LANUAGE = "scala"
   final val MOD_DEPENDENCIES = "required-after:Forge@[v11.14.1.1397,)"
   final val PACKET_CHANEL = MOD_ID
@@ -45,9 +48,12 @@ object RMMod {
   }
   @EventHandler
   def Init(event: FMLInitializationEvent) {
-    PacketDataManager.registerPacketData(classOf[TileData].asInstanceOf[Class[BasicPacketData]])
+    registerPacket(classOf[TileData].asInstanceOf[Class[BasicPacketData]])
+    registerPacket(classOf[TabSwitch].asInstanceOf[Class[BasicPacketData]])
+    registerPacket(classOf[TabSwitch].asInstanceOf[Class[BoundsData]])
     
     GameRegistry.registerTileEntity(classOf[RMTile], MOD_ID + "_coreTile")
+    GameRegistry.registerTileEntity(classOf[TileBounds], MOD_ID + "_boundsTile")
     
     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)
   }
@@ -86,5 +92,10 @@ object Lib {
     final val FORMAT_ITALIC = "\u00a7o"
   
     final val RESET = "\u00a7r"
+  }
+  
+  object TextureInfo {
+    final val GUI_LOCATION = MOD_ID + ":textures/gui/"
+    final val GUI_TAB_UTILS = GUI_LOCATION + "GuiTabUtils.png"
   }
 }

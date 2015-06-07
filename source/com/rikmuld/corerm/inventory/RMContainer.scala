@@ -9,7 +9,7 @@ import net.minecraft.item.Item
 import net.minecraft.inventory.Slot
 
 abstract class RMContainerItem(player: EntityPlayer) extends Container {
-  val invPlayer: InventoryPlayer = player.inventory;
+  val invPlayer: InventoryPlayer = player.inventory
   val inv = getItemInv
 
   inv.openInventory(player)
@@ -21,18 +21,18 @@ abstract class RMContainerItem(player: EntityPlayer) extends Container {
     if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem().equals(getItem)) ((inv).setNBT(player.getCurrentEquippedItem()))
   }
   override def transferStackInSlot(p: EntityPlayer, i: Int): ItemStack = {
-    var itemstack: ItemStack = null;
-    var slot = inventorySlots.get(i).asInstanceOf[Slot];
+    var itemstack: ItemStack = null
+    var slot = inventorySlots.get(i).asInstanceOf[Slot]
     if ((slot != null) && slot.getHasStack()) {
-      var itemstack1 = slot.getStack();
-      itemstack = itemstack1.copy();
+      var itemstack1 = slot.getStack()
+      itemstack = itemstack1.copy()
       if (i < inv.getSizeInventory()) {
-        if (!mergeItemStack(itemstack1, inv.getSizeInventory(), inventorySlots.size(), true)) return null;
-      } else if (!mergeItemStack(itemstack1, 0, inv.getSizeInventory(), false)) return null;
-      if (itemstack1.stackSize == 0) slot.putStack(null);
-      else slot.onSlotChanged();
+        if (!mergeItemStack(itemstack1, inv.getSizeInventory(), inventorySlots.size(), true)) return null
+      } else if (!mergeItemStack(itemstack1, 0, inv.getSizeInventory(), false)) return null
+      if (itemstack1.stackSize == 0) slot.putStack(null)
+      else slot.onSlotChanged()
     }
-    itemstack;
+    itemstack
   }
   def getItemInv: RMInventoryItem
   def getItem: Item
