@@ -18,23 +18,23 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World
 import com.rikmuld.corerm.RMMod
 
-class RMItem(modId:String, info:ObjInfo) extends RMCoreItem {
+class RMItem(val modId:String, info:ObjInfo) extends RMCoreItem {
   info.register(this, modId)
   
   def getItemInfo:ObjInfo = info
 }
 
-class RMItemBlock(modId:String, info:ObjInfo, block:Block) extends ItemBlock(block) with RMCoreItem {
+class RMItemBlock(val modId:String, info:ObjInfo, block:Block) extends ItemBlock(block) with RMCoreItem {
   def getItemInfo:ObjInfo = info
 }
 
-class RMItemFood(modId:String, info:ObjInfo) extends ItemFood(info.getValue(HEAL), info.getValue(SATURATION), info.getValue(WOLFMEAT)) with RMCoreItem {
+class RMItemFood(val modId:String, info:ObjInfo) extends ItemFood(info.getValue(HEAL), info.getValue(SATURATION), info.getValue(WOLFMEAT)) with RMCoreItem {
   info.register(this, modId) 
   
   def getItemInfo:ObjInfo = info
 }
 
-class RMItemArmor(modId:String, info:ObjInfo) extends ItemArmor(info.getValue(ARMORMAT), 0, info.getValue(ARMORTYPE))  with RMCoreItem {
+class RMItemArmor(val modId:String, info:ObjInfo) extends ItemArmor(info.getValue(ARMORMAT), 0, info.getValue(ARMORTYPE))  with RMCoreItem {
   info.register(this, modId)  
   maxStackSize = 1
 

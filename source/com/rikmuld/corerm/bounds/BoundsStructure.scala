@@ -8,6 +8,7 @@ import com.rikmuld.corerm.CoreUtils._
 import com.rikmuld.corerm.misc.WorldBlock._
 import net.minecraft.block.state.BlockState
 import net.minecraft.util.BlockPos
+import net.minecraft.block.state.IBlockState
 
 object Bounds {
   def readBoundsToNBT(tag: NBTTagCompound): Bounds = {
@@ -49,16 +50,18 @@ class BoundsStructure(var blocks: Array[Array[Int]]) {
   def canBePlaced(world: World, tracker: BoundsTracker): Boolean = {
     for (i <- 0 until blocks(0).length) {
       val bd = getBD(world, tracker, i)
-      if (bd.block != Blocks.air && bd.block.isInstanceOf[IBoundsBlock] && !bd.isReplaceable) return false
+      if (bd.block != Blocks.air && !bd.isReplaceable) return false
     }
     if (hadSolidUnderGround(world, tracker)) true else false
   }
-  def createStructure(world: World, tracker: BoundsTracker, boundsBlock:IBoundsBlock) {
-    for (i <- 0 until blocks(0).length) {
-      val bd = getBD(world, tracker, i)
-      bd.setState(boundsBlock.getDefaultState, 2)
-      bd.tile.asInstanceOf[TileBounds].setBounds(tracker.getBoundsOnRelativePoistion(blocks(0)(i), blocks(1)(i), blocks(2)(i)))
-      bd.tile.asInstanceOf[TileBounds].setBaseCoords(tracker.baseX, tracker.baseY, tracker.baseZ)
+  def createStructure(world: World, tracker: BoundsTracker, boundsBlockState:IBlockState) {
+    if(boundsBlockState.getBlock.isInstanceOf[IBoundsBlock]){
+      for (i <- 0 until blocks(0).length) {
+        val bd = getBD(world, tracker, i)
+        bd.setState(boundsBlockState, 2)
+        bd.tile.asInstanceOf[TileBounds].setBounds(tracker.getBoundsOnRelativePoistion(blocks(0)(i), blocks(1)(i), blocks(2)(i)))
+        bd.tile.asInstanceOf[TileBounds].setBaseCoords(tracker.baseX, tracker.baseY, tracker.baseZ)
+      }
     }
   }
   def getBD(world:World, tracker:BoundsTracker, index:Int):BlockData = (world, new BlockPos(tracker.baseX + blocks(0)(index), tracker.baseY + blocks(1)(index), tracker.baseZ + blocks(2)(index)))
