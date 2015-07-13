@@ -62,12 +62,13 @@ trait WithInstable extends Block {
       dropBlockAsItemWithChance(bd.world, bd.pos, bd.state, 1, 1)
       bd.toAir
       bd.update
-    }
+    } else couldStay(bd)
   }
-  override def canPlaceBlockAt(world: World, pos:BlockPos) = (world, pos).canInstableStand
+  override def canPlaceBlockAt(world: World, pos:BlockPos) = (world, pos).canInstableStand && canStay((world, pos))
   override def onBlockAdded(world: World, pos:BlockPos, state:IBlockState) = if (!world.isRemote) dropIfCantStay((world, pos))
   override def onNeighborBlockChange(world: World, pos:BlockPos, state:IBlockState, block: Block) = if (!world.isRemote) dropIfCantStay((world, pos))
   def canStay(bd:BlockData): Boolean = bd.solidBelow
+  def couldStay(bd:BlockData) = {}
 }
 
 trait WithModel extends Block {

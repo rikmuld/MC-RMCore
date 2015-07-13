@@ -32,6 +32,7 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.util.BlockPos
 import net.minecraft.entity.EntityLivingBase
 import com.rikmuld.corerm.objs.RMProp
+import net.minecraft.block.BlockFence
 
 object CoreUtils {
   var startEntityId = 300
@@ -99,18 +100,9 @@ object CoreUtils {
         }
       }
     }
-    def isTouchingBlockSolidForSideOrHasCorrectBounds(pos:BlockPos, side: EnumFacing*): Boolean = {
-      side.foreach { facing =>  
-        val bd = (world, pos.offset(facing))
-        if(bd.block != Blocks.air){
-          if(bd.world.isSideSolid(bd.pos, facing.getOpposite)) return true
-          else {
-            val bounds = bd.block.getBounds(bd.world, bd.pos) 
-            if(bounds != null) return bounds(facing.ordinal) == (if((bounds(facing.ordinal) % 2) == 0) 0.0F else 1.0F)
-          }
-        }
-      }
-      false
+    def isTouchingBlockSolidForSide(pos:BlockPos, facing: EnumFacing): Boolean = {
+      val bd = (world, pos.offset(facing))
+      bd.block != Blocks.air && (bd.world.isSideSolid(bd.pos, facing.getOpposite) || bd.block.isInstanceOf[BlockFence])
     }
     def dropItemsInWorld(stacks: ArrayList[ItemStack], x: Float, y: Float, z: Float, rand: Random) {
       if (!world.isRemote) {
