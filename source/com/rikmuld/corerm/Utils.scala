@@ -102,7 +102,7 @@ object CoreUtils {
     }
     def isTouchingBlockSolidForSide(pos:BlockPos, facing: EnumFacing): Boolean = {
       val bd = (world, pos.offset(facing))
-      bd.block != Blocks.air && (bd.world.isSideSolid(bd.pos, facing.getOpposite) || bd.block.isInstanceOf[BlockFence])
+      bd.block != Blocks.air && (bd.world.isSideSolid(bd.pos, facing.getOpposite) || bd.block.isInstanceOf[BlockFence] || bd.block.isFullCube )
     }
     def dropItemsInWorld(stacks: ArrayList[ItemStack], x: Float, y: Float, z: Float, rand: Random) {
       if (!world.isRemote) {

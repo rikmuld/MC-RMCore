@@ -34,6 +34,7 @@ class RMPlayerInventory(player: EntityPlayer, size: Int) extends IInventory {
       }
     } else null
   }
+  def getInventory = inventoryContents
   override def getInventoryStackLimit(): Int = 64
   override def getSizeInventory(): Int = inventoryContents.length
   override def getStackInSlot(slot: Int): ItemStack = inventoryContents(slot)
