@@ -30,9 +30,9 @@ class RMTile extends TileEntity {
   def bd = (worldObj, pos)
   override def onDataPacket(net: NetworkManager, packet: S35PacketUpdateTileEntity) = readFromNBT(packet.getNbtCompound());
   def setTileData(id: Int, data: Array[Int]) {}
-  def sendTileData(id: Int, client: Boolean, data: Int*) {
-    if (!client && worldObj.isRemote) PacketSender.toServer(new TileData(id, pos.getX, pos.getY, pos.getZ, data));
-    else if (client && !worldObj.isRemote) PacketSender.toClient(new TileData(id, pos.getX, pos.getY, pos.getZ, data));
+  def sendTileData(id: Int, toClient: Boolean, data: Int*) {
+    if (!toClient && worldObj.isRemote) PacketSender.toServer(new TileData(id, pos.getX, pos.getY, pos.getZ, data));
+    else if (toClient && !worldObj.isRemote) PacketSender.toClient(new TileData(id, pos.getX, pos.getY, pos.getZ, data));
   }
 }
 

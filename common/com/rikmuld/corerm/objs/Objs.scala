@@ -20,7 +20,9 @@ import scala.collection.mutable.ListBuffer
 
 object PropType extends Enumeration {
   type PropType = Value
-  val NAME,TAB,MATERIAL,HARDNESS,RECISTANCE,SOUND,OPACITY,LIGHT,HARVEST,ITEMBLOCK,MAX_DAMAGE,MAX_STACKSIZE,METADATA,HEAL,SATURATION,WOLFMEAT,ARMORMAT,ARMORTYPE,ARMORTEX,FORCESUBTYPE,GUITRIGGER = Value
+  val NAME,TAB,MATERIAL,HARDNESS,RECISTANCE,SOUND,OPACITY,LIGHT,HARVEST,
+      ITEMBLOCK,MAX_DAMAGE,MAX_STACKSIZE,METADATA,HEAL,SATURATION,WOLFMEAT,
+      ARMORMAT,ARMORTYPE,ARMORTEX,FORCESUBTYPE,GUITRIGGER,GUITRIGGER_META = Value
 }
 
 class ObjInfo(props:Prop*) {  
@@ -127,5 +129,8 @@ object Properties {
   }
   case class GuiTrigger(id:Int) extends Prop(id) {
     override def getType:PropType.PropType = PropType.GUITRIGGER
+  }
+  case class GuiTriggerMeta(ids:(Int, Int)*) extends Prop(ids.toArray) {
+    override def getType:PropType.PropType = PropType.GUITRIGGER_META
   }
 }

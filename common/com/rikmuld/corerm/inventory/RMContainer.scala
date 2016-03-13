@@ -18,7 +18,12 @@ abstract class RMContainerItem(player: EntityPlayer) extends Container {
   override def onContainerClosed(player: EntityPlayer) {
     super.onContainerClosed(player)
     inv.closeInventory(player)
-    if (player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem().equals(getItem)) ((inv).setNBT(player.getCurrentEquippedItem()))
+    
+    val item = player.getCurrentEquippedItem
+    
+    if (item != null && item.getItem().equals(getItem) && ( getItemDamage==(-1) || item.getItemDamage == getItemDamage)) {
+      inv.setNBT(item)
+    }
   }
   override def transferStackInSlot(p: EntityPlayer, i: Int): ItemStack = {
     var itemstack: ItemStack = null
@@ -36,6 +41,7 @@ abstract class RMContainerItem(player: EntityPlayer) extends Container {
   }
   def getItemInv: RMInventoryItem
   def getItem: Item
+  def getItemDamage: Int = -1;
 }
 
 abstract class RMContainerTile(player: EntityPlayer, tile: IInventory) extends Container {
