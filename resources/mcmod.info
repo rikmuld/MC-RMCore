@@ -3,8 +3,8 @@
   "modid": "corerm",
   "name": "RikMuld's Core",
   "description": "Core functions for mods by RikMuld",
-  "version": "1.2c",
-  "mcversion": "1.8",
+  "version": "1.2d",
+  "mcversion": "1.8.9",
   "url": "rikmuld.com",
   "updateUrl": "",
   "authors": [
