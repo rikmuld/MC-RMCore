@@ -185,8 +185,8 @@ object CoreUtils {
       }
       inventory
     }
-    def containsItem(item: Item): Boolean = stacks.find(_.getItem == item).map(_ => true).getOrElse(false)
-    def containsStack(stack: ItemStack): Boolean = stacks.find(_.isItemEqual(stack)).map(_ => true).getOrElse(false)
+    def containsItem(item: Item): Boolean = stacks.find(it=> it!=null && it.getItem == item).isDefined
+    def containsStack(stack: ItemStack): Boolean = stacks.find(it=> it!=null && it.isItemEqual(stack)).isDefined
   }
 
   implicit class ItemStackUtils(item: ItemStack) {
