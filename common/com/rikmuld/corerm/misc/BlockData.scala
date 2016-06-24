@@ -1,12 +1,12 @@
 package com.rikmuld.corerm.misc
 
 import net.minecraft.block.state.IBlockState
-import net.minecraft.util.BlockPos
 import net.minecraft.world.World
 import com.rikmuld.corerm.CoreUtils._
 import java.util.Random
 import net.minecraft.util.EnumFacing
 import net.minecraft.world.IBlockAccess
+import net.minecraft.util.math.BlockPos
 
 object WorldBlock {
   type BlockData = (World, BlockPos)
@@ -30,10 +30,9 @@ object WorldBlock {
     val pos:BlockPos
     
     def block = state.getBlock
-    def material = state.getBlock.getMaterial
+    def material = block.getMaterial(state)
     def meta = block.getMetaFromState(state)
     def tile = world.getTileEntity(pos)
-    def metarial = block.getMaterial
     def x = pos.getX
     def y = pos.getY
     def z = pos.getZ
@@ -43,12 +42,12 @@ object WorldBlock {
     def setState(state:IBlockState, flag:Int) = world.setBlockState(pos, state, flag)
     def newState(meta:Int) = block.getStateFromMeta(meta)
     def notifyWorld = world.notifyNeighborsOfStateChange(pos, block)
-    def update = world.markBlockForUpdate(pos)
+    def update = world.notifyBlockUpdate(pos, state, state, 3)
     def updateRender = world.markBlockRangeForRenderUpdate(relPos(-1, -1, -1), relPos(1, 1, 1))
     def clearBlock = world.setBlockToAir(pos)
     def dropInvItems = world.dropBlockItems(pos, new Random)
     def isReplaceable = block.isReplaceable(world, pos) 
-    def solidBelow = World.doesBlockHaveSolidTopSurface(world, relPos(0, -1, 0))
+    def solidBelow = world.isSideSolid(relPos(0, -1, 0), EnumFacing.UP)
     def canInstableStand = ((block == null) || isReplaceable) && solidBelow
     def toAir = world.setBlockToAir(pos)
     def isAir = world.isAirBlock(pos)

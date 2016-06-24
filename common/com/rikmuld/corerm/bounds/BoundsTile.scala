@@ -4,8 +4,8 @@ import com.rikmuld.corerm.objs.RMTile
 import net.minecraft.nbt.NBTTagCompound
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.misc.WorldBlock._
-import net.minecraft.util.BlockPos
 import net.minecraft.util.ITickable
+import net.minecraft.util.math.BlockPos
 
 class TileBounds extends RMTile with ITickable {
   var bounds: Bounds = _
@@ -45,11 +45,11 @@ class TileBounds extends RMTile with ITickable {
       updateNeed = false
     }
   }
-  override def writeToNBT(tag: NBTTagCompound) {
-    super.writeToNBT(tag)
+  override def writeToNBT(tag: NBTTagCompound):NBTTagCompound = {
     tag.setInteger("baseX", baseX)
     tag.setInteger("baseY", baseY)
     tag.setInteger("baseZ", baseZ)
     if (bounds != null) bounds.writeBoundsToNBT(tag)
+    super.writeToNBT(tag)
   }
 }

@@ -5,57 +5,56 @@ import scala.collection.mutable.HashMap
 import net.minecraft.init.Blocks
 import scala.actors.threadpool.Arrays
 import net.minecraft.world.World
-import net.minecraft.util.BlockPos
-import net.minecraft.block.state.BlockState
 import net.minecraft.block.state.IBlockState
 import net.minecraft.block.properties.IProperty
 import net.minecraft.block.BlockFurnace
 import com.rikmuld.corerm.misc.WorldBlock._
 import net.minecraft.block.BlockPistonBase
+import net.minecraft.util.math.BlockPos
 
 object Rotation {
   private type RotData = (Int, Int, Int)
   private type Rotation = (IMLazyBlockData) => Boolean
   
   val blocksRot: HashMap[Block, Either[Rotation, RotData]] = HashMap(
-      Blocks.furnace -> Right((6, 2, 1)),
-      Blocks.lit_furnace -> Right((6, 2, 1)),
-      Blocks.oak_stairs -> Right((8, 0, 1)),
-      Blocks.stone_stairs -> Right((8, 0, 1)),
-      Blocks.brick_stairs -> Right((8, 0, 1)),
-      Blocks.stone_brick_stairs -> Right((8, 0, 1)),
-      Blocks.nether_brick_stairs -> Right((8, 0, 1)),
-      Blocks.sandstone_stairs -> Right((8, 0, 1)),
-      Blocks.spruce_stairs -> Right((8, 0, 1)),
-      Blocks.birch_stairs -> Right((8, 0, 1)),
-      Blocks.jungle_stairs -> Right((8, 0, 1)),
-      Blocks.quartz_stairs -> Right((8, 0, 1)),
-      Blocks.acacia_stairs -> Right((8, 0, 1)),
-      Blocks.dark_oak_stairs -> Right((8, 0, 1)),
-      Blocks.red_sandstone_stairs -> Right((8, 0, 1)),
-      Blocks.chest -> Right((6, 2, 1)),
-      Blocks.trapped_chest -> Right((6, 2, 1)),
-      Blocks.ender_chest -> Right((6, 2, 1)),
-      Blocks.dispenser -> Right((6, 0, 1)),
-      Blocks.dropper -> Right((6, 0, 1)),
-      Blocks.pumpkin -> Right((4, 0, 1)),
-      Blocks.lit_pumpkin -> Right((4, 0, 1)),
-      Blocks.standing_sign -> Right((16, 0, 1)),
-      Blocks.log -> Right((16, -1, 4)),
-      Blocks.log2 -> Right((16, -1, 4)),
-      Blocks.acacia_fence_gate -> Right((-4, -1, 1)),
-      Blocks.oak_fence_gate -> Right((-4, -1, 1)),
-      Blocks.birch_fence_gate -> Right((-4, -1, 1)),
-      Blocks.jungle_fence_gate -> Right((-4, -1, 1)),
-      Blocks.dark_oak_fence_gate -> Right((-4, -1, 1)),
-      Blocks.spruce_fence_gate -> Right((-4, -1, 1)),
-      Blocks.powered_comparator -> Right((-4, -1, 1)),
-      Blocks.unpowered_comparator -> Right((-4, -1, 1)),
-      Blocks.powered_repeater -> Right((-4, -1, 1)),
-      Blocks.unpowered_repeater -> Right((-4, -1, 1)),
-      Blocks.anvil -> Right((-2, -1, 1)),
-      Blocks.piston -> Left(rotPiston),
-      Blocks.sticky_piston -> Left(rotPiston)
+      Blocks.FURNACE -> Right((6, 2, 1)),
+      Blocks.LIT_FURNACE -> Right((6, 2, 1)),
+      Blocks.OAK_STAIRS -> Right((8, 0, 1)),
+      Blocks.STONE_STAIRS -> Right((8, 0, 1)),
+      Blocks.BRICK_STAIRS -> Right((8, 0, 1)),
+      Blocks.STONE_BRICK_STAIRS -> Right((8, 0, 1)),
+      Blocks.NETHER_BRICK_STAIRS -> Right((8, 0, 1)),
+      Blocks.SANDSTONE_STAIRS -> Right((8, 0, 1)),
+      Blocks.SPRUCE_STAIRS -> Right((8, 0, 1)),
+      Blocks.BIRCH_STAIRS -> Right((8, 0, 1)),
+      Blocks.JUNGLE_STAIRS -> Right((8, 0, 1)),
+      Blocks.QUARTZ_STAIRS -> Right((8, 0, 1)),
+      Blocks.ACACIA_STAIRS -> Right((8, 0, 1)),
+      Blocks.DARK_OAK_STAIRS -> Right((8, 0, 1)),
+      Blocks.RED_SANDSTONE_STAIRS -> Right((8, 0, 1)),
+      Blocks.CHEST -> Right((6, 2, 1)),
+      Blocks.TRAPPED_CHEST -> Right((6, 2, 1)),
+      Blocks.ENDER_CHEST -> Right((6, 2, 1)),
+      Blocks.DISPENSER -> Right((6, 0, 1)),
+      Blocks.DROPPER -> Right((6, 0, 1)),
+      Blocks.PUMPKIN -> Right((4, 0, 1)),
+      Blocks.LIT_PUMPKIN -> Right((4, 0, 1)),
+      Blocks.STANDING_SIGN -> Right((16, 0, 1)),
+      Blocks.LOG -> Right((16, -1, 4)),
+      Blocks.LOG2 -> Right((16, -1, 4)),
+      Blocks.ACACIA_FENCE_GATE -> Right((-4, -1, 1)),
+      Blocks.OAK_FENCE_GATE -> Right((-4, -1, 1)),
+      Blocks.BIRCH_FENCE_GATE -> Right((-4, -1, 1)),
+      Blocks.JUNGLE_FENCE_GATE -> Right((-4, -1, 1)),
+      Blocks.DARK_OAK_FENCE_GATE -> Right((-4, -1, 1)),
+      Blocks.SPRUCE_FENCE_GATE -> Right((-4, -1, 1)),
+      Blocks.POWERED_COMPARATOR -> Right((-4, -1, 1)),
+      Blocks.UNPOWERED_COMPARATOR -> Right((-4, -1, 1)),
+      Blocks.POWERED_REPEATER -> Right((-4, -1, 1)),
+      Blocks.UNPOWERED_REPEATER -> Right((-4, -1, 1)),
+      Blocks.ANVIL -> Right((-2, -1, 1)),
+      Blocks.PISTON -> Left(rotPiston),
+      Blocks.STICKY_PISTON -> Left(rotPiston)
   )
   
   def addRotationBlock(block: Block, data:Either[Rotation, RotData]) = blocksRot(block) = data

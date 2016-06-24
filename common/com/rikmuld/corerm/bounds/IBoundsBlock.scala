@@ -6,9 +6,7 @@ import com.rikmuld.corerm.objs.RMBlockContainer
 import com.rikmuld.corerm.objs.ObjInfo
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.AxisAlignedBB
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.MovingObjectPosition
 import net.minecraft.world.IBlockAccess
 import net.minecraft.item.ItemStack
 import net.minecraft.world.World
@@ -18,16 +16,21 @@ import net.minecraft.entity.Entity
 import net.minecraft.block.Block
 import net.minecraft.dispenser.IBlockSource
 import net.minecraft.block.state.IBlockState
-import net.minecraft.util.BlockPos
 import com.rikmuld.corerm.misc.WorldBlock._
 import net.minecraft.util.EnumFacing
 import com.rikmuld.corerm.objs.RMTile
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.AxisAlignedBB
+import net.minecraft.util.math.RayTraceResult
+import net.minecraft.util.EnumHand
+import net.minecraft.util.EnumBlockRenderType
 
 abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
-  override def getRenderType = -1
-  override def addCollisionBoxesToList(world: World, pos:BlockPos, state:IBlockState, alignedBB: AxisAlignedBB, list: java.util.List[AxisAlignedBB], entity: Entity) {
-    Option((world, pos).tile.asInstanceOf[TileBounds].bounds) map (bounds => bounds.setBlockCollision(this))
-    super.addCollisionBoxesToList(world, pos, state, alignedBB, list, entity)
+  final val emptyAxis = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+  override def getRenderType(state:IBlockState) = EnumBlockRenderType.INVISIBLE
+  override def addCollisionBoxToList(state:IBlockState, world: World, pos:BlockPos, alignedBB: AxisAlignedBB, list: java.util.List[AxisAlignedBB], entity: Entity) {
+    Option((world, pos).tile.asInstanceOf[TileBounds].bounds) map (bounds => list.add(bounds.getBlockCollision(this)))
+    super.addCollisionBoxToList(state, world, pos, alignedBB, list, entity)
   }
   override def breakBlock(world: World, pos:BlockPos, state: IBlockState) {
     val tile = (world, pos).tile.asInstanceOf[TileBounds]
@@ -36,34 +39,34 @@ abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
     super.breakBlock(world, pos, state)
   }
   override def createNewTileEntity(world: World, meta: Int): RMTile = new TileBounds
-  override def getBlockHardness(world: World, pos:BlockPos): Float = {
+  override def getBlockHardness(state:IBlockState, world: World, pos:BlockPos): Float = {
     val tileFlag = Option((world, pos).tile)
     var tile:Option[TileBounds] = None
     
     if(tileFlag.isDefined&&tileFlag.get.isInstanceOf[TileBounds])tile = Some(tileFlag.get.asInstanceOf[TileBounds])
     
-    var hardness = super.getBlockHardness(world, pos)
-    tile map (tile => if(!tile.bd.isAir) hardness = (world, tile.basePos).block.getBlockHardness(world, tile.basePos))
+    var hardness = super.getBlockHardness(state, world, pos)
+    tile map (tile => 
+      if(!tile.bd.isAir) hardness = (world, tile.basePos).block.getBlockHardness(state, world, tile.basePos))
     hardness
   }
-  override def getPickBlock(target: MovingObjectPosition, world: World, pos:BlockPos): ItemStack = {
+  override def getPickBlock(state:IBlockState, target: RayTraceResult, world: World, pos:BlockPos, player:EntityPlayer): ItemStack = {
     val tile = (world, pos).tile.asInstanceOf[TileBounds]
     val bd = (world, tile.basePos)
-    bd.block.getPickBlock(target, world, pos)
+    bd.block.getPickBlock(bd.state, target, world, pos, player)
   }
-  override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
+  override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, hand:EnumHand, itemstack:ItemStack, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
     val tile = (world, pos).tile.asInstanceOf[TileBounds]
     val bd = (world, tile.basePos)
-    bd.block.onBlockActivated(world, bd.pos, bd.state, player, side, xHit, yHit, zHit)
+    bd.block.onBlockActivated(world, bd.pos, bd.state, player, hand, itemstack, side, xHit, yHit, zHit)
   }
-  override def onNeighborBlockChange(world: World, pos:BlockPos, state:IBlockState, block: Block) {
-    val tile = (world, pos).tile.asInstanceOf[TileBounds]
-    val bd = (world, tile.basePos)
-    if (!bd.isAir) bd.block.onNeighborBlockChange(world, bd.pos, state, block)
+  override def onNeighborChange(world: IBlockAccess, pos:BlockPos, neig:BlockPos) {
+    val tile = world.getTileEntity(pos)
+    if (!world.isAirBlock(pos)) world.getBlockState(pos).getBlock.onNeighborChange(world, pos, neig)
   }
   override def quantityDropped(par1Random: Random): Int = 0
-  override def setBlockBoundsBasedOnState(world: IBlockAccess, pos:BlockPos) {
-    val tile = world.getTileEntity(pos).asInstanceOf[TileBounds]
-    Option(tile.bounds) map (bounds => bounds.setBlockBounds(this))
-  }
+
+  override def getBoundingBox(state:IBlockState, world: IBlockAccess, pos:BlockPos):AxisAlignedBB = 
+    (Option(world.getTileEntity(pos).asInstanceOf[TileBounds].bounds) map (bounds => 
+      bounds.getBlockBounds(this))).getOrElse(emptyAxis)
 }

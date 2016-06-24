@@ -19,7 +19,7 @@ abstract class RMContainerItem(player: EntityPlayer) extends Container {
     super.onContainerClosed(player)
     inv.closeInventory(player)
     
-    val item = player.getCurrentEquippedItem
+    val item = player.inventory.getCurrentItem
     
     if (item != null && item.getItem().equals(getItem) && ( getItemDamage==(-1) || item.getItemDamage == getItemDamage)) {
       inv.setNBT(item)

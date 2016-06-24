@@ -5,7 +5,6 @@ import scala.collection.JavaConversions._
 import org.lwjgl.opengl.GL11
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.inventory.GuiContainer
-import net.minecraft.client.renderer.entity.RenderItem
 import net.minecraft.inventory.Container
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ResourceLocation

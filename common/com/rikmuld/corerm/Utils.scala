@@ -16,9 +16,6 @@ import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.nbt.NBTTagList
-import net.minecraft.util.MathHelper
-import net.minecraft.util.MovingObjectPosition
-import net.minecraft.util.Vec3
 import net.minecraft.world.World
 import net.minecraft.world.storage.MapData
 import net.minecraftforge.oredict.OreDictionary
@@ -29,16 +26,19 @@ import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 import com.rikmuld.corerm.misc.WorldBlock._
 import net.minecraft.util.EnumFacing
-import net.minecraft.util.BlockPos
 import net.minecraft.entity.EntityLivingBase
 import com.rikmuld.corerm.objs.RMProp
 import net.minecraft.block.BlockFence
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.MathHelper
+import net.minecraft.util.math.RayTraceResult
+import net.minecraft.util.math.Vec3d
 
 object CoreUtils {
   var startEntityId = 300
 
   def getUniqueEntityId = {
-    while (EntityList.getStringFromID(startEntityId) != null) startEntityId += 1
+    while (EntityList.getClassFromID(startEntityId) != null) startEntityId += 1
     startEntityId
   }
   def nwsk(item:Item) = new ItemStack(item)
@@ -102,7 +102,7 @@ object CoreUtils {
     }
     def isTouchingBlockSolidForSide(pos:BlockPos, facing: EnumFacing): Boolean = {
       val bd = (world, pos.offset(facing))
-      bd.block != Blocks.air && (bd.world.isSideSolid(bd.pos, facing.getOpposite) || bd.block.isInstanceOf[BlockFence] || bd.block.isFullCube )
+      bd.block != Blocks.AIR && (bd.world.isSideSolid(bd.pos, facing.getOpposite) || bd.block.isInstanceOf[BlockFence] || bd.block.isFullCube(bd.state) )
     }
     def dropItemsInWorld(stacks: ArrayList[ItemStack], x: Float, y: Float, z: Float, rand: Random) {
       if (!world.isRemote) {
@@ -151,14 +151,14 @@ object CoreUtils {
 
   implicit class PlayerUtils(player: EntityPlayer) {
     def setCurrentItem(stack: ItemStack) = player.inventory.setInventorySlotContents(player.inventory.currentItem, stack)
-    def getMOP(): MovingObjectPosition = {
+    def getMOP(): RayTraceResult = {
       val f = 1.0F
       val f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f
       val f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f
       val d0 = player.prevPosX + (player.posX - player.prevPosX) * f.toDouble
       val d1 = player.prevPosY + (player.posY - player.prevPosY) * f.toDouble + (if (player.worldObj.isRemote) player.getEyeHeight - player.getDefaultEyeHeight else player.getEyeHeight).toDouble
       val d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * f.toDouble
-      val vec3 = new Vec3(d0, d1, d2)
+      val vec3 = new Vec3d(d0, d1, d2)
       val f3 = MathHelper.cos(-f2 * 0.017453292F - Math.PI.toFloat)
       val f4 = MathHelper.sin(-f2 * 0.017453292F - Math.PI.toFloat)
       val f5 = -MathHelper.cos(-f1 * 0.017453292F)
@@ -167,7 +167,7 @@ object CoreUtils {
       val f8 = f3 * f5
       var d3 = 5.0D
       if (player.isInstanceOf[EntityPlayerMP]) {
-        d3 = player.asInstanceOf[EntityPlayerMP].theItemInWorldManager.getBlockReachDistance
+        d3 = player.asInstanceOf[EntityPlayerMP].interactionManager.getBlockReachDistance
       }
       val vec31 = vec3.addVector(f7.toDouble * d3, f6.toDouble * d3, f8.toDouble * d3)
       player.worldObj.rayTraceBlocks(vec3, vec31, true, false, false)
@@ -225,7 +225,7 @@ object CoreUtils {
   implicit class BlockUtils(block:Block){
     def getBounds(world:World, pos:BlockPos) = {
       val bd = (world, pos)
-      val bounds = bd.block.getCollisionBoundingBox(bd.world, bd.pos, bd.state) 
+      val bounds = bd.state.getCollisionBoundingBox(world, pos) 
       if(bounds != null) Array(bounds.minY-bd.y, bounds.maxY-bd.y, bounds.maxZ-bd.z, bounds.minZ-bd.z, bounds.minX-bd.x, bounds.maxX-bd.x) else null
     }
   }

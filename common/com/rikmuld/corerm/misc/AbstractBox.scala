@@ -5,7 +5,7 @@ import net.minecraft.client.model.TexturedQuad
 import net.minecraft.client.renderer.Tessellator
 import net.minecraftforge.fml.relauncher.SideOnly
 import net.minecraftforge.fml.relauncher.Side
-import net.minecraft.client.renderer.WorldRenderer
+import net.minecraft.client.renderer.VertexBuffer
 
 class AbstractBox(texWidth: Int, texHeigth: Int, mirror: Boolean, texturerOffsetX: Int, textureOffsetY: Int, var x: Float, var y: Float, var z: Float, width: Int, height: Int, depth: Int, ratio: Float, xScale: Float, yScale: Float, zScale: Float) {
   private val vertexPositions = new Array[PositionTextureVertex](8)
@@ -63,5 +63,5 @@ class AbstractBox(texWidth: Int, texHeigth: Int, mirror: Boolean, texturerOffset
     return this;
   }
   @SideOnly(Side.CLIENT)
-  def render(render: WorldRenderer) = quadList.foreach(_.draw(render, ratio))
+  def render(render: VertexBuffer) = quadList.foreach(_.draw(render, ratio))
 }

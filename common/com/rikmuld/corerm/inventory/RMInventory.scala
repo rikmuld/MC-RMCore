@@ -7,8 +7,8 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Item
 import net.minecraftforge.common.util.Constants
-import net.minecraft.util.IChatComponent
-import net.minecraft.util.ChatComponentText
+import net.minecraft.util.text.ITextComponent
+import net.minecraft.util.text.TextComponentString
 
 class RMPlayerInventory(player: EntityPlayer, size: Int) extends IInventory {
   private var inventoryContents: Array[ItemStack] = new Array[ItemStack](size)
@@ -80,7 +80,7 @@ class RMPlayerInventory(player: EntityPlayer, size: Int) extends IInventory {
   override def markDirty() {}
   override def getName: String = "customContainer_player"
   override def hasCustomName: Boolean = false
-  override def getDisplayName: IChatComponent = new ChatComponentText(getName)
+  override def getDisplayName: ITextComponent = new TextComponentString(getName)
   override def getField(id: Int): Int = 0
   override def getFieldCount(): Int = 0
   override def setField(id: Int, value: Int) {}
@@ -102,7 +102,7 @@ class RMInventoryItem(stack: ItemStack, var player: EntityPlayer, size: Int, var
         itemstack = inventoryContents(slot)
         inventoryContents(slot) = null
         this.writeToNBT(tag)
-        if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
+        if(player.inventory.getCurrentItem != null&&player.inventory.getCurrentItem.getItem == item&&toEquipped) this.setNBT(player.inventory.getCurrentItem)
         itemstack
       } else {
         itemstack = inventoryContents(slot).splitStack(amount)
@@ -110,12 +110,12 @@ class RMInventoryItem(stack: ItemStack, var player: EntityPlayer, size: Int, var
           inventoryContents(slot) = null
         }
         this.writeToNBT(tag)
-        if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
+        if(player.inventory.getCurrentItem != null&&player.inventory.getCurrentItem.getItem == item&&toEquipped) this.setNBT(player.inventory.getCurrentItem)
         itemstack
       }
     } else {
       this.writeToNBT(tag)
-      if(player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
+      if(player.inventory.getCurrentItem != null&&player.inventory.getCurrentItem.getItem == item&&toEquipped) this.setNBT(player.inventory.getCurrentItem)
       null
     }
   }
@@ -131,7 +131,7 @@ class RMInventoryItem(stack: ItemStack, var player: EntityPlayer, size: Int, var
   }
   override def isItemValidForSlot(slot: Int, itemstack: ItemStack): Boolean = true
   override def isUseableByPlayer(player: EntityPlayer): Boolean = {
-    player.getCurrentEquippedItem != null && player.getCurrentEquippedItem.getItem == item
+    player.inventory.getCurrentItem != null && player.inventory.getCurrentItem.getItem == item
   }
   def readFromNBT(tag: NBTTagCompound) {
     inventoryContents = Array.ofDim[ItemStack](getSizeInventory)
@@ -150,7 +150,7 @@ class RMInventoryItem(stack: ItemStack, var player: EntityPlayer, size: Int, var
       stack.stackSize = getInventoryStackLimit
     }
     this.writeToNBT(tag)
-    if (player.getCurrentEquippedItem != null&&player.getCurrentEquippedItem.getItem == item&&toEquipped) this.setNBT(player.getCurrentEquippedItem)
+    if (player.inventory.getCurrentItem != null&&player.inventory.getCurrentItem.getItem == item&&toEquipped) this.setNBT(player.inventory.getCurrentItem)
   }
   def setNBT(item: ItemStack) = item.setTagCompound(tag)
   def writeToNBT(tag: NBTTagCompound) {    
@@ -168,7 +168,7 @@ class RMInventoryItem(stack: ItemStack, var player: EntityPlayer, size: Int, var
   override def markDirty() {}
   override def getName: String = "container_" + stack.getUnlocalizedName
   override def hasCustomName: Boolean = false
-  override def getDisplayName: IChatComponent = new ChatComponentText(getName)
+  override def getDisplayName: ITextComponent = new TextComponentString(getName)
   override def getField(id: Int): Int = 0
   override def getFieldCount(): Int = 0
   override def setField(id: Int, value: Int) {}

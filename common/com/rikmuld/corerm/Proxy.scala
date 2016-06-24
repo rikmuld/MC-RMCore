@@ -9,15 +9,16 @@ import scala.collection.mutable.HashMap
 import net.minecraft.inventory.Container
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraft.inventory.IInventory
-import net.minecraft.util.BlockPos
-import net.minecraft.client.resources.model.ModelResourceLocation
-import net.minecraft.client.resources.model.ModelBakery
 import net.minecraft.client.Minecraft
 import com.rikmuld.corerm.objs.PropType
 import com.rikmuld.corerm.objs.Properties._
 import com.rikmuld.corerm.objs.ObjInfo
 import net.minecraft.item.Item
 import net.minecraft.block.Block
+import net.minecraft.util.math.BlockPos
+import net.minecraft.client.renderer.block.model.ModelBakery
+import net.minecraft.client.renderer.block.model.ModelResourceLocation
+import net.minecraft.util.ResourceLocation
 
 class ProxyServer extends IGuiHandler {
   val guis = HashMap[Integer, Tuple2[Class[_], Class[_]]]();
@@ -56,7 +57,7 @@ class ProxyClient extends ProxyServer {
     if(info.hasProp(PropType.METADATA)){
       val meta = info.getProp[Metadata](PropType.METADATA)
       for(i <- 0 until meta.names.length){
-        ModelBakery.addVariantName(item, modId + ":" + info.getValue[String](PropType.NAME) + "_" + meta.getName(i))
+        ModelBakery.registerItemVariants(item, new ResourceLocation(modId + ":" + info.getValue[String](PropType.NAME) + "_" + meta.getName(i)))
         Minecraft.getMinecraft.getRenderItem.getItemModelMesher.register(item, i, new ModelResourceLocation(modId + ":" + info.getValue[String](PropType.NAME) + "_" + meta.getName(i), "inventory"))
       }
     } else Minecraft.getMinecraft.getRenderItem.getItemModelMesher.register(item, 0, new ModelResourceLocation(modId + ":" + info.getValue[String](PropType.NAME), "inventory"))

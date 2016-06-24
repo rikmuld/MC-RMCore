@@ -6,9 +6,10 @@ import net.minecraft.block.Block
 import net.minecraft.init.Blocks
 import com.rikmuld.corerm.CoreUtils._
 import com.rikmuld.corerm.misc.WorldBlock._
-import net.minecraft.block.state.BlockState
-import net.minecraft.util.BlockPos
 import net.minecraft.block.state.IBlockState
+import net.minecraft.util.math.BlockPos
+import net.minecraft.util.EnumFacing
+import net.minecraft.util.math.AxisAlignedBB
 
 object Bounds {
   def readBoundsToNBT(tag: NBTTagCompound): Bounds = {
@@ -17,10 +18,11 @@ object Bounds {
 }
 
 class Bounds(var xMin: Float, var yMin: Float, var zMin: Float, var xMax: Float, var yMax: Float, var zMax: Float) {
-  def setBlockBounds(block: Block) = block.setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax)
-  def setBlockCollision(block: Block) {
-    block.setBlockBounds(Math.max(xMin, 0), Math.max(yMin, 0), Math.max(zMin, 0), Math.min(xMax, 1), Math.min(yMax, 1), Math.min(zMax, 1))
-  }
+  def getBlockBounds(block: Block):AxisAlignedBB = 
+    new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax)
+  def getBlockCollision(block: Block):AxisAlignedBB =
+    new AxisAlignedBB(Math.max(xMin, 0), Math.max(yMin, 0), Math.max(zMin, 0), Math.min(xMax, 1), Math.min(yMax, 1), Math.min(zMax, 1))
+   
   def writeBoundsToNBT(tag: NBTTagCompound) {
     tag.setFloat("xMin", xMin)
     tag.setFloat("yMin", yMin)
@@ -50,7 +52,7 @@ class BoundsStructure(var blocks: Array[Array[Int]]) {
   def canBePlaced(world: World, tracker: BoundsTracker): Boolean = {
     for (i <- 0 until blocks(0).length) {
       val bd = getBD(world, tracker, i)
-      if (bd.block != Blocks.air && !bd.isReplaceable) return false
+      if (bd.block != Blocks.AIR && !bd.isReplaceable) return false
     }
     if (hadSolidUnderGround(world, tracker)) true else false
   }
@@ -67,7 +69,7 @@ class BoundsStructure(var blocks: Array[Array[Int]]) {
   def getBD(world:World, tracker:BoundsTracker, index:Int):BlockData = (world, new BlockPos(tracker.baseX + blocks(0)(index), tracker.baseY + blocks(1)(index), tracker.baseZ + blocks(2)(index)))
   def destroyStructure(world: World, tracker: BoundsTracker) = for (i <- 0 until blocks(0).length) getBD(world, tracker, i).toAir
   def hadSolidUnderGround(world: World, tracker: BoundsTracker): Boolean = {
-    (0 until blocks(0).length).find(i => !World.doesBlockHaveSolidTopSurface(world, new BlockPos(tracker.baseX + blocks(0)(i), tracker.baseY - 1, tracker.baseZ + blocks(2)(i)))).map(_ => false).getOrElse(true)
+    (0 until blocks(0).length).find(i => !world.isSideSolid(new BlockPos(tracker.baseX + blocks(0)(i), tracker.baseY - 1, tracker.baseZ + blocks(2)(i)), EnumFacing.UP)).map(_ => false).getOrElse(true)
   }
 }
 

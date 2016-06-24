@@ -17,6 +17,9 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.world.World
 import com.rikmuld.corerm.RMMod
+import net.minecraft.util.EnumHand
+import net.minecraft.util.ActionResult
+import net.minecraft.inventory.EntityEquipmentSlot
 
 class RMItem(val modId:String, info:ObjInfo) extends RMCoreItem {
   info.register(this, modId)
@@ -40,7 +43,7 @@ class RMItemArmor(val modId:String, info:ObjInfo) extends ItemArmor(info.getValu
 
   def getItemInfo:ObjInfo = info
 
-  override def getArmorTexture(stack: ItemStack, entity: Entity, slot: Int, layer: String): String = getItemInfo.getValue(ARMORTEX)
+  override def getArmorTexture(stack: ItemStack, entity: Entity, slot: EntityEquipmentSlot, layer: String): String = getItemInfo.getValue(ARMORTEX)
 }
 
 abstract trait RMCoreItem extends Item {  
@@ -61,7 +64,7 @@ abstract trait RMCoreItem extends Item {
       for(i <- 0 until meta.length) subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, i)) 
     } else subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, 0))
   }
-  override def onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer): ItemStack = {
+  override def onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer, hand:EnumHand): ActionResult[ItemStack] = {
     if (!world.isRemote) {
       var success = false
       if(getItemInfo.hasProp(GUITRIGGER_META)){
@@ -83,6 +86,6 @@ abstract trait RMCoreItem extends Item {
         player.openGui(RMMod, gui.value.asInstanceOf[Int], world, 0, 0, 0)        
       }
     } 
-    super.onItemRightClick(stack, world, player)
+    super.onItemRightClick(stack, world, player, hand)
   }
 }

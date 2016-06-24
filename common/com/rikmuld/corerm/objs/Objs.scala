@@ -4,13 +4,10 @@ import net.minecraft.creativetab.CreativeTabs
 import scala.collection.mutable.HashSet
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
-import net.minecraft.block.Block.SoundType
 import net.minecraftforge.fml.common.registry.GameRegistry
 import net.minecraft.item.ItemBlock
 import com.rikmuld.corerm.objs.Properties._
 import net.minecraft.item.Item
-import net.minecraft.client.resources.model.ModelResourceLocation
-import net.minecraft.client.resources.model.ModelBakery
 import net.minecraftforge.client.model.ModelLoader
 import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemArmor.ArmorMaterial
@@ -36,7 +33,6 @@ class ObjInfo(props:Prop*) {
     case PropType.TAB => block.setCreativeTab(prop.value.asInstanceOf[CreativeTabs])
     case PropType.HARDNESS => block.setHardness(prop.value.asInstanceOf[Float])
     case PropType.RECISTANCE => block.setResistance(prop.value.asInstanceOf[Float])
-    case PropType.SOUND => block.setStepSound(prop.value.asInstanceOf[SoundType])
     case PropType.OPACITY => block.setLightOpacity(prop.value.asInstanceOf[Int])
     case PropType.LIGHT => block.setLightLevel(prop.value.asInstanceOf[Float])
     case PropType.HARVEST => 
@@ -80,9 +76,6 @@ object Properties {
   }
   case class Recistance(resistance:Float) extends Prop(resistance){
     override def getType:PropType.PropType = PropType.RECISTANCE
-  }
-  case class StepSound(sound:SoundType) extends Prop(sound){
-    override def getType:PropType.PropType = PropType.SOUND
   }
   case class LightOpacity(opacity:Int) extends Prop(opacity){
     override def getType:PropType.PropType = PropType.OPACITY

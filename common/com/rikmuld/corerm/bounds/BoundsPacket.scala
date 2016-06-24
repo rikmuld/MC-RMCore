@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer
 import com.rikmuld.corerm.network.BasicPacketData
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
-import net.minecraft.util.BlockPos
+import net.minecraft.util.math.BlockPos
 
 class BoundsData(var bounds: Bounds, var x: Int, var y: Int, var z: Int) extends BasicPacketData {
   var xMin = if (bounds != null) bounds.xMin else 0

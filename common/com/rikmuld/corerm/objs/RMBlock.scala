@@ -8,10 +8,8 @@ import net.minecraft.block.BlockContainer
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.IProperty
 import net.minecraft.block.state.IBlockState
-import net.minecraft.util.BlockPos
 import net.minecraft.world.World
 import scala.collection.mutable.ListBuffer
-import net.minecraft.block.state.BlockState
 import scala.collection.JavaConversions._
 import scala.reflect.ClassTag
 import net.minecraft.util.EnumFacing
@@ -21,6 +19,13 @@ import com.rikmuld.corerm.objs.PropType._
 import net.minecraft.inventory.IInventory
 import com.rikmuld.corerm.misc.WorldBlock._
 import scala.collection.JavaConversions._
+import net.minecraft.util.math.BlockPos
+import net.minecraft.block.state.BlockStateBase
+import net.minecraft.block.state.BlockStateContainer
+import net.minecraft.world.IBlockAccess
+import net.minecraft.util.EnumBlockRenderType
+import net.minecraft.util.EnumHand
+import net.minecraft.item.ItemStack
 
 class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
   info.register(this, modId)
@@ -33,7 +38,7 @@ abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContain
     
   def getInfo:ObjInfo = info
   override def createNewTileEntity(world:World, meta:Int):RMTile = new RMTile
-  override def getRenderType = 3
+  override def getRenderType(state:IBlockState) = EnumBlockRenderType.MODEL
   override def breakBlock(world:World, pos:BlockPos, state:IBlockState) {
     if((world, pos).tile.isInstanceOf[IInventory])world.dropBlockItems(pos, new Random())
     super.breakBlock(world, pos, state)
@@ -44,8 +49,8 @@ trait RMCoreBlock extends Block {
   getInfo.apply(this)
   
   def getInfo:ObjInfo
-  override def isOpaqueCube() = !getInfo.hasProp(PropType.OPACITY)
-  override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
+  override def isOpaqueCube(state:IBlockState) = !getInfo.hasProp(PropType.OPACITY)
+  override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, hand:EnumHand, itemstack:ItemStack, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
     if(!world.isRemote){
       if (getInfo.hasProp(GUITRIGGER)) {
         openGui((world, pos), player, getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[Int])
@@ -67,21 +72,23 @@ trait WithInstable extends Block {
   }
   override def canPlaceBlockAt(world: World, pos:BlockPos) = (world, pos).canInstableStand && canStay((world, pos))
   override def onBlockAdded(world: World, pos:BlockPos, state:IBlockState) = if (!world.isRemote) dropIfCantStay((world, pos))
-  override def onNeighborBlockChange(world: World, pos:BlockPos, state:IBlockState, block: Block) = if (!world.isRemote) dropIfCantStay((world, pos))
+  //override def onNeighborChange(state:IBlockState, pos:BlockPos, block: BlockPos) = if (!world.isRemote) dropIfCantStay((world, pos))
   def canStay(bd:BlockData): Boolean = bd.solidBelow
   def couldStay(bd:BlockData) = {}
 }
 
 trait WithModel extends Block {
-  override def isReplaceable(world: World, pos:BlockPos) = false
-  override def isOpaqueCube = false
-  override def isFullCube = false
+  override def isReplaceable(world: IBlockAccess, pos:BlockPos) = false
+  override def isOpaqueCube(state:IBlockState) = false
+  override def isFullCube(state:IBlockState) = false
+  
+  override def getRenderType(state:IBlockState) = EnumBlockRenderType.ENTITYBLOCK_ANIMATED
 }
 
 trait WithProperties extends Block {   
   def getProps:Array[RMProp]
   def getProp(prop:IProperty[_]):RMProp = getProps.find { rmProp => rmProp.prop.eq(prop) }.get
-  protected override def createBlockState = new BlockState(this, getProps.map { rmProp => rmProp.prop }.toArray:_*)
+  protected override def createBlockState = new BlockStateContainer(this, getProps.map { rmProp => rmProp.prop }.toArray:_*)
   override def getStateFromMeta(meta:Int):IBlockState = {
     var state = getBlockState.getBaseState
     getProps.foreach { prop => state = state.withProperty(prop.prop, prop.fromIntData(prop.getBitData(meta) )) }
