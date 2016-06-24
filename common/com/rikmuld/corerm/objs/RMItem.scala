@@ -56,7 +56,7 @@ abstract trait RMCoreItem extends Item {
   override def getMetadata(damageValue: Int): Int = if(hasMeta) damageValue else 0
   override def getUnlocalizedName(stack:ItemStack):String = if(!getItemInfo.hasProp(METADATA)) getUnlocalizedName else "item." + getItemInfo.getValue[String](NAME) + "_" + meta(stack.getMetadata)
   @SideOnly(Side.CLIENT)
-  override def getSubItems(itemIn:Item, tab:CreativeTabs, subItems:List[_]) {
+  override def getSubItems(itemIn:Item, tab:CreativeTabs, subItems:List[ItemStack]) {
     if(hasMeta){
       for(i <- 0 until meta.length) subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, i)) 
     } else subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, 0))

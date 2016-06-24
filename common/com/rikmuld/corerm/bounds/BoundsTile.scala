@@ -4,10 +4,10 @@ import com.rikmuld.corerm.objs.RMTile
 import net.minecraft.nbt.NBTTagCompound
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.misc.WorldBlock._
-import net.minecraft.server.gui.IUpdatePlayerListBox
 import net.minecraft.util.BlockPos
+import net.minecraft.util.ITickable
 
-class TileBounds extends RMTile with IUpdatePlayerListBox {
+class TileBounds extends RMTile with ITickable {
   var bounds: Bounds = _
   var baseX: Int = _
   var baseY: Int = _

@@ -17,12 +17,12 @@ import net.minecraft.nbt.NBTTagList
 import net.minecraftforge.common.util.Constants
 import net.minecraft.util.IChatComponent
 import net.minecraft.util.ChatComponentText
-import net.minecraft.server.gui.IUpdatePlayerListBox
+import net.minecraft.network.play.INetHandlerPlayClient
 
 class RMTile extends TileEntity {
   override def readFromNBT(tag: NBTTagCompound) = super.readFromNBT(tag)
   override def writeToNBT(tag: NBTTagCompound) = super.writeToNBT(tag)
-  override def getDescriptionPacket(): Packet = {
+  override def getDescriptionPacket(): Packet[INetHandlerPlayClient] = {
     val compound = new NBTTagCompound();
     writeToNBT(compound);
     new S35PacketUpdateTileEntity(new BlockPos(this.pos.getX, this.pos.getY, this.pos.getZ), 1, compound);
@@ -60,7 +60,7 @@ abstract trait WithTileInventory extends TileEntity with IInventory {
   override def getInventoryStackLimit(): Int = 64
   override def getSizeInventory(): Int
   override def getStackInSlot(slot: Int): ItemStack = inventoryContents(slot)
-  override def getStackInSlotOnClosing(slot: Int): ItemStack = {
+  override def removeStackFromSlot(slot: Int): ItemStack = {
     if (inventoryContents(slot) != null) {
       val itemstack = inventoryContents(slot)
       inventoryContents(slot) = null

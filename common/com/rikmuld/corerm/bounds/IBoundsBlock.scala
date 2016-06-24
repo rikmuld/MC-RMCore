@@ -25,7 +25,7 @@ import com.rikmuld.corerm.objs.RMTile
 
 abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
   override def getRenderType = -1
-  override def addCollisionBoxesToList(world: World, pos:BlockPos, state:IBlockState, alignedBB: AxisAlignedBB, list: java.util.List[_], entity: Entity) {
+  override def addCollisionBoxesToList(world: World, pos:BlockPos, state:IBlockState, alignedBB: AxisAlignedBB, list: java.util.List[AxisAlignedBB], entity: Entity) {
     Option((world, pos).tile.asInstanceOf[TileBounds].bounds) map (bounds => bounds.setBlockCollision(this))
     super.addCollisionBoxesToList(world, pos, state, alignedBB, list, entity)
   }

@@ -38,7 +38,7 @@ class RMPlayerInventory(player: EntityPlayer, size: Int) extends IInventory {
   override def getInventoryStackLimit(): Int = 64
   override def getSizeInventory(): Int = inventoryContents.length
   override def getStackInSlot(slot: Int): ItemStack = inventoryContents(slot)
-  override def getStackInSlotOnClosing(slot: Int): ItemStack = {
+  override def removeStackFromSlot(slot: Int): ItemStack = {
     if (inventoryContents(slot) != null) {
       val itemstack = inventoryContents(slot)
       inventoryContents(slot) = null
@@ -122,7 +122,7 @@ class RMInventoryItem(stack: ItemStack, var player: EntityPlayer, size: Int, var
   override def getInventoryStackLimit(): Int = stackSize
   override def getSizeInventory(): Int = inventoryContents.length
   override def getStackInSlot(slot: Int): ItemStack = inventoryContents(slot)
-  override def getStackInSlotOnClosing(slot: Int): ItemStack = {
+  override def removeStackFromSlot(slot: Int): ItemStack = {
     if (inventoryContents(slot) != null) {
       val itemstack = inventoryContents(slot)
       inventoryContents(slot) = null

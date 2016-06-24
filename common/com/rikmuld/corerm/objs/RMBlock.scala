@@ -20,6 +20,7 @@ import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.objs.PropType._
 import net.minecraft.inventory.IInventory
 import com.rikmuld.corerm.misc.WorldBlock._
+import scala.collection.JavaConversions._
 
 class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
   info.register(this, modId)
@@ -79,7 +80,7 @@ trait WithModel extends Block {
 
 trait WithProperties extends Block {   
   def getProps:Array[RMProp]
-  def getProp(prop:IProperty):RMProp = getProps.find { rmProp => rmProp.prop.eq(prop) }.get
+  def getProp(prop:IProperty[_]):RMProp = getProps.find { rmProp => rmProp.prop.eq(prop) }.get
   protected override def createBlockState = new BlockState(this, getProps.map { rmProp => rmProp.prop }.toArray:_*)
   override def getStateFromMeta(meta:Int):IBlockState = {
     var state = getBlockState.getBaseState
@@ -93,25 +94,25 @@ trait WithProperties extends Block {
   }
 }
 
-abstract class RMProp(val prop:IProperty, size:Int, bitPos:Int) {
+abstract class RMProp(val prop:IProperty[_], size:Int, bitPos:Int) {
   def getBitData(meta:Int) = meta.bitGet(bitPos, size)
   def putBitData(data:Int, meta:Int) = meta.bitPut(bitPos, data)
   def toIntAndPut(data:Comparable[_], meta:Int) = putBitData(toIntData(data), meta)
   def toIntData(data:Comparable[_]):Int
-  def fromIntData(data:Int):Comparable[_]
+  def fromIntData[V](data:Int):V
 }
 
-class RMIntProp(prop:IProperty, size:Int, bitPos:Int) extends RMProp(prop, size, bitPos){
+class RMIntProp(prop:IProperty[java.lang.Integer], size:Int, bitPos:Int) extends RMProp(prop, size, bitPos){
   def toIntData(data:Comparable[_]):Int = data.asInstanceOf[Int]
-  def fromIntData(data:Int):Comparable[_] = data
+  def fromIntData[V](data:Int):V = data.asInstanceOf[V]
 }
 
-class RMBoolProp(prop:IProperty, bitPos:Int) extends RMProp(prop, 1, bitPos){
+class RMBoolProp(prop:IProperty[java.lang.Boolean], bitPos:Int) extends RMProp(prop, 1, bitPos){
   def toIntData(data:Comparable[_]):Int = data.asInstanceOf[Boolean].intValue
-  def fromIntData(data:Int):Comparable[_] = data==1
+  def fromIntData[V](data:Int):V = (data==1).asInstanceOf[V]
 }
 
-class RMFacingHorizontalProp(prop:IProperty, bitPos:Int) extends RMProp(prop, 2, bitPos) {
+class RMFacingHorizontalProp(prop:IProperty[EnumFacing], bitPos:Int) extends RMProp(prop, 2, bitPos) {
   def toIntData(data:Comparable[_]):Int = data.asInstanceOf[EnumFacing].getHorizontalIndex
-  def fromIntData(data:Int):Comparable[_] = EnumFacing.getHorizontal(data)
+  def fromIntData[V](data:Int):V = EnumFacing.getHorizontal(data).asInstanceOf[V]
 }
