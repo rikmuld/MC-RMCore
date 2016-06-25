@@ -65,15 +65,12 @@ abstract trait RMCoreItem extends Item {
     if (!world.isRemote) {
       var success = false
       if(getItemInfo.hasProp(GUITRIGGER_META)){
-        println("Found property")
         val guis = getItemInfo.getProp[Properties.GuiTrigger](GUITRIGGER_META).value.asInstanceOf[Array[(Int, Int)]]
         val damage = stack.getItemDamage
         
         val gui = guis.deep.filter { ids => ids.asInstanceOf[(Int, Int)]._1 == damage }
-        println(guis, gui)
 
         if(gui.length>0){
-          println("Success for: " + damage + " with: " + gui(0))
           player.openGui(RMMod, gui(0).asInstanceOf[(Int, Int)]._2, world, 0, 0, 0)
           success = true
         }
