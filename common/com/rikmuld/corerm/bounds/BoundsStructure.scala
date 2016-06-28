@@ -18,9 +18,9 @@ object Bounds {
 }
 
 class Bounds(var xMin: Float, var yMin: Float, var zMin: Float, var xMax: Float, var yMax: Float, var zMax: Float) {
-  def getBlockBounds(block: Block):AxisAlignedBB = 
+  def getBlockBounds:AxisAlignedBB = 
     new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax)
-  def getBlockCollision(block: Block):AxisAlignedBB =
+  def getBlockCollision:AxisAlignedBB =
     new AxisAlignedBB(Math.max(xMin, 0), Math.max(yMin, 0), Math.max(zMin, 0), Math.min(xMax, 1), Math.min(yMax, 1), Math.min(zMax, 1))
    
   def writeBoundsToNBT(tag: NBTTagCompound) {

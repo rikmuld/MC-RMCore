@@ -31,6 +31,7 @@ class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](
   info.register(this, modId)
     
   def getInfo:ObjInfo = info
+  if(getInfo.hasProp(PropType.SOUND))this.setSoundType(getInfo.getValue(PropType.SOUND))
 }
 
 abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContainer(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
@@ -72,7 +73,7 @@ trait WithInstable extends Block {
   }
   override def canPlaceBlockAt(world: World, pos:BlockPos) = (world, pos).canInstableStand && canStay((world, pos))
   override def onBlockAdded(world: World, pos:BlockPos, state:IBlockState) = if (!world.isRemote) dropIfCantStay((world, pos))
-  //override def onNeighborChange(state:IBlockState, pos:BlockPos, block: BlockPos) = if (!world.isRemote) dropIfCantStay((world, pos))
+  override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block) = dropIfCantStay((world, pos))
   def canStay(bd:BlockData): Boolean = bd.solidBelow
   def couldStay(bd:BlockData) = {}
 }

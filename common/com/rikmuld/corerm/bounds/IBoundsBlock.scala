@@ -26,12 +26,10 @@ import net.minecraft.util.EnumHand
 import net.minecraft.util.EnumBlockRenderType
 
 abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
-  final val emptyAxis = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.INVISIBLE
-  override def addCollisionBoxToList(state:IBlockState, world: World, pos:BlockPos, alignedBB: AxisAlignedBB, list: java.util.List[AxisAlignedBB], entity: Entity) {
-    Option((world, pos).tile.asInstanceOf[TileBounds].bounds) map (bounds => list.add(bounds.getBlockCollision(this)))
-    super.addCollisionBoxToList(state, world, pos, alignedBB, list, entity)
-  }
+  override def getCollisionBoundingBox(state:IBlockState, world: World, pos:BlockPos):AxisAlignedBB = 
+    Option(world.getTileEntity(pos).asInstanceOf[TileBounds].bounds).map(bounds => bounds.getBlockCollision).getOrElse(new AxisAlignedBB(0, 0, 0, 0, 0, 0))
+
   override def breakBlock(world: World, pos:BlockPos, state: IBlockState) {
     val tile = (world, pos).tile.asInstanceOf[TileBounds]
     val bd = (world, tile.basePos)
@@ -62,11 +60,10 @@ abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
   }
   override def onNeighborChange(world: IBlockAccess, pos:BlockPos, neig:BlockPos) {
     val tile = world.getTileEntity(pos)
-    if (!world.isAirBlock(pos)) world.getBlockState(pos).getBlock.onNeighborChange(world, pos, neig)
+    //if (!world.isAirBlock(pos)) world.getBlockState(pos).getBlock.onNeighborChange(world, pos, neig)
   }
   override def quantityDropped(par1Random: Random): Int = 0
-
   override def getBoundingBox(state:IBlockState, world: IBlockAccess, pos:BlockPos):AxisAlignedBB = 
     (Option(world.getTileEntity(pos).asInstanceOf[TileBounds].bounds) map (bounds => 
-      bounds.getBlockBounds(this))).getOrElse(emptyAxis)
+      bounds.getBlockBounds)).getOrElse(new AxisAlignedBB(0, 0, 0, 0, 0, 0))
 }

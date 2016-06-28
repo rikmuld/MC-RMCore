@@ -14,6 +14,8 @@ import net.minecraft.item.ItemArmor.ArmorMaterial
 import net.minecraft.util.ResourceLocation
 import com.rikmuld.corerm.RMMod
 import scala.collection.mutable.ListBuffer
+import net.minecraft.util.SoundEvent
+import net.minecraft.inventory.EntityEquipmentSlot
 
 object PropType extends Enumeration {
   type PropType = Value
@@ -105,13 +107,16 @@ object Properties {
   case class Saturation(amount:Float) extends Prop(amount){
     override def getType:PropType.PropType = PropType.SATURATION
   }
+  case class StepSound(amount:SoundEvent) extends Prop(amount){
+    override def getType:PropType.PropType = PropType.SOUND
+  }
   case class WolfMeat(wolfMeat:Boolean) extends Prop(wolfMeat){
     override def getType:PropType.PropType = PropType.WOLFMEAT
   }
   case class ArmorMateria(material:ArmorMaterial) extends Prop(material){
     override def getType:PropType.PropType = PropType.ARMORMAT
   }
-  case class ArmorTyp(typ:Int) extends Prop(typ){
+  case class ArmorTyp(typ:EntityEquipmentSlot) extends Prop(typ){
     override def getType:PropType.PropType = PropType.ARMORTYPE
   }
   case class ArmorTexture(texMain:String) extends Prop(texMain) {

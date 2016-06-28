@@ -158,7 +158,7 @@ object CoreUtils {
       val d0 = player.prevPosX + (player.posX - player.prevPosX) * f.toDouble
       val d1 = player.prevPosY + (player.posY - player.prevPosY) * f.toDouble + (if (player.worldObj.isRemote) player.getEyeHeight - player.getDefaultEyeHeight else player.getEyeHeight).toDouble
       val d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * f.toDouble
-      val vec3 = new Vec3d(d0, d1, d2)
+      val Vec3d = new Vec3d(d0, d1, d2)
       val f3 = MathHelper.cos(-f2 * 0.017453292F - Math.PI.toFloat)
       val f4 = MathHelper.sin(-f2 * 0.017453292F - Math.PI.toFloat)
       val f5 = -MathHelper.cos(-f1 * 0.017453292F)
@@ -169,8 +169,8 @@ object CoreUtils {
       if (player.isInstanceOf[EntityPlayerMP]) {
         d3 = player.asInstanceOf[EntityPlayerMP].interactionManager.getBlockReachDistance
       }
-      val vec31 = vec3.addVector(f7.toDouble * d3, f6.toDouble * d3, f8.toDouble * d3)
-      player.worldObj.rayTraceBlocks(vec3, vec31, true, false, false)
+      val Vec3d1 = Vec3d.addVector(f7.toDouble * d3, f6.toDouble * d3, f8.toDouble * d3)
+      player.worldObj.rayTraceBlocks(Vec3d, Vec3d1, true, false, false)
     }
   }
   
