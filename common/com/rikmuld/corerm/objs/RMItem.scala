@@ -74,7 +74,6 @@ abstract trait RMCoreItem extends Item {
         val gui = guis.deep.filter { ids => ids.asInstanceOf[(Int, Int)]._1 == damage }
 
         if(gui.length>0){
-          println("Success for: " + damage + " with: " + gui(0))
           player.openGui(RMMod, gui(0).asInstanceOf[(Int, Int)]._2, world, 0, 0, 0)
           success = true
         }

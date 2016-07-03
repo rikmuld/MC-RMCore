@@ -24,14 +24,12 @@ class RMTile extends TileEntity {
   override def writeToNBT(tag: NBTTagCompound) = super.writeToNBT(tag)
   override def getUpdatePacket(): SPacketUpdateTileEntity = {
     val compound = getUpdateTag
-    println("sdfsdf")
     new SPacketUpdateTileEntity(pos, 1, compound)
   }
   def bd = (worldObj, pos)
   override def onDataPacket(net: NetworkManager, packet: SPacketUpdateTileEntity) {
     super.onDataPacket(net, packet)
     readFromNBT(packet.getNbtCompound());
-    println("boisdf")
   }
   def setTileData(id: Int, data: Array[Int]) {}
   def sendTileData(id: Int, toClient: Boolean, data: Int*) {
