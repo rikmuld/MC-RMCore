@@ -25,18 +25,24 @@ import net.minecraft.util.math.RayTraceResult
 import net.minecraft.util.EnumHand
 import net.minecraft.util.EnumBlockRenderType
 
+object BoundsBlock {
+  final val EMPTY = new AxisAlignedBB(0, 0, 0, 0, 0, 0)
+}
+
 abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.INVISIBLE
   override def getCollisionBoundingBox(state:IBlockState, world: World, pos:BlockPos):AxisAlignedBB = 
-    Option(world.getTileEntity(pos).asInstanceOf[TileBounds].bounds).map(bounds => bounds.getBlockCollision).getOrElse(new AxisAlignedBB(0, 0, 0, 0, 0, 0))
-
+    if(world.getTileEntity(pos)!=null) 
+      Option(world.getTileEntity(pos).asInstanceOf[TileBounds].bounds).map(bounds => bounds.getBlockCollision).getOrElse(BoundsBlock.EMPTY)
+    else BoundsBlock.EMPTY
+      
   override def breakBlock(world: World, pos:BlockPos, state: IBlockState) {
     val tile = (world, pos).tile.asInstanceOf[TileBounds]
     val bd = (world, tile.basePos)
     if (!bd.isAir) bd.toAir
     super.breakBlock(world, pos, state)
   }
-  override def createNewTileEntity(world: World, meta: Int): RMTile = new TileBounds
+  override def createTileEntity(world: World, state: IBlockState): RMTile = new TileBounds
   override def getBlockHardness(state:IBlockState, world: World, pos:BlockPos): Float = {
     val tileFlag = Option((world, pos).tile)
     var tile:Option[TileBounds] = None
@@ -58,12 +64,12 @@ abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
     val bd = (world, tile.basePos)
     bd.block.onBlockActivated(world, bd.pos, bd.state, player, hand, itemstack, side, xHit, yHit, zHit)
   }
-  override def onNeighborChange(world: IBlockAccess, pos:BlockPos, neig:BlockPos) {
+  override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block) = {
     val tile = world.getTileEntity(pos)
-    //if (!world.isAirBlock(pos)) world.getBlockState(pos).getBlock.onNeighborChange(world, pos, neig)
+    if (!world.isAirBlock(pos)) world.getBlockState(tile.asInstanceOf[TileBounds].basePos).getBlock.neighborChanged(state, world, tile.asInstanceOf[TileBounds].basePos, block)
   }
   override def quantityDropped(par1Random: Random): Int = 0
   override def getBoundingBox(state:IBlockState, world: IBlockAccess, pos:BlockPos):AxisAlignedBB = 
     (Option(world.getTileEntity(pos).asInstanceOf[TileBounds].bounds) map (bounds => 
-      bounds.getBlockBounds)).getOrElse(new AxisAlignedBB(0, 0, 0, 0, 0, 0))
+      bounds.getBlockBounds)).getOrElse(BoundsBlock.EMPTY)
 }

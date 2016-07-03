@@ -65,15 +65,13 @@ abstract trait RMCoreItem extends Item {
     } else subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, 0))
   }
   override def onItemRightClick(stack: ItemStack, world: World, player: EntityPlayer, hand:EnumHand): ActionResult[ItemStack] = {
-    if (!world.isRemote) {
+    if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
       var success = false
       if(getItemInfo.hasProp(GUITRIGGER_META)){
-        println("Found property")
         val guis = getItemInfo.getProp[Properties.GuiTrigger](GUITRIGGER_META).value.asInstanceOf[Array[(Int, Int)]]
         val damage = stack.getItemDamage
         
         val gui = guis.deep.filter { ids => ids.asInstanceOf[(Int, Int)]._1 == damage }
-        println(guis, gui)
 
         if(gui.length>0){
           println("Success for: " + damage + " with: " + gui(0))

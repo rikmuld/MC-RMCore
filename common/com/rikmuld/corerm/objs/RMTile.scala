@@ -23,16 +23,24 @@ class RMTile extends TileEntity {
   override def readFromNBT(tag: NBTTagCompound) = super.readFromNBT(tag)
   override def writeToNBT(tag: NBTTagCompound) = super.writeToNBT(tag)
   override def getUpdatePacket(): SPacketUpdateTileEntity = {
-    val compound = new NBTTagCompound();
-    writeToNBT(compound);
-    new SPacketUpdateTileEntity(new BlockPos(this.pos.getX, this.pos.getY, this.pos.getZ), 1, compound);
+    val compound = getUpdateTag
+    println("sdfsdf")
+    new SPacketUpdateTileEntity(pos, 1, compound)
   }
   def bd = (worldObj, pos)
-  override def onDataPacket(net: NetworkManager, packet: SPacketUpdateTileEntity) = readFromNBT(packet.getNbtCompound());
+  override def onDataPacket(net: NetworkManager, packet: SPacketUpdateTileEntity) {
+    super.onDataPacket(net, packet)
+    readFromNBT(packet.getNbtCompound());
+    println("boisdf")
+  }
   def setTileData(id: Int, data: Array[Int]) {}
   def sendTileData(id: Int, toClient: Boolean, data: Int*) {
     if (!toClient && worldObj.isRemote) PacketSender.toServer(new TileData(id, pos.getX, pos.getY, pos.getZ, data));
     else if (toClient && !worldObj.isRemote) PacketSender.toClient(new TileData(id, pos.getX, pos.getY, pos.getZ, data));
+  }
+  override def getUpdateTag(): NBTTagCompound = {
+    val tag = super.getUpdateTag()
+    this.writeToNBT(tag)
   }
 }
 
