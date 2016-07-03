@@ -29,9 +29,9 @@ import com.rikmuld.corerm.bounds.BoundsData
 object RMMod {
   final val MOD_ID = "corerm"
   final val MOD_NAME = "RikMuld's Core"
-  final val MOD_VERSION = "1.2d"
+  final val MOD_VERSION = "1.2e-1.8.9"
   final val MOD_LANUAGE = "scala"
-  final val MOD_DEPENDENCIES = "required-after:Forge@[v11.14.1.1397,)"
+  final val MOD_DEPENDENCIES = "required-after:Forge@[11.15.1.1722,)"
   final val PACKET_CHANEL = MOD_ID
   final val MOD_SERVER_PROXY = "com.rikmuld.corerm.ProxyServer"
   final val MOD_CLIENT_PROXY = "com.rikmuld.corerm.ProxyClient"

@@ -32,8 +32,14 @@ abstract class RMContainerItem(player: EntityPlayer) extends Container {
       var itemstack1 = slot.getStack()
       itemstack = itemstack1.copy()
       if (i < inv.getSizeInventory()) {
-        if (!mergeItemStack(itemstack1, inv.getSizeInventory(), inventorySlots.size(), true)) return null
-      } else if (!mergeItemStack(itemstack1, 0, inv.getSizeInventory(), false)) return null
+        if (!mergeItemStack(itemstack1, inv.getSizeInventory(), inventorySlots.size(), false)) return null
+      } else if (!mergeItemStack(itemstack1, 0, inv.getSizeInventory(), false)) {
+        if(i < inv.getSizeInventory + 9){
+          if(!mergeItemStack(itemstack1, inv.getSizeInventory + 9, inv.getSizeInventory + 9 + 27, false)) return null
+        } else {
+          if(!mergeItemStack(itemstack1, inv.getSizeInventory, inv.getSizeInventory + 9, false)) return null
+        }
+      }
       if (itemstack1.stackSize == 0) slot.putStack(null)
       else slot.onSlotChanged()
     }
