@@ -52,10 +52,10 @@ abstract class RMContainerItem(player: EntityPlayer) extends Container {
 }
 
 abstract class RMContainerTile(player: EntityPlayer, tile: IInventory) extends Container {
-  override def canInteractWith(player: EntityPlayer): Boolean = !player.isDead && tile.isUseableByPlayer(player)
+  override def canInteractWith(player: EntityPlayer): Boolean = !player.isDead && tile!=null && tile.isUseableByPlayer(player)
   override def onContainerClosed(player: EntityPlayer) {
     super.onContainerClosed(player)
-    tile.closeInventory(player)
+    if(tile!=null)tile.closeInventory(player)
   }
   override def transferStackInSlot(player: EntityPlayer, slotNum: Int): ItemStack = {
     var itemstack: ItemStack = null
