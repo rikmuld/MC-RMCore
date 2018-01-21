@@ -1,6 +1,7 @@
 package com.rikmuld.corerm.objs
 
 import net.minecraft.creativetab.CreativeTabs
+
 import scala.collection.mutable.HashSet
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
@@ -13,9 +14,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.item.ItemArmor.ArmorMaterial
 import net.minecraft.util.ResourceLocation
 import com.rikmuld.corerm.RMMod
+import com.rikmuld.corerm.misc.DataContainer
+
 import scala.collection.mutable.ListBuffer
 import net.minecraft.util.SoundEvent
 import net.minecraft.inventory.EntityEquipmentSlot
+import net.minecraftforge.event.RegistryEvent
 
 object PropType extends Enumeration {
   type PropType = Value
@@ -31,7 +35,6 @@ class ObjInfo(props:Prop*) {
   def apply(block:Block) = props.foreach { prop => applyProp(block, prop) }
   def apply(item:Item) = props.foreach { prop => applyProp(item, prop) }
   def applyProp(block:Block, prop:Prop) = prop.getType match {
-    case PropType.NAME => block.setUnlocalizedName(prop.value.asInstanceOf[String])
     case PropType.TAB => block.setCreativeTab(prop.value.asInstanceOf[CreativeTabs])
     case PropType.HARDNESS => block.setHardness(prop.value.asInstanceOf[Float])
     case PropType.RECISTANCE => block.setResistance(prop.value.asInstanceOf[Float])
@@ -43,20 +46,32 @@ class ObjInfo(props:Prop*) {
     case _ =>
   }
   def applyProp(item:Item, prop:Prop) = prop.getType match {
-    case PropType.NAME => item.setUnlocalizedName(prop.value.asInstanceOf[String])
     case PropType.TAB => item.setCreativeTab(prop.value.asInstanceOf[CreativeTabs])
     case PropType.MAX_DAMAGE => item.setMaxDamage(prop.value.asInstanceOf[Int])
     case PropType.MAX_STACKSIZE => item.setMaxStackSize(prop.value.asInstanceOf[Int])
     case _ =>
   }
-  def register(block:RMCoreBlock, modId:String) {
-    if(hasProp(PropType.ITEMBLOCK)) GameRegistry.registerBlock(block, getValue[Class[ItemBlock]](PropType.ITEMBLOCK), getValue[String](PropType.NAME))
-    else GameRegistry.registerBlock(block, getValue[String](PropType.NAME))
-    RMMod.proxy.registerRendersFor(Left(block), this, modId)
+  def register(event: RegistryEvent.Register[Block], block:Block, modId:String): ItemBlock = {
+    val itemClass =
+      if (hasProp(PropType.ITEMBLOCK)) getValue[Class[ItemBlock]](PropType.ITEMBLOCK)
+      else classOf[ItemBlock]
+
+    val item = itemClass.getConstructor(classOf[Block]).newInstance(block)
+
+    block.setRegistryName(modId, getValue[String](PropType.NAME))
+    block.setUnlocalizedName(block.getRegistryName.toString)
+
+    item.setRegistryName(modId, getValue[String](PropType.NAME))
+    item.setUnlocalizedName(item.getRegistryName.toString)
+
+    event.getRegistry.register(block)
+    item
   }
-  def register(item:RMCoreItem, modId:String){
-    GameRegistry.registerItem(item, getValue[String](PropType.NAME))
-    RMMod.proxy.registerRendersFor(Right(item), this, modId)
+  def register(event: RegistryEvent.Register[Item], item:Item, modId:String){
+    item.setRegistryName(modId, getValue[String](PropType.NAME))
+    item.setUnlocalizedName(item.getRegistryName.toString)
+
+    event.getRegistry.register(item)
   }
 }
 
@@ -125,10 +140,10 @@ object Properties {
   case class ForceSubtype(flag:Boolean) extends Prop(flag) {
     override def getType:PropType.PropType = PropType.FORCESUBTYPE
   }
-  case class GuiTrigger(id:Int) extends Prop(id) {
+  case class GuiTrigger(id:DataContainer[Int]) extends Prop(id) {
     override def getType:PropType.PropType = PropType.GUITRIGGER
   }
-  case class GuiTriggerMeta(ids:(Int, Int)*) extends Prop(ids.toArray) {
+  case class GuiTriggerMeta(ids:(Int, DataContainer[Int])*) extends Prop(ids.toArray) {
     override def getType:PropType.PropType = PropType.GUITRIGGER_META
   }
 }

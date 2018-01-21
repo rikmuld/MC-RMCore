@@ -41,7 +41,7 @@ object WorldBlock {
     def relPos(xFlag:Int, yFlag:Int, zFlag:Int) = new BlockPos(x+xFlag, y+yFlag, z+zFlag)
     def setState(state:IBlockState, flag:Int) = world.setBlockState(pos, state, flag)
     def newState(meta:Int) = block.getStateFromMeta(meta)
-    def notifyWorld = world.notifyNeighborsOfStateChange(pos, block)
+    def notifyWorld = world.notifyNeighborsOfStateChange(pos, block, true)
     def update = world.notifyBlockUpdate(pos, state, state, 3)
     def updateRender = world.markBlockRangeForRenderUpdate(relPos(-1, -1, -1), relPos(1, 1, 1))
     def clearBlock = world.setBlockToAir(pos)

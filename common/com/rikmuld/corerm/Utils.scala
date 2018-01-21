@@ -57,7 +57,7 @@ object CoreUtils {
     }
     def toStack(count: Int): ItemStack = {
       val stack = toStack
-      stack.stackSize = count
+      stack.setCount(count)
       stack
     }
     def getMetaCycle(maxMetadata: Int): Array[ItemStack] = {
@@ -85,18 +85,18 @@ object CoreUtils {
   implicit class WorldUtils(world: World) {
     def dropItemInWorld(itemStack: ItemStack, x: Float, y: Float, z: Float, rand: Random) {
       if (!world.isRemote) {
-        if ((itemStack != null) && (itemStack.stackSize > 0)) {
+        if ((itemStack != null) && (itemStack.getCount > 0)) {
           val dX = (rand.nextFloat() * 0.8F) + 0.1F
           val dY = (rand.nextFloat() * 0.8F) + 0.1F
           val dZ = (rand.nextFloat() * 0.8F) + 0.1F
-          val entityItem = new EntityItem(world, x + dX, y + dY, z + dZ, new ItemStack(itemStack.getItem, itemStack.stackSize, itemStack.getItemDamage))
+          val entityItem = new EntityItem(world, x + dX, y + dY, z + dZ, new ItemStack(itemStack.getItem, itemStack.getCount, itemStack.getItemDamage))
           if (itemStack.hasTagCompound()) entityItem.getEntityItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
           val factor = 0.05F
           entityItem.motionX = rand.nextGaussian() * factor
           entityItem.motionY = (rand.nextGaussian() * factor) + 0.2F
           entityItem.motionZ = rand.nextGaussian() * factor
-          world.spawnEntityInWorld(entityItem)
-          itemStack.stackSize = 0
+          world.spawnEntity(entityItem)
+          itemStack.setCount(0)
         }
       }
     }
@@ -127,12 +127,12 @@ object CoreUtils {
           val inventory = tileEntity.asInstanceOf[IInventory]
           for (i <- 0 until inventory.getSizeInventory) {
             val itemStack = inventory.getStackInSlot(i)
-            if ((itemStack != null) && (itemStack.stackSize > 0)) {
+            if ((itemStack != null) && (itemStack.getCount > 0)) {
               val dX = (rand.nextFloat() * 0.8F) + 0.1F
               val dY = (rand.nextFloat() * 0.8F) + 0.1F
               val dZ = (rand.nextFloat() * 0.8F) + 0.1F
               val entityItem = new EntityItem(world, pos.getX + dX, pos.getY + dY, pos.getZ + dZ, new ItemStack(itemStack.getItem,
-                itemStack.stackSize, itemStack.getItemDamage))
+                itemStack.getCount, itemStack.getItemDamage))
               if (itemStack.hasTagCompound()) {
                 entityItem.getEntityItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
               }
@@ -140,8 +140,8 @@ object CoreUtils {
               entityItem.motionX = rand.nextGaussian() * factor
               entityItem.motionY = (rand.nextGaussian() * factor) + 0.2F
               entityItem.motionZ = rand.nextGaussian() * factor
-              world.spawnEntityInWorld(entityItem)
-              itemStack.stackSize = 0
+              world.spawnEntity(entityItem)
+              itemStack.setCount(0)
             }
           }
         }
@@ -156,7 +156,7 @@ object CoreUtils {
       val f1 = player.prevRotationPitch + (player.rotationPitch - player.prevRotationPitch) * f
       val f2 = player.prevRotationYaw + (player.rotationYaw - player.prevRotationYaw) * f
       val d0 = player.prevPosX + (player.posX - player.prevPosX) * f.toDouble
-      val d1 = player.prevPosY + (player.posY - player.prevPosY) * f.toDouble + (if (player.worldObj.isRemote) player.getEyeHeight - player.getDefaultEyeHeight else player.getEyeHeight).toDouble
+      val d1 = player.prevPosY + (player.posY - player.prevPosY) * f.toDouble + (if (player.world.isRemote) player.getEyeHeight - player.getDefaultEyeHeight else player.getEyeHeight).toDouble
       val d2 = player.prevPosZ + (player.posZ - player.prevPosZ) * f.toDouble
       val Vec3d = new Vec3d(d0, d1, d2)
       val f3 = MathHelper.cos(-f2 * 0.017453292F - Math.PI.toFloat)
@@ -170,7 +170,7 @@ object CoreUtils {
         d3 = player.asInstanceOf[EntityPlayerMP].interactionManager.getBlockReachDistance
       }
       val Vec3d1 = Vec3d.addVector(f7.toDouble * d3, f6.toDouble * d3, f8.toDouble * d3)
-      player.worldObj.rayTraceBlocks(Vec3d, Vec3d1, true, false, false)
+      player.world.rayTraceBlocks(Vec3d, Vec3d1, true, false, false)
     }
   }
   
@@ -198,7 +198,7 @@ object CoreUtils {
     def addDamage(damage: Int): ItemStack = {
       val returnStack = new ItemStack(item.getItem, 1, (item.getItemDamage + damage))
       val returnStack2 = returnStack.copy()
-      returnStack2.stackSize = 0
+      returnStack2.setCount(0)
       if (returnStack.getItemDamage >= item.getMaxDamage) returnStack2 else returnStack
     }
   }
@@ -238,7 +238,7 @@ object CoreUtils {
   
   implicit class LivingUtils(entity:EntityLivingBase) {
     def facing:EnumFacing = {
-      val facing = MathHelper.floor_double(((entity.rotationYaw * 4.0F) / 360.0F) + 0.5D) & 3
+      val facing = MathHelper.floor(((entity.rotationYaw * 4.0F) / 360.0F) + 0.5D) & 3
       if (facing == EnumFacing.WEST.getHorizontalIndex) EnumFacing.WEST
       else if (facing == EnumFacing.SOUTH.getHorizontalIndex) EnumFacing.SOUTH
       else if (facing == EnumFacing.NORTH.getHorizontalIndex) EnumFacing.NORTH

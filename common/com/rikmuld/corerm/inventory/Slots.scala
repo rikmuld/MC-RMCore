@@ -65,13 +65,13 @@ class SlotItemsOnly(inv: IInventory, id: Int, x: Int, y: Int, stacks: AnyRef*) e
 }
 
 trait SlotWithOnlyItem extends Slot {
-  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) == null
+  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) == Blocks.AIR
 }
 
 class SlotOnlyItems(inv: IInventory, id: Int, x: Int, y: Int) extends Slot(inv, id, x, y) with SlotWithOnlyItem {}
 
 trait SlotWithOnlyBlock extends Slot {
-  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) != null
+  override def isItemValid(stack: ItemStack): Boolean = Block.getBlockFromItem(stack.getItem()) != Blocks.AIR
 }
 
 class SlotOnlyBlocks(inv: IInventory, id: Int, x: Int, y: Int) extends Slot(inv, id, x, y) with SlotWithOnlyBlock {}
@@ -82,23 +82,28 @@ trait SlotWithDisable extends Slot {
   var yFlag:Int = _
   
   def setDisableSlot(x:Int, y:Int){
-    xFlag = x;
-    yFlag = y;
+    xFlag = x
+    yFlag = y
   }
   def disable = {
-    xDisplayPosition = -500
-    yDisplayPosition = -500
+    xPos = -500
+    yPos = -500
     
     enabled = false
   }
   def enable = {
-    xDisplayPosition = xFlag
-    yDisplayPosition = yFlag
+    xPos = xFlag
+    yPos = yFlag
     
     enabled = true
   }
 }
 
 class SlotDisable(inv: IInventory, id: Int, x: Int, y: Int) extends Slot(inv, id, x, y) with SlotWithDisable {
+  setDisableSlot(x, y)
+}
+
+class SlotItemsNotDisable(inv: IInventory, id: Int, x: Int, y: Int, stacks: Any*) extends Slot(inv, id, x, y) with SlotWithItemsNot with SlotWithDisable {
+  setStacks(stacks)
   setDisableSlot(x, y)
 }

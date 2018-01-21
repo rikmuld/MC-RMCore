@@ -45,8 +45,8 @@ class TileData(var id: Int, var x: Int, var y: Int, var z: Int, tileData: Seq[In
       for (j <- 0 until 4) wrap(j) = data(j + (i * 4))
       intData(i) = ByteBuffer.wrap(wrap).getInt
     }
-    if (player!=null&&player.worldObj!=null&&player.worldObj.getTileEntity(new BlockPos(x, y, z)) != null&&player.worldObj.getTileEntity(new BlockPos(x, y, z)).isInstanceOf[RMTile]){
-      player.worldObj.getTileEntity(new BlockPos(x, y, z)).asInstanceOf[RMTile].setTileData(id, intData) 
+    if (player!=null&&player.world!=null&&player.world.getTileEntity(new BlockPos(x, y, z)) != null&&player.world.getTileEntity(new BlockPos(x, y, z)).isInstanceOf[RMTile]){
+      player.world.getTileEntity(new BlockPos(x, y, z)).asInstanceOf[RMTile].setTileData(id, intData)
     }
   }
 }

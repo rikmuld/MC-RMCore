@@ -52,7 +52,7 @@ class PacketGlobal(var data: BasicPacketData) extends IMessage {
   }
   def handlePacketServer(ctx: MessageContext) = data.handlePacket(ctx.getServerHandler.playerEntity, ctx)
   @SideOnly(Side.CLIENT)
-  def handlePacketClient(ctx: MessageContext) = data.handlePacket(Minecraft.getMinecraft.thePlayer, ctx)
+  def handlePacketClient(ctx: MessageContext) = data.handlePacket(Minecraft.getMinecraft.player, ctx)
 }
 
 class Handler extends IMessageHandler[PacketGlobal, IMessage] {

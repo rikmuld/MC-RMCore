@@ -9,7 +9,7 @@ class TabSwitch(var idLeft:Int, var idTop:Int) extends BasicPacketData {
   def this() = this(0, 0)
  
   override def handlePacket(player: EntityPlayer, ctx: MessageContext) {
-    if(!player.worldObj.isRemote&&player.openContainer.isInstanceOf[ContainerTabbed])player.openContainer.asInstanceOf[ContainerTabbed].updateTab(player, idLeft, idTop)
+    if(!player.world.isRemote&&player.openContainer.isInstanceOf[ContainerTabbed])player.openContainer.asInstanceOf[ContainerTabbed].updateTab(player, idLeft, idTop)
   }
   override def getData(stream: PacketBuffer) {
     idLeft = stream.readInt

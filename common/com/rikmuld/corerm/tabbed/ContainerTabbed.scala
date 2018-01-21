@@ -15,7 +15,7 @@ trait ContainerTabbed extends Container {
     leftActive = idLeft
     topActive = idTop
     
-    if(player.worldObj.isRemote)PacketSender.toServer(new TabSwitch(idLeft, idTop))
+    if(player.world.isRemote)PacketSender.toServer(new TabSwitch(idLeft, idTop))
   }
   def getCurrentTab = List(leftActive, topActive)
   def getCurrentTabTop = topActive

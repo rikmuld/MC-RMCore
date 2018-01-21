@@ -40,7 +40,7 @@ class TileBounds extends RMTile with ITickable {
     }
   }
   override def update() {
-    if (!worldObj.isRemote && updateNeed) {
+    if (!world.isRemote && updateNeed) {
       PacketSender.toClient(new BoundsData(bounds, bd.x, bd.y, bd.z))
       updateNeed = false
     }

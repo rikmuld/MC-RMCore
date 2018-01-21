@@ -38,8 +38,8 @@ class BoundsData(var bounds: Bounds, var x: Int, var y: Int, var z: Int) extends
     stream.writeFloat(zMax)
   }
   override def handlePacket(player: EntityPlayer, ctx: MessageContext) {
-    if (player.worldObj.getTileEntity(new BlockPos(x, y, z)) != null) {
-      player.worldObj.getTileEntity(new BlockPos(x, y, z)).asInstanceOf[TileBounds].bounds = new Bounds(xMin, yMin, zMin, xMax, yMax, zMax)
+    if (player.world.getTileEntity(new BlockPos(x, y, z)) != null) {
+      player.world.getTileEntity(new BlockPos(x, y, z)).asInstanceOf[TileBounds].bounds = new Bounds(xMin, yMin, zMin, xMax, yMax, zMax)
     }
   }
 }

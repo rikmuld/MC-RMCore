@@ -1,23 +1,26 @@
 package com.rikmuld.corerm.objs
 
 import java.util.Random
+
 import com.rikmuld.corerm.CoreUtils._
 import com.rikmuld.corerm.misc.WorldBlock._
-import net.minecraft.block.Block
-import net.minecraft.block.BlockContainer
+import net.minecraft.block.{Block, BlockBed, BlockContainer}
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.IProperty
 import net.minecraft.block.state.IBlockState
 import net.minecraft.world.World
+
 import scala.collection.mutable.ListBuffer
 import scala.collection.JavaConversions._
 import scala.reflect.ClassTag
 import net.minecraft.util.EnumFacing
 import net.minecraft.entity.player.EntityPlayer
 import com.rikmuld.corerm.RMMod
+import com.rikmuld.corerm.misc.DataContainer
 import com.rikmuld.corerm.objs.PropType._
 import net.minecraft.inventory.IInventory
 import com.rikmuld.corerm.misc.WorldBlock._
+
 import scala.collection.JavaConversions._
 import net.minecraft.util.math.BlockPos
 import net.minecraft.block.state.BlockStateBase
@@ -28,15 +31,11 @@ import net.minecraft.util.EnumHand
 import net.minecraft.item.ItemStack
 
 class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
-  info.register(this, modId)
-    
   def getInfo:ObjInfo = info
   if(getInfo.hasProp(PropType.SOUND))this.setSoundType(getInfo.getValue(PropType.SOUND))
 }
 
 abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContainer(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
-  info.register(this, modId)
-    
   def getInfo:ObjInfo = info
   override def createNewTileEntity(world:World, meta:Int):RMTile = new RMTile
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.MODEL
@@ -51,10 +50,10 @@ trait RMCoreBlock extends Block {
   
   def getInfo:ObjInfo
   override def isOpaqueCube(state:IBlockState) = !getInfo.hasProp(PropType.OPACITY)
-  override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, hand:EnumHand, itemstack:ItemStack, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
+  override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, hand:EnumHand, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
     if(!world.isRemote){
       if (getInfo.hasProp(GUITRIGGER)) {
-        openGui((world, pos), player, getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[Int])
+        openGui((world, pos), player, getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[DataContainer[Int]].get.get)
         true
       } else false
     } else true  
@@ -73,7 +72,7 @@ trait WithInstable extends Block {
   }
   override def canPlaceBlockAt(world: World, pos:BlockPos) = (world, pos).canInstableStand && canStay((world, pos))
   override def onBlockAdded(world: World, pos:BlockPos, state:IBlockState) = if (!world.isRemote) dropIfCantStay((world, pos))
-  override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block) = dropIfCantStay((world, pos))
+  override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block, fromPos: BlockPos) = dropIfCantStay((world, pos))
   def canStay(bd:BlockData): Boolean = bd.solidBelow
   def couldStay(bd:BlockData) = {}
 }
@@ -97,7 +96,11 @@ trait WithProperties extends Block {
   }
   override def getMetaFromState(state:IBlockState):Int = {
     var meta = 0
-    getProps.foreach { prop => meta = prop.putBitData(prop.toIntData(state.getValue(prop.prop)), meta) }
+    getProps.foreach { prop =>
+      val comp = state.getValue(prop.prop)
+      val data = prop.toIntData(comp.asInstanceOf[Comparable[_]])
+      meta = prop.putBitData(data, meta)
+    }
     meta
   }
 }
