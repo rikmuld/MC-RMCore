@@ -1,17 +1,14 @@
 package com.rikmuld.corerm.network
 
-import scala.collection.mutable.ArrayBuffer
-import net.minecraftforge.fml.relauncher.SideOnly
-import net.minecraftforge.fml.relauncher.Side
+import com.rikmuld.corerm.RMMod._
 import io.netty.buffer.ByteBuf
 import net.minecraft.client.Minecraft
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.network.PacketBuffer
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
-import com.rikmuld.corerm.RMMod._
+import net.minecraftforge.fml.common.network.simpleimpl.{IMessage, IMessageHandler, MessageContext}
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
+
+import scala.collection.mutable.ArrayBuffer
 
 object PacketDataManager {
   var dataMap: ArrayBuffer[Class[BasicPacketData]] = new ArrayBuffer[Class[BasicPacketData]]

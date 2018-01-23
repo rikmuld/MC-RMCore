@@ -1,29 +1,17 @@
 package com.rikmuld.corerm
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
-import net.minecraftforge.fml.common.SidedProxy
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
-import net.minecraftforge.fml.common.Mod.EventHandler
-import net.minecraftforge.fml.common.network.NetworkRegistry
-import net.minecraftforge.fml.common.registry.GameRegistry
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper
-import net.minecraftforge.fml.relauncher.Side
-import com.rikmuld.corerm.network.PacketGlobal
-import com.rikmuld.corerm.network.BasicPacketData
-import com.rikmuld.corerm.network.PacketDataManager
-import com.rikmuld.corerm.network.Handler
 import com.rikmuld.corerm.RMMod._
-import com.rikmuld.corerm.network.TileData
-import com.rikmuld.corerm.objs.RMTile
-import com.rikmuld.corerm.network.Handler
-import com.rikmuld.corerm.network.PacketGlobal
-import com.rikmuld.corerm.network.TileData
-import com.rikmuld.corerm.objs.RMTile
-import com.rikmuld.corerm.tabbed.TabSwitch
-import com.rikmuld.corerm.bounds.TileBounds
-import com.rikmuld.corerm.bounds.BoundsData
+import com.rikmuld.corerm.features.bounds.{BoundsData, TileBounds}
+import com.rikmuld.corerm.features.tabbed.TabSwitch
+import com.rikmuld.corerm.network._
+import com.rikmuld.corerm.tileentity.RMTile
+import net.minecraftforge.fml.common.Mod.EventHandler
+import net.minecraftforge.fml.common.{Mod, SidedProxy}
+import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
+import net.minecraftforge.fml.common.network.NetworkRegistry
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper
+import net.minecraftforge.fml.common.registry.GameRegistry
+import net.minecraftforge.fml.relauncher.Side
 
 @Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = MOD_DEPENDENCIES, modLanguage = MOD_LANUAGE)
 object RMMod {

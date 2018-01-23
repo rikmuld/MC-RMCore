@@ -1,27 +1,22 @@
 package com.rikmuld.corerm
 
-import net.minecraft.client.gui.Gui
-import net.minecraftforge.fml.common.network.IGuiHandler
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.world.World
-import net.minecraftforge.fml.relauncher.SideOnly
-
-import scala.collection.mutable.HashMap
-import net.minecraft.inventory.Container
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraft.inventory.IInventory
-import net.minecraft.client.Minecraft
-import com.rikmuld.corerm.objs.PropType
+import com.rikmuld.corerm.objs.{ObjInfo, PropType}
 import com.rikmuld.corerm.objs.Properties._
-import com.rikmuld.corerm.objs.ObjInfo
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.Gui
+import net.minecraft.client.renderer.block.model.{ModelBakery, ModelResourceLocation}
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.inventory.{Container, IInventory}
 import net.minecraft.item.Item
-import net.minecraft.block.Block
-import net.minecraft.util.math.BlockPos
-import net.minecraft.client.renderer.block.model.ModelBakery
-import net.minecraft.client.renderer.block.model.ModelResourceLocation
 import net.minecraft.util.ResourceLocation
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 import net.minecraftforge.client.event.ModelRegistryEvent
 import net.minecraftforge.client.model.ModelLoader
+import net.minecraftforge.fml.common.network.IGuiHandler
+import net.minecraftforge.fml.relauncher.{Side, SideOnly}
+
+import scala.collection.mutable.HashMap
 
 class ProxyServer extends IGuiHandler {
   val guis = HashMap[Integer, Tuple2[Class[_], Class[_]]]();

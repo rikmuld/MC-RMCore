@@ -1,11 +1,12 @@
 package com.rikmuld.corerm.network
 
 import java.nio.ByteBuffer
+
+import com.rikmuld.corerm.tileentity.RMTile
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
-import com.rikmuld.corerm.objs.RMTile
 import net.minecraft.util.math.BlockPos
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
 
 class TileData(var id: Int, var x: Int, var y: Int, var z: Int, tileData: Seq[Int]) extends BasicPacketData {
   var length: Int = if (tileData == null) 0 else tileData.length * 4
