@@ -1,7 +1,7 @@
 package com.rikmuld.corerm.misc
 
 import net.minecraft.client.model.{PositionTextureVertex, TexturedQuad}
-import net.minecraft.client.renderer.VertexBuffer
+import net.minecraft.client.renderer.BufferBuilder
 import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 
 class AbstractBox(texWidth: Int, texHeigth: Int, mirror: Boolean, texturerOffsetX: Int, textureOffsetY: Int, var x: Float, var y: Float, var z: Float, width: Int, height: Int, depth: Int, ratio: Float, xScale: Float, yScale: Float, zScale: Float) {
@@ -60,5 +60,5 @@ class AbstractBox(texWidth: Int, texHeigth: Int, mirror: Boolean, texturerOffset
     return this;
   }
   @SideOnly(Side.CLIENT)
-  def render(render: VertexBuffer) = quadList.foreach(_.draw(render, ratio))
+  def render(render: BufferBuilder) = quadList.foreach(_.draw(render, ratio))
 }

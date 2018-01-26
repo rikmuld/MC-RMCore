@@ -62,7 +62,7 @@ object CoreUtils {
           val dY = (rand.nextFloat() * 0.8F) + 0.1F
           val dZ = (rand.nextFloat() * 0.8F) + 0.1F
           val entityItem = new EntityItem(world, x + dX, y + dY, z + dZ, new ItemStack(itemStack.getItem, itemStack.getCount, itemStack.getItemDamage))
-          if (itemStack.hasTagCompound()) entityItem.getEntityItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
+          if (itemStack.hasTagCompound()) entityItem.getItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
           val factor = 0.05F
           entityItem.motionX = rand.nextGaussian() * factor
           entityItem.motionY = (rand.nextGaussian() * factor) + 0.2F
@@ -106,7 +106,7 @@ object CoreUtils {
               val entityItem = new EntityItem(world, pos.getX + dX, pos.getY + dY, pos.getZ + dZ, new ItemStack(itemStack.getItem,
                 itemStack.getCount, itemStack.getItemDamage))
               if (itemStack.hasTagCompound()) {
-                entityItem.getEntityItem.setTagCompound(itemStack.getTagCompound.copy().asInstanceOf[NBTTagCompound])
+                entityItem.getItem.setTagCompound(itemStack.getTagCompound.copy())
               }
               val factor = 0.05F
               entityItem.motionX = rand.nextGaussian() * factor

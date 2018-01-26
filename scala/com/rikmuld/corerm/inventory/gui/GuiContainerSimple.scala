@@ -17,7 +17,7 @@ abstract class GuiContainerSimple(container: Container) extends GuiContainer(con
     drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize)
 
   override def drawGuiContainerForegroundLayer(i: Int, j: Int) =
-    if (hasName) drawCenteredString(fontRendererObj, getName, xSize / 2, 8, 4210752)
+    if (hasName) drawCenteredString(fontRenderer, getName, xSize / 2, 8, 4210752)
 
   override def drawCenteredString(fontRender: FontRenderer, text: String, x: Int, y: Int, color: Int) =
     fontRender.drawString(text, x - fontRender.getStringWidth(text) / 2, y, color)

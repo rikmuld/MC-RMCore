@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.Side
 object RMMod {
   final val MOD_ID = "corerm"
   final val MOD_NAME = "RikMuld's Core"
-  final val MOD_VERSION = "1.2f"
+  final val MOD_VERSION = "1.2g"
   final val MOD_LANUAGE = "scala"
   final val MOD_DEPENDENCIES = "required-after:forge@[v13.20.1.2386,)"
   final val PACKET_CHANEL = MOD_ID

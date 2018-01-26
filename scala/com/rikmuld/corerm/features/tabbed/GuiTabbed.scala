@@ -36,17 +36,17 @@ abstract class GuiTabbed(player:EntityPlayer, container: Container) extends GuiC
     setTabTopActive(0)
   }
   def initTabbed
-  def getFontRenderer = fontRendererObj
+  def getFontRenderer = fontRenderer
   def getRenderEngine = mc.renderEngine
   override def drawScreen(x: Int, y: Int, par3: Float) {
     super.drawScreen(x, y, par3)
     for (tab <- tabsLeft if isPointInRegion(tab.guiStartX - guiLeft + tab.guiWidth, tab.guiStartY - guiTop + 10 + (tabsLeft.indexOf(tab) * 28),23, 25, x, y)){
       if (Mouse.isButtonDown(0)&&tab.enabled) this.setTabLeftActive(tab.id)
-      this.drawHoveringText(tab.getHoveringText, x, y, fontRendererObj) 
+      this.drawHoveringText(tab.getHoveringText, x, y, fontRenderer)
     }
     for (tab <- tabsTop if isPointInRegion(tab.guiStartX - guiLeft + 4 + (tabsTop.indexOf(tab) * 26),tab.guiStartY - guiTop - 20, 24, 20, x, y)){
       if (Mouse.isButtonDown(0)&&tab.enabled) this.setTabTopActive(tab.id)
-      this.drawHoveringText(tab.getHoveringText, x, y, fontRendererObj) 
+      this.drawHoveringText(tab.getHoveringText, x, y, fontRenderer)
     }
   }
   def updateButtons(left:Int, top:Int) = buttonList.foreach(button => {if(button.isInstanceOf[ButtonWithTab]) button.asInstanceOf[ButtonWithTab].tabChanged(left, top)})

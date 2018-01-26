@@ -4,6 +4,7 @@ import java.util.List
 
 import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.objs.PropType._
+import com.rikmuld.corerm.objs.Properties.Tab
 import com.rikmuld.corerm.objs.{ObjInfo, Properties}
 import com.rikmuld.corerm.utils.DataContainer
 import net.minecraft.block.Block
@@ -53,11 +54,12 @@ abstract trait RMCoreItem extends Item {
 
   override def getMetadata(damageValue: Int): Int = if(hasMeta) damageValue else 0
   override def getUnlocalizedName(stack:ItemStack):String = if(!getItemInfo.hasProp(METADATA)) getUnlocalizedName else "item." + getModId + ":" + getItemInfo.getValue[String](NAME) + "_" + meta(stack.getMetadata)
-  @SideOnly(Side.CLIENT)
-  override def getSubItems(itemIn:Item, tab:CreativeTabs, subItems:NonNullList[ItemStack]) {
+  override def getSubItems(tab:CreativeTabs, subItems:NonNullList[ItemStack]) {
+    if(getItemInfo.getProp(TAB).asInstanceOf[Tab].tab != tab) return
+
     if(hasMeta){
-      for(i <- 0 until meta.length) subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, i)) 
-    } else subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(itemIn, 1, 0))
+      for(i <- 0 until meta.length) subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(this, 1, i))
+    } else subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(this, 1, 0))
   }
   override def onItemRightClick(world: World, player: EntityPlayer, hand:EnumHand): ActionResult[ItemStack] = {
     if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
