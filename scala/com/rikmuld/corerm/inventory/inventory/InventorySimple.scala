@@ -19,10 +19,6 @@ trait InventorySimple extends IInventory {
   protected def setInventory(inventory: Seq[ItemStack]): Unit =
     inventoryContents = inventory
 
-  def openInventory(player: EntityPlayer): Unit
-
-  def closeInventory(player: EntityPlayer): Unit
-
   def changeInventory(inventory: Seq[ItemStack]): Unit = {
     markDirty()
     setInventory(inventory)
@@ -55,7 +51,7 @@ trait InventorySimple extends IInventory {
       stack
   }
 
-  def setInventorySlotContents(index: Int, stack: ItemStack) = {
+  def setInventorySlotContents(index: Int, stack: ItemStack): Unit = {
     changeInventory(
       if (stack == null) getInventory.updated(index, ItemStack.EMPTY)
       else getInventory.updated(index, StackHelper.limit(stack, getInventoryStackLimit))
@@ -75,13 +71,13 @@ trait InventorySimple extends IInventory {
   def getField(id: Int): Int =
     0
 
-  def setField(id: Int, value: Int) =
+  def setField(id: Int, value: Int): Unit =
     Unit
 
   def getFieldCount: Int =
     0
 
-  def clear() =
+  def clear(): Unit =
     changeInventory(Seq.fill(getSizeInventory)(ItemStack.EMPTY))
 
   def getName: String =

@@ -1,18 +1,17 @@
 package com.rikmuld.corerm.inventory.inventory
 
+import com.rikmuld.corerm.utils.NBTUtil
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
-import net.minecraftforge.common.util.Constants
+import net.minecraft.nbt.NBTTagCompound
 
 trait InventoryTag extends InventorySimple {
   private val tag: NBTTagCompound =
     loadTag()
 
-  def closeInventory(player:EntityPlayer) =
+  def closeInventory(player:EntityPlayer): Unit =
     saveTag(player)
 
-  def openInventory(player:EntityPlayer) = {
+  def openInventory(player:EntityPlayer): Unit = {
     readItems(tag)
     writeItems(tag)
   }
@@ -27,30 +26,11 @@ trait InventoryTag extends InventorySimple {
 
   def saveTag(player: EntityPlayer): Unit
 
-  def readItems(tag: NBTTagCompound) {
-    val inventory = tag.getTagList("items", Constants.NBT.TAG_COMPOUND)
-
-    for (i <- 0 until inventory.tagCount()) {
-      val stackInfo = inventory.getCompoundTagAt(i)
-      val index = stackInfo.getByte("slotIndex")
-
-      setInventorySlotContents(index, new ItemStack(stackInfo))
-    }
-  }
-
-  def writeItems(tag: NBTTagCompound) {
-    val inventory = new NBTTagList()
-
-    for (slot <- 0 until getSizeInventory) {
-      val stack = getStackInSlot(slot)
-      if(!stack.isEmpty) {
-        val stackInfo = new NBTTagCompound()
-
-        stackInfo.setByte("slotIndex", slot.toByte)
-        inventory.appendTag(stack.writeToNBT(stackInfo))
-      }
+  def readItems(tag: NBTTagCompound): Unit =
+    for((slot, stack) <- NBTUtil.readInventory(tag)){
+      setInventorySlotContents(slot, stack)
     }
 
-    tag.setTag("items", inventory)
-  }
+  def writeItems(tag: NBTTagCompound): NBTTagCompound =
+    NBTUtil.writeInventory(tag, this)
 }
