@@ -7,6 +7,8 @@ import net.minecraft.util.ResourceLocation
 import org.lwjgl.opengl.GL11
 
 abstract class GuiContainerSimple(container: Container) extends GuiContainer(container) {
+  val getTexture: ResourceLocation
+
   protected override def drawGuiContainerBackgroundLayer(partialTick: Float, mouseX: Int, mouseY: Int) {
     GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F)
     mc.renderEngine.bindTexture(getTexture)
@@ -27,6 +29,4 @@ abstract class GuiContainerSimple(container: Container) extends GuiContainer(con
 
   def hasName: Boolean =
     false
-
-  def getTexture: ResourceLocation
 }
