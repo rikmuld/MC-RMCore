@@ -3,7 +3,7 @@ package com.rikmuld.corerm.features.bounds
 import java.util.Random
 
 import com.rikmuld.corerm.objs.blocks.{RMBlockContainer, WithModel}
-import com.rikmuld.corerm.tileentity.RMTile
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.Block
 import net.minecraft.block.state.IBlockState
@@ -30,7 +30,7 @@ abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
     if (!bd.isAir) bd.toAir
     super.breakBlock(world, pos, state)
   }
-  override def createTileEntity(world: World, state: IBlockState): RMTile = new TileBounds
+  override def createTileEntity(world: World, state: IBlockState): TileEntitySimple = new TileBounds
   override def getBlockHardness(state:IBlockState, world: World, pos:BlockPos): Float = {
     val tileFlag = Option((world, pos).tile)
     var tile:Option[TileBounds] = None

@@ -1,13 +1,13 @@
 package com.rikmuld.corerm.features.bounds
 
 import com.rikmuld.corerm.network.PacketSender
-import com.rikmuld.corerm.tileentity.RMTile
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ITickable
 import net.minecraft.util.math.BlockPos
 
-class TileBounds extends RMTile with ITickable {
+class TileBounds extends TileEntitySimple with ITickable {
   var bounds: Bounds = _
   var baseX: Int = _
   var baseY: Int = _

@@ -5,6 +5,7 @@ import com.rikmuld.corerm.utils.NBTUtil
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
+import net.minecraft.util.text.ITextComponent
 
 trait TileEntityInventory extends TileEntity with InventorySimple {
   override def isUsableByPlayer(player: EntityPlayer): Boolean =
@@ -27,4 +28,7 @@ trait TileEntityInventory extends TileEntity with InventorySimple {
 
   def closeInventory(player: EntityPlayer): Unit =
     Unit
+
+  override def getDisplayName: ITextComponent =
+    super.getDisplayName
 }

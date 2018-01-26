@@ -5,7 +5,7 @@ import java.util.Random
 import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.objs.PropType._
 import com.rikmuld.corerm.objs.{ObjInfo, PropType, Properties}
-import com.rikmuld.corerm.tileentity.RMTile
+import com.rikmuld.corerm.tileentity.{TileEntitySimple}
 import com.rikmuld.corerm.utils.CoreUtils._
 import com.rikmuld.corerm.utils.DataContainer
 import com.rikmuld.corerm.utils.WorldBlock._
@@ -26,7 +26,7 @@ class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](
 
 abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContainer(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
   def getInfo:ObjInfo = info
-  override def createNewTileEntity(world:World, meta:Int):RMTile = new RMTile
+  override def createNewTileEntity(world:World, meta:Int):TileEntitySimple = new TileEntitySimple
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.MODEL
   override def breakBlock(world:World, pos:BlockPos, state:IBlockState) {
     if((world, pos).tile.isInstanceOf[IInventory])world.dropBlockItems(pos, new Random())

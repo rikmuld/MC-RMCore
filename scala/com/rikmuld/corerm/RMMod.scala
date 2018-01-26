@@ -4,7 +4,7 @@ import com.rikmuld.corerm.RMMod._
 import com.rikmuld.corerm.features.bounds.{BoundsData, TileBounds}
 import com.rikmuld.corerm.features.tabbed.TabSwitch
 import com.rikmuld.corerm.network._
-import com.rikmuld.corerm.tileentity.RMTile
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.{Mod, SidedProxy}
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
@@ -40,7 +40,7 @@ object RMMod {
     registerPacket(classOf[TabSwitch].asInstanceOf[Class[BasicPacketData]])
     registerPacket(classOf[TabSwitch].asInstanceOf[Class[BoundsData]])
     
-    GameRegistry.registerTileEntity(classOf[RMTile], MOD_ID + "_coreTile")
+    GameRegistry.registerTileEntity(classOf[TileEntitySimple], MOD_ID + "_coreTile")
     GameRegistry.registerTileEntity(classOf[TileBounds], MOD_ID + "_boundsTile")
     
     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)

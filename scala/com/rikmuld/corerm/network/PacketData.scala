@@ -2,7 +2,7 @@ package com.rikmuld.corerm.network
 
 import java.nio.ByteBuffer
 
-import com.rikmuld.corerm.tileentity.RMTile
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer
 import net.minecraft.util.math.BlockPos
@@ -46,8 +46,8 @@ class TileData(var id: Int, var x: Int, var y: Int, var z: Int, tileData: Seq[In
       for (j <- 0 until 4) wrap(j) = data(j + (i * 4))
       intData(i) = ByteBuffer.wrap(wrap).getInt
     }
-    if (player!=null&&player.world!=null&&player.world.getTileEntity(new BlockPos(x, y, z)) != null&&player.world.getTileEntity(new BlockPos(x, y, z)).isInstanceOf[RMTile]){
-      player.world.getTileEntity(new BlockPos(x, y, z)).asInstanceOf[RMTile].setTileData(id, intData)
+    if (player!=null&&player.world!=null&&player.world.getTileEntity(new BlockPos(x, y, z)) != null&&player.world.getTileEntity(new BlockPos(x, y, z)).isInstanceOf[TileEntitySimple]){
+      player.world.getTileEntity(new BlockPos(x, y, z)).asInstanceOf[TileEntitySimple].setTileData(id, intData)
     }
   }
 }
