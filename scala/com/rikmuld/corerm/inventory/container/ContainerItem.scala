@@ -18,5 +18,8 @@ abstract class ContainerItem(player: EntityPlayer) extends ContainerSimple[Inven
 
     addSlots(player.inventory, 9, 3, 9, playerInvX, playerInvY)
   }
+
+  def getID: String =
+    player.inventory.getCurrentItem.getItem.getRegistryName.getResourcePath
 }
 

@@ -1,6 +1,7 @@
 package com.rikmuld.corerm.inventory.container
 
-import net.minecraft.entity.player.EntityPlayer
+import com.rikmuld.corerm.advancements.AdvancementTriggers
+import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.inventory._
 import net.minecraft.item.ItemStack
 
@@ -12,11 +13,16 @@ abstract class ContainerSimple[A <: IInventory](player: EntityPlayer) extends Co
 
   getIInventory.openInventory(player)
 
+  if(!player.world.isRemote)
+    AdvancementTriggers.guiOpen.trigger(player.asInstanceOf[EntityPlayerMP], getID)
+
   def playerInvX: Int =
     8
 
   def playerInvY: Int =
     84
+
+  def getID: String
 
   override def canInteractWith(player: EntityPlayer): Boolean =
     !player.isDead && getIInventory.isUsableByPlayer(player)

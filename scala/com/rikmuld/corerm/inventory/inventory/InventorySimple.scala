@@ -27,6 +27,9 @@ trait InventorySimple extends IInventory {
   def isEmpty: Boolean =
     getInventory.forall(_.isEmpty)
 
+  def isFull: Boolean =
+    getInventory.forall(!_.isEmpty)
+
   def getStackInSlot(index: Int): ItemStack =
     getInventory(index)
 
@@ -80,11 +83,8 @@ trait InventorySimple extends IInventory {
   def clear(): Unit =
     changeInventory(Seq.fill(getSizeInventory)(ItemStack.EMPTY))
 
-  def getName: String =
-    ""
-
   def hasCustomName: Boolean =
-    false
+    true
 
   def getDisplayName: ITextComponent =
     new TextComponentString(getName)

@@ -1,10 +1,12 @@
 package com.rikmuld.corerm
 
 import com.rikmuld.corerm.RMMod._
+import com.rikmuld.corerm.advancements.AdvancementTriggers
 import com.rikmuld.corerm.features.bounds.{BoundsData, TileBounds}
 import com.rikmuld.corerm.features.tabbed.TabSwitch
 import com.rikmuld.corerm.network._
 import com.rikmuld.corerm.tileentity.TileEntitySimple
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.{Mod, SidedProxy}
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
@@ -44,6 +46,8 @@ object RMMod {
     GameRegistry.registerTileEntity(classOf[TileBounds], MOD_ID + "_boundsTile")
     
     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)
+
+    AdvancementTriggers.init()
   }
   @EventHandler
   def PosInit(event: FMLPostInitializationEvent) {}  
@@ -85,5 +89,10 @@ object Lib {
   object TextureInfo {
     final val GUI_LOCATION = MOD_ID + ":textures/gui/"
     final val GUI_TAB_UTILS = GUI_LOCATION + "gui_tab_utils.png"
+  }
+
+
+  object AdvancementInfo {
+    final val GUI_OPEN = new ResourceLocation(MOD_ID, "gui_open")
   }
 }

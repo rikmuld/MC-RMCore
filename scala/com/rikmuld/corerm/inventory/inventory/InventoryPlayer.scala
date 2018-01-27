@@ -18,5 +18,8 @@ class InventoryPlayer(player: EntityPlayer, size: Int, stackSize: Int, id: Strin
 
   override def isUsableByPlayer(player: EntityPlayer): Boolean =
     true
+
+  override def getName: String =
+    "player_inventory_" + id
 }
 
