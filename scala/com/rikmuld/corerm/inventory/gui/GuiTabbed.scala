@@ -50,7 +50,7 @@ abstract class GuiTabbed(player:EntityPlayer, container: ContainerTabbed) extend
     tabs.foreach(_.setTab(tab))
     buttonList.foreach {
       case button: ButtonTabbed => button.updateTab(tab)
-      case _ => _
+      case _ =>
     }
   }
 

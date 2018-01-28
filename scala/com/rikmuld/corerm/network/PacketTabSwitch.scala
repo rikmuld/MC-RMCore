@@ -11,7 +11,7 @@ class PacketTabSwitch(var index: Int) extends BasicPacketData {
   override def handlePacket(player: EntityPlayer, ctx: MessageContext): Unit =
     if(!player.world.isRemote) player.openContainer match {
       case tabbed: ContainerTabbed => tabbed.updateTab(player, index)
-      case _ => _
+      case _ =>
     }
 
   override def getData(stream: PacketBuffer): Unit =

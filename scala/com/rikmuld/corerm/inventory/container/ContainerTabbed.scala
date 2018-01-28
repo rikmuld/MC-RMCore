@@ -14,7 +14,7 @@ trait ContainerTabbed extends Container {
   def updateTab(player:EntityPlayer, index:Int){
     inventorySlots.foreach({
       case slot: SlotTabbed => slot.updateTab(player, index)
-      case _ => _
+      case _ =>
     })
     
     tab = index
