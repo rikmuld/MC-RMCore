@@ -38,7 +38,6 @@ trait AdvancementTrigger[Data, A <: TriggerInstance[Data]] extends ICriterionTri
   override def deserializeInstance(json: JsonObject, context: JsonDeserializationContext): A
 
   def trigger(player: EntityPlayerMP, data: Data): Unit = {
-    println(data)
     getListeners(player.getAdvancements).foreach { instance =>
       if(instance.getCriterionInstance.test(player, data)){
         instance.grantCriterion(player.getAdvancements)

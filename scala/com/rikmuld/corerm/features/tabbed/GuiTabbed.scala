@@ -39,6 +39,7 @@ abstract class GuiTabbed(player:EntityPlayer, container: Container) extends GuiC
   def getFontRenderer = fontRenderer
   def getRenderEngine = mc.renderEngine
   override def drawScreen(x: Int, y: Int, par3: Float) {
+    this.drawDefaultBackground()
     super.drawScreen(x, y, par3)
     for (tab <- tabsLeft if isPointInRegion(tab.guiStartX - guiLeft + tab.guiWidth, tab.guiStartY - guiTop + 10 + (tabsLeft.indexOf(tab) * 28),23, 25, x, y)){
       if (Mouse.isButtonDown(0)&&tab.enabled) this.setTabLeftActive(tab.id)
@@ -48,6 +49,7 @@ abstract class GuiTabbed(player:EntityPlayer, container: Container) extends GuiC
       if (Mouse.isButtonDown(0)&&tab.enabled) this.setTabTopActive(tab.id)
       this.drawHoveringText(tab.getHoveringText, x, y, fontRenderer)
     }
+    this.renderHoveredToolTip(x, y)
   }
   def updateButtons(left:Int, top:Int) = buttonList.foreach(button => {if(button.isInstanceOf[ButtonWithTab]) button.asInstanceOf[ButtonWithTab].tabChanged(left, top)})
   def updateContainer(left:Int, top:Int) = player.openContainer.asInstanceOf[ContainerTabbed].updateTab(player, left, top)
@@ -87,7 +89,7 @@ abstract class GuiTabbed(player:EntityPlayer, container: Container) extends GuiC
     if(texture!=null){
       mc.renderEngine.bindTexture(texture)
       for (tab <- tabsLeft) tab.drawBackgroundTexture(this)
-      for (tab <- tabsTop) tab.drawBackgroundTexture(this) 
+      for (tab <- tabsTop) tab.drawBackgroundTexture(this)
     }
     for (tab <- tabsLeft) tab.drawBackgroundItem(this)
     for (tab <- tabsTop) tab.drawBackgroundItem(this)
@@ -126,13 +128,13 @@ class GuiTab(var name: String, var guiWidth: Int, var guiHeigth: Int, xStart: In
     mc.renderEngine.bindTexture(TEXT_UTILS_TAB)
     val xStart = if(side==0)guiStartX + guiWidth - 3 else guiStartX + 4
     val yStart = if(side==0)guiStartY + 10 else guiStartY + 3 - 23
-    
+
     if(!enabled&&(!active))GL11.glColor3f(.5f, .5f, .5f)
     if (side==0){
-      if(active)guiTab.drawTexturedModalRect(xStart, yStart + (id * 28), 0, 46, 26, 26) 
+      if(active)guiTab.drawTexturedModalRect(xStart, yStart + (id * 28), 0, 46, 26, 26)
       else guiTab.drawTexturedModalRect(xStart, yStart + (id * 28), 0, 20, 26, 26)
     } else {
-      if (active) guiTab.drawTexturedModalRect(xStart + (id * 26), yStart, 26, 43, 24, 23) 
+      if (active) guiTab.drawTexturedModalRect(xStart + (id * 26), yStart, 26, 43, 24, 23)
       else guiTab.drawTexturedModalRect(xStart + (id * 26), yStart, 26, 20, 24, 23)
     }
     if(!enabled)GL11.glColor3f(1, 1, 1)

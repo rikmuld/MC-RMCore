@@ -2,8 +2,11 @@ package com.rikmuld.corerm.inventory.container
 
 import com.rikmuld.corerm.advancements.AdvancementTriggers
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
-import net.minecraft.inventory._
+import net.minecraft.inventory.{InventoryCraftResult, InventoryCrafting, _}
 import net.minecraft.item.ItemStack
+import net.minecraft.item.crafting.{CraftingManager, IRecipe}
+import net.minecraft.network.play.server.SPacketSetSlot
+import net.minecraft.world.World
 
 abstract class ContainerSimple[A <: IInventory](player: EntityPlayer) extends Container {
   val inv: A = initIInventory
@@ -91,6 +94,24 @@ abstract class ContainerSimple[A <: IInventory](player: EntityPlayer) extends Co
       addSlotToContainer(new Slot(
         inv, column + (row * columnMax) + slotID, xStart + (column * 18), yStart + (row * 18)
       ))
+  }
+
+  //default implementation always (for the client side) puts the stack in slot with ID 0
+  protected def slotChangedCraftingGrid(world: World, player: EntityPlayer, crafting: InventoryCrafting, result: InventoryCraftResult, slotId: Int): Unit = {
+    if (!world.isRemote) {
+      val playerMP = player.asInstanceOf[EntityPlayerMP]
+
+      val stack = Option(CraftingManager.findMatchingRecipe(crafting, world)).fold(ItemStack.EMPTY)(
+        recipe =>
+          if(recipe.isDynamic || !world.getGameRules.getBoolean("doLimitedCrafting") || playerMP.getRecipeBook.isUnlocked(recipe)){
+            result.setRecipeUsed(recipe)
+            recipe.getCraftingResult(crafting)
+          } else ItemStack.EMPTY
+      )
+
+      result.setInventorySlotContents(0, stack)
+      playerMP.connection.sendPacket(new SPacketSetSlot(this.windowId, slotId, stack))
+    }
   }
 }
 
