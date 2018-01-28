@@ -20,6 +20,9 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.{ListBuffer, WrappedArray}
 
 object CoreUtils {
+  def isInBox(left: Int, top: Int, width: Int, height: Int)(x: Int, y: Int) =
+    x >= left && x <= left + width && y >= top && y <= top + height
+
   var startEntityId = 300
 
   def getUniqueEntityId = {

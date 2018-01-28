@@ -25,5 +25,5 @@ class InventoryItem(stack: ItemStack, size: Int, stackSize: Int) extends Invento
     stack
 
   override def getName: String =
-    stack.getItem.getRegistryName.getResourcePath
+    "inventory_" + stack.getItem.getRegistryName.getResourcePath
 }

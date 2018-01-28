@@ -15,6 +15,12 @@ abstract class GuiContainerSimple(container: Container) extends GuiContainer(con
     drawGUI(mouseX, mouseY)
   }
 
+  override def drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float): Unit = {
+    this.drawDefaultBackground()
+    super.drawScreen(mouseX, mouseY, partialTicks)
+    this.renderHoveredToolTip(mouseX, mouseY)
+  }
+
   def drawGUI(mouseX: Int, mouseY: Int): Unit =
     drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize)
 

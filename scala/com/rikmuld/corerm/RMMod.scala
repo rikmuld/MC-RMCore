@@ -3,23 +3,22 @@ package com.rikmuld.corerm
 import com.rikmuld.corerm.RMMod._
 import com.rikmuld.corerm.advancements.AdvancementTriggers
 import com.rikmuld.corerm.features.bounds.{BoundsData, TileBounds}
-import com.rikmuld.corerm.features.tabbed.TabSwitch
 import com.rikmuld.corerm.network._
 import com.rikmuld.corerm.tileentity.TileEntitySimple
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.Mod.EventHandler
-import net.minecraftforge.fml.common.{Mod, SidedProxy}
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
 import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper
 import net.minecraftforge.fml.common.registry.GameRegistry
+import net.minecraftforge.fml.common.{Mod, SidedProxy}
 import net.minecraftforge.fml.relauncher.Side
 
 @Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = MOD_DEPENDENCIES, modLanguage = MOD_LANUAGE)
 object RMMod {
   final val MOD_ID = "corerm"
   final val MOD_NAME = "RikMuld's Core"
-  final val MOD_VERSION = "1.2g"
+  final val MOD_VERSION = "1.2h"
   final val MOD_LANUAGE = "scala"
   final val MOD_DEPENDENCIES = "required-after:forge@[v13.20.1.2386,)"
   final val PACKET_CHANEL = MOD_ID
@@ -38,9 +37,9 @@ object RMMod {
   }
   @EventHandler
   def Init(event: FMLInitializationEvent) {
-    registerPacket(classOf[TileData].asInstanceOf[Class[BasicPacketData]])
-    registerPacket(classOf[TabSwitch].asInstanceOf[Class[BasicPacketData]])
-    registerPacket(classOf[TabSwitch].asInstanceOf[Class[BoundsData]])
+    registerPacket(classOf[PacketTileData])
+    registerPacket(classOf[PacketTabSwitch])
+    registerPacket(classOf[BoundsData])
     
     GameRegistry.registerTileEntity(classOf[TileEntitySimple], MOD_ID + "_coreTile")
     GameRegistry.registerTileEntity(classOf[TileBounds], MOD_ID + "_boundsTile")
