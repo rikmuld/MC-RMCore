@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.network
 
-import com.rikmuld.corerm.inventory.container.ContainerTabbed
+import com.rikmuld.corerm.gui.container.ContainerTabbed
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext

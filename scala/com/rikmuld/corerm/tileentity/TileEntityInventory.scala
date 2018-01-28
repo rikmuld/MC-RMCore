@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.tileentity
 
-import com.rikmuld.corerm.inventory.inventory.InventorySimple
+import com.rikmuld.corerm.inventory.InventorySimple
 import com.rikmuld.corerm.utils.NBTUtil
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound

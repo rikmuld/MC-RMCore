@@ -2,9 +2,8 @@ package com.rikmuld.corerm
 
 import com.rikmuld.corerm.RMMod._
 import com.rikmuld.corerm.advancements.AdvancementTriggers
-import com.rikmuld.corerm.features.bounds.{BoundsData, TileBounds}
 import com.rikmuld.corerm.network._
-import com.rikmuld.corerm.tileentity.TileEntitySimple
+import com.rikmuld.corerm.tileentity.{TileEntityBounds, TileEntitySimple}
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.{FMLInitializationEvent, FMLPostInitializationEvent, FMLPreInitializationEvent}
@@ -42,7 +41,7 @@ object RMMod {
     registerPacket(classOf[BoundsData])
     
     GameRegistry.registerTileEntity(classOf[TileEntitySimple], MOD_ID + "_coreTile")
-    GameRegistry.registerTileEntity(classOf[TileBounds], MOD_ID + "_boundsTile")
+    GameRegistry.registerTileEntity(classOf[TileEntityBounds], MOD_ID + "_boundsTile")
     
     NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy)
 
