@@ -11,13 +11,13 @@ trait SlotChangingInventory extends Slot {
   override def getStack: ItemStack =
     getIInventory.fold(ItemStack.EMPTY)(_.getStackInSlot(getSlotIndex))
 
-  override def putStack(stack: ItemStack) =
+  override def putStack(stack: ItemStack): Unit =
     getIInventory.foreach { inv =>
       inv.setInventorySlotContents(getSlotIndex, stack)
-      onSlotChanged()
+      inv.markDirty()
     }
 
-  override def onSlotChanged() =
+  override def onSlotChanged(): Unit =
     getIInventory.foreach(_.markDirty())
 
   override def getSlotStackLimit: Int =
