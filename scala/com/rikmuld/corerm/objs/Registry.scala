@@ -1,15 +1,14 @@
 package com.rikmuld.corerm.objs
 
 import com.rikmuld.corerm.objs.Properties._
-import com.rikmuld.corerm.utils.DataContainer
+import com.rikmuld.corerm.objs.items.RMItemBlock
 import net.minecraft.block.Block
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.inventory.EntityEquipmentSlot
+import net.minecraft.item.Item
 import net.minecraft.item.ItemArmor.ArmorMaterial
-import net.minecraft.item.{Item, ItemBlock}
-import net.minecraft.util.SoundEvent
-import net.minecraftforge.event.RegistryEvent
+import net.minecraft.util.{ResourceLocation, SoundEvent}
 
 object PropType extends Enumeration {
   type PropType = Value
@@ -22,10 +21,12 @@ class ObjInfo(props:Prop*) {
   def getValue[T](propType:PropType.PropType):T = props.filter { p => p.getType.equals(propType) }(0).value.asInstanceOf[T]
   def getProp[T <: Prop](propType:PropType.PropType):T = props.filter { p => p.getType.equals(propType) }(0).asInstanceOf[T]
   def hasProp(propType:PropType.PropType) = props.filter { p => p.getType.equals(propType) }.size>0
-  def apply(block:Block) = props.foreach { prop => applyProp(block, prop) }
-  def apply(item:Item) = props.foreach { prop => applyProp(item, prop) }
-  def applyProp(block:Block, prop:Prop) = prop.getType match {
-    case PropType.TAB => block.setCreativeTab(prop.value.asInstanceOf[CreativeTabs])
+  def apply(block:Block, modId: String) = props.foreach { prop => applyProp(block, prop, modId) }
+  def apply(item:Item, modId: String) = props.foreach { prop => applyProp(item, prop, modId) }
+  def applyProp(block:Block, prop:Prop, modId: String) = prop.getType match {
+    case PropType.NAME =>
+      block.setRegistryName(modId, prop.value.asInstanceOf[String])
+      block.setUnlocalizedName(block.getRegistryName.toString)
     case PropType.HARDNESS => block.setHardness(prop.value.asInstanceOf[Float])
     case PropType.RECISTANCE => block.setResistance(prop.value.asInstanceOf[Float])
     case PropType.OPACITY => block.setLightOpacity(prop.value.asInstanceOf[Int])
@@ -35,33 +36,14 @@ class ObjInfo(props:Prop*) {
       block.setHarvestLevel(value(0), value(1).toInt)
     case _ =>
   }
-  def applyProp(item:Item, prop:Prop) = prop.getType match {
+  def applyProp(item:Item, prop:Prop, modId: String) = prop.getType match {
+    case PropType.NAME =>
+      item.setRegistryName(modId, prop.value.asInstanceOf[String])
+      item.setUnlocalizedName(item.getRegistryName.toString)
     case PropType.TAB => item.setCreativeTab(prop.value.asInstanceOf[CreativeTabs])
     case PropType.MAX_DAMAGE => item.setMaxDamage(prop.value.asInstanceOf[Int])
     case PropType.MAX_STACKSIZE => item.setMaxStackSize(prop.value.asInstanceOf[Int])
     case _ =>
-  }
-  def register(event: RegistryEvent.Register[Block], block:Block, modId:String): ItemBlock = {
-    val itemClass =
-      if (hasProp(PropType.ITEMBLOCK)) getValue[Class[ItemBlock]](PropType.ITEMBLOCK)
-      else classOf[ItemBlock]
-
-    val item = itemClass.getConstructor(classOf[Block]).newInstance(block)
-
-    block.setRegistryName(modId, getValue[String](PropType.NAME))
-    block.setUnlocalizedName(block.getRegistryName.toString)
-
-    item.setRegistryName(modId, getValue[String](PropType.NAME))
-    item.setUnlocalizedName(item.getRegistryName.toString)
-
-    event.getRegistry.register(block)
-    item
-  }
-  def register(event: RegistryEvent.Register[Item], item:Item, modId:String){
-    item.setRegistryName(modId, getValue[String](PropType.NAME))
-    item.setUnlocalizedName(item.getRegistryName.toString)
-
-    event.getRegistry.register(item)
   }
 }
 
@@ -93,7 +75,7 @@ object Properties {
   case class HarvestLevel(tool:String, level:Int) extends Prop(Array[String](tool, level.toString)){
     override def getType:PropType.PropType = PropType.HARVEST
   }
-  case class ItemBl[T <: ItemBlock](item:Class[T]) extends Prop(item){
+  case class ItemBl[T <: RMItemBlock](item:Class[T]) extends Prop(item){
     override def getType:PropType.PropType = PropType.ITEMBLOCK
   }
   case class MaxDamage(damage:Int) extends Prop(damage){
@@ -130,10 +112,10 @@ object Properties {
   case class ForceSubtype(flag:Boolean) extends Prop(flag) {
     override def getType:PropType.PropType = PropType.FORCESUBTYPE
   }
-  case class GuiTrigger(id:DataContainer[Int]) extends Prop(id) {
+  case class GuiTrigger(id:ResourceLocation) extends Prop(id) {
     override def getType:PropType.PropType = PropType.GUITRIGGER
   }
-  case class GuiTriggerMeta(ids:(Int, DataContainer[Int])*) extends Prop(ids.toArray) {
+  case class GuiTriggerMeta(ids:(Int, ResourceLocation)*) extends Prop(ids.toArray) {
     override def getType:PropType.PropType = PropType.GUITRIGGER_META
   }
 }

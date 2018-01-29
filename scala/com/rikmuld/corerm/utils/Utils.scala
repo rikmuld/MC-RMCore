@@ -1,5 +1,6 @@
 package com.rikmuld.corerm.utils
 
+import java.nio.ByteBuffer
 import java.util.{ArrayList, Random}
 
 import com.rikmuld.corerm.utils.WorldBlock._
@@ -20,6 +21,12 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.{ListBuffer, WrappedArray}
 
 object CoreUtils {
+  def intToBytes(int: Int): Array[Byte] =
+    ByteBuffer.allocate(4).putInt(int).array
+
+  def bytesToInt(bytes: Seq[Byte]): Int =
+    ByteBuffer.wrap(bytes.toArray).getInt
+
   def isInBox(left: Int, top: Int, width: Int, height: Int)(x: Int, y: Int) =
     x >= left && x <= left + width && y >= top && y <= top + height
 

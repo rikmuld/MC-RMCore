@@ -1,7 +1,8 @@
 package com.rikmuld.corerm.gui.container
 
 import com.rikmuld.corerm.gui.slots.SlotTabbed
-import com.rikmuld.corerm.network.{PacketSender, PacketTabSwitch}
+import com.rikmuld.corerm.network.PacketSender
+import com.rikmuld.corerm.network.packets.PacketTabSwitch
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.Container
 
@@ -20,7 +21,7 @@ trait ContainerTabbed extends Container {
     tab = index
 
     if(player.world.isRemote)
-      PacketSender.toServer(new PacketTabSwitch(index))
+      PacketSender.sendToServer(new PacketTabSwitch(index))
   }
 
   def getTab: Int =

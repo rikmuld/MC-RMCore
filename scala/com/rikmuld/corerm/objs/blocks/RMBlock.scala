@@ -3,11 +3,12 @@ package com.rikmuld.corerm.objs.blocks
 import java.util.Random
 
 import com.rikmuld.corerm.RMMod
+import com.rikmuld.corerm.gui.GuiSender
 import com.rikmuld.corerm.objs.PropType._
+import com.rikmuld.corerm.objs.items.RMItemBlock
 import com.rikmuld.corerm.objs.{ObjInfo, PropType, Properties}
-import com.rikmuld.corerm.tileentity.{TileEntitySimple}
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import com.rikmuld.corerm.utils.CoreUtils._
-import com.rikmuld.corerm.utils.DataContainer
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.IProperty
@@ -16,16 +17,18 @@ import net.minecraft.block.{Block, BlockContainer}
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.IInventory
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.{EnumBlockRenderType, EnumFacing, EnumHand}
+import net.minecraft.util.{EnumBlockRenderType, EnumFacing, EnumHand, ResourceLocation}
 import net.minecraft.world.{IBlockAccess, World}
 
 class RMBlock(modId:String, info:ObjInfo) extends Block(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
   def getInfo:ObjInfo = info
+  def getModId: String = modId
   if(getInfo.hasProp(PropType.SOUND))this.setSoundType(getInfo.getValue(PropType.SOUND))
 }
 
 abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContainer(info.getValue[Material](PropType.MATERIAL)) with RMCoreBlock {
   def getInfo:ObjInfo = info
+  def getModId: String = modId
   override def createNewTileEntity(world:World, meta:Int):TileEntitySimple = new TileEntitySimple
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.MODEL
   override def breakBlock(world:World, pos:BlockPos, state:IBlockState) {
@@ -35,14 +38,20 @@ abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContain
 }
 
 trait RMCoreBlock extends Block {
-  getInfo.apply(this)
-  
+  getInfo.apply(this, getModId)
+
+  def generateItem(): RMItemBlock =
+    if (getInfo.hasProp(PropType.ITEMBLOCK))
+      getInfo.getValue[Class[RMItemBlock]](PropType.ITEMBLOCK).getConstructor(classOf[Block]).newInstance(this)
+    else classOf[RMItemBlock].getConstructor(classOf[String], classOf[ObjInfo], classOf[Block]).newInstance(getModId, getInfo, this)
+
+  def getModId: String
   def getInfo:ObjInfo
   override def isOpaqueCube(state:IBlockState) = !getInfo.hasProp(PropType.OPACITY)
   override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, hand:EnumHand, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
     if(!world.isRemote){
       if (getInfo.hasProp(GUITRIGGER)) {
-        openGui((world, pos), player, getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[DataContainer[Int]].get.get)
+        GuiSender.openGui(getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[ResourceLocation], player, pos)
         true
       } else false
     } else true  

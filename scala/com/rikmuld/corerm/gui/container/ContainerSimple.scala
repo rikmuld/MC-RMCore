@@ -1,6 +1,7 @@
 package com.rikmuld.corerm.gui.container
 
-import com.rikmuld.corerm.advancements.AdvancementTriggers
+import com.rikmuld.corerm.Library.AdvancementInfo
+import com.rikmuld.corerm.advancements.TriggerHelper
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.inventory.{InventoryCraftResult, InventoryCrafting, _}
 import net.minecraft.item.ItemStack
@@ -17,7 +18,7 @@ abstract class ContainerSimple[A <: IInventory](player: EntityPlayer) extends Co
   getIInventory.openInventory(player)
 
   if(!player.world.isRemote)
-    AdvancementTriggers.guiOpen.trigger(player.asInstanceOf[EntityPlayerMP], getID)
+    TriggerHelper.trigger(AdvancementInfo.GUI_OPEN, player, getID)
 
   def playerInvX: Int =
     8
