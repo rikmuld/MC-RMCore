@@ -2,16 +2,12 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketTileData
-import com.rikmuld.corerm.utils.WorldBlock.BlockData
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.NetworkManager
 import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
 
 class TileEntitySimple extends TileEntity {
-  def bd: BlockData =
-    (world, pos)
-
   override def readFromNBT(tag: NBTTagCompound): Unit =
     super.readFromNBT(tag)
 

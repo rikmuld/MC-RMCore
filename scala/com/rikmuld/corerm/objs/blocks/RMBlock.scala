@@ -1,15 +1,12 @@
 package com.rikmuld.corerm.objs.blocks
 
-import java.util.Random
 
 import com.rikmuld.corerm.gui.GuiHelper
 import com.rikmuld.corerm.objs.PropType._
 import com.rikmuld.corerm.objs.items.RMItemBlock
 import com.rikmuld.corerm.objs.{ObjInfo, PropType, Properties}
 import com.rikmuld.corerm.tileentity.TileEntitySimple
-import com.rikmuld.corerm.utils.CoreUtils._
-import com.rikmuld.corerm.utils.MathUtils
-import com.rikmuld.corerm.utils.WorldBlock._
+import com.rikmuld.corerm.utils.{MathUtils, WorldUtils}
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.IProperty
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
@@ -32,7 +29,7 @@ abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContain
   override def createNewTileEntity(world:World, meta:Int):TileEntitySimple = new TileEntitySimple
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.MODEL
   override def breakBlock(world:World, pos:BlockPos, state:IBlockState) {
-    if((world, pos).tile.isInstanceOf[IInventory])world.dropBlockItems(pos, new Random())
+    if((world, pos).tile.isInstanceOf[IInventory]) WorldUtils.dropBlockItems(world, pos)
     super.breakBlock(world, pos, state)
   }
 }

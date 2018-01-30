@@ -1,7 +1,6 @@
 package com.rikmuld.corerm.objs.blocks
 
 import com.rikmuld.corerm.tileentity.TileEntityBounds
-import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound

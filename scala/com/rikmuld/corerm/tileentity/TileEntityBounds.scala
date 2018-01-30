@@ -3,7 +3,6 @@ package com.rikmuld.corerm.tileentity
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketBounds
 import com.rikmuld.corerm.objs.blocks.Bounds
-import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ITickable
 import net.minecraft.util.math.BlockPos
@@ -51,7 +50,7 @@ class TileEntityBounds extends TileEntitySimple with ITickable {
 
   override def update(): Unit =
     if (!world.isRemote && updateNeed) {
-      PacketSender.sendToClient(new PacketBounds(Some(bounds), bd.x, bd.y, bd.z))
+      PacketSender.sendToClient(new PacketBounds(Some(bounds), getPos.getX, getPos.getY, getPos.getZ))
       updateNeed = false
     }
 

@@ -3,7 +3,6 @@ package com.rikmuld.corerm.objs.blocks
 import java.util.Random
 
 import com.rikmuld.corerm.tileentity.{TileEntityBounds, TileEntitySimple}
-import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.Block
 import net.minecraft.block.state.IBlockState
 import net.minecraft.entity.player.EntityPlayer
