@@ -1,13 +1,12 @@
 package com.rikmuld.corerm.utils
 
-import java.nio.ByteBuffer
 import java.util.{ArrayList, Random}
 
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.{Block, BlockFence}
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.item.EntityItem
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
-import net.minecraft.entity.{EntityList, EntityLivingBase}
 import net.minecraft.init.Blocks
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.{Item, ItemStack}
@@ -21,49 +20,6 @@ import scala.collection.JavaConversions._
 import scala.collection.mutable.{ListBuffer, WrappedArray}
 
 object CoreUtils {
-  def intToBytes(int: Int): Array[Byte] =
-    ByteBuffer.allocate(4).putInt(int).array
-
-  def bytesToInt(bytes: Seq[Byte]): Int =
-    ByteBuffer.wrap(bytes.toArray).getInt
-
-  def isInBox(left: Int, top: Int, width: Int, height: Int)(x: Int, y: Int) =
-    x >= left && x <= left + width && y >= top && y <= top + height
-
-  var startEntityId = 300
-
-  def getUniqueEntityId = {
-    while (EntityList.getClassFromID(startEntityId) != null) startEntityId += 1
-    startEntityId
-  }
-  def nwsk(item:Item) = new ItemStack(item)
-  def nwsk(item:Block) = new ItemStack(item)
-  def nwsk(item:Item, meta:Int) = new ItemStack(item, 1, meta)
-  def nwsk(item:Block, meta:Int) = new ItemStack(item, 1, meta)
-  def nwsk(item:Item, size:Int, meta:Int) = new ItemStack(item, size, meta)
-  def nwsk(item:Block, size:Int, meta:Int) = new ItemStack(item, size, meta)
-  implicit class ItemUtils(obj: AnyRef) {
-    def toStack(): ItemStack = {
-      var stack: ItemStack = null
-      if (obj.isInstanceOf[Block]) stack = new ItemStack(obj.asInstanceOf[Block])
-      else if (obj.isInstanceOf[Item]) stack = new ItemStack(obj.asInstanceOf[Item])
-      else if (obj.isInstanceOf[ItemStack]) stack = obj.asInstanceOf[ItemStack]
-      stack
-    }
-    def toStack(count: Int): ItemStack = {
-      val stack = toStack
-      stack.setCount(count)
-      stack
-    }
-    def getMetaCycle(maxMetadata: Int): Array[ItemStack] = {
-      val stack = Array.ofDim[ItemStack](maxMetadata)
-      for (i <- 0 until maxMetadata) {
-        if (obj.isInstanceOf[Block]) stack(i) = new ItemStack(obj.asInstanceOf[Block], 1, i)
-        if (obj.isInstanceOf[Item]) stack(i) = new ItemStack(obj.asInstanceOf[Item], 1, i)
-      }
-      stack
-    }
-  }
   implicit class WorldUtils(world: World) {
     def dropItemInWorld(itemStack: ItemStack, x: Float, y: Float, z: Float, rand: Random) {
       if (!world.isRemote) {
@@ -184,14 +140,6 @@ object CoreUtils {
       if (returnStack.getItemDamage >= item.getMaxDamage) returnStack2 else returnStack
     }
   }
-
-  implicit class IntArrayUtils(numbers: Array[Int]) {
-    def inverse(): Array[Int] = {
-      val returnNumbers = Array.ofDim[Int](numbers.length)
-      for (i <- 0 until numbers.length) returnNumbers(i) = -numbers(i)
-      returnNumbers
-    }
-  }
   
   implicit class WrappedArrayUtils(wrap:WrappedArray[_]) {
     def unwrap:ListBuffer[Any] = {
@@ -211,12 +159,6 @@ object CoreUtils {
       if(bounds != null) Array(bounds.minY-bd.y, bounds.maxY-bd.y, bounds.maxZ-bd.z, bounds.minZ-bd.z, bounds.minX-bd.x, bounds.maxX-bd.x) else null
     }
   }
-
-  implicit class IntegerUtils(currNumber: Int) {
-    def getScaledNumber(maxNumber: Int, scaledNumber: Int): Float = (currNumber.toFloat / maxNumber.toFloat) * scaledNumber
-    def bitGet(pos:Int, size:Int) = (Math.pow(2, size).toInt - 1) & (currNumber >> pos)
-    def bitPut(pos:Int, data:Int) = currNumber | (data << pos)
-  }
   
   implicit class LivingUtils(entity:EntityLivingBase) {
     def facing:EnumFacing = {
@@ -227,8 +169,5 @@ object CoreUtils {
       else if (facing == EnumFacing.EAST.getHorizontalIndex) EnumFacing.EAST
       else EnumFacing.NORTH
     }
-  }
-  implicit class BoolUtils(value:Boolean) {
-    def intValue = if(value) 1 else 0
   }
 }

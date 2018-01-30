@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.nbt.{NBTTagCompound, NBTTagList}
 import net.minecraftforge.common.util.Constants
 
-object NBTUtil {
+object NBTUtils {
   def readInventory(tag: NBTTagCompound): Map[Byte, ItemStack] = {
     val data = tag.getTagList("items", Constants.NBT.TAG_COMPOUND)
     val inventory = for (i <- 0 until data.tagCount())

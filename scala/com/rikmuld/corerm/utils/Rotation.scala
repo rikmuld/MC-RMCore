@@ -6,13 +6,16 @@ import net.minecraft.init.Blocks
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-import scala.collection.mutable.HashMap
+import scala.collection.mutable
 
 object Rotation {
-  private type RotData = (Int, Int, Int)
-  private type Rotation = (IMLazyBlockData) => Boolean
+  private type RotData =
+    (Int, Int, Int)
+
+  private type Rotation =
+    (IMLazyBlockData) => Boolean
   
-  val blocksRot: HashMap[Block, Either[Rotation, RotData]] = HashMap(
+  val blocksRot: mutable.Map[Block, Either[Rotation, RotData]] = mutable.Map(
       Blocks.FURNACE -> Right((6, 2, 1)),
       Blocks.LIT_FURNACE -> Right((6, 2, 1)),
       Blocks.OAK_STAIRS -> Right((8, 0, 1)),

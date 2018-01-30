@@ -1,8 +1,6 @@
-package com.rikmuld.corerm.utils
+package com.rikmuld.corerm.objs.blocks
 
-import com.rikmuld.corerm.objs.blocks.IBoundsBlock
 import com.rikmuld.corerm.tileentity.TileEntityBounds
-import com.rikmuld.corerm.utils.CoreUtils._
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.state.IBlockState
 import net.minecraft.init.Blocks
@@ -40,8 +38,8 @@ object BoundsStructure {
     else {
       val structure = Array.ofDim[BoundsStructure](4)
       structure(0) = new BoundsStructure(Array(xCoords, yCoords, zCoords))
-      structure(1) = new BoundsStructure(Array(zCoords.inverse, yCoords, xCoords.inverse))
-      structure(2) = new BoundsStructure(Array(xCoords.inverse, yCoords, zCoords.inverse))
+      structure(1) = new BoundsStructure(Array(zCoords.map(i => -i), yCoords, xCoords.map(i => -i)))
+      structure(2) = new BoundsStructure(Array(xCoords.map(i => -i), yCoords, zCoords.map(i => -i)))
       structure(3) = new BoundsStructure(Array(zCoords, yCoords, xCoords))
       structure
     }

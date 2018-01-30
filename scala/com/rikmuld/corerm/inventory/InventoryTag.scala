@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.inventory
 
-import com.rikmuld.corerm.utils.NBTUtil
+import com.rikmuld.corerm.utils.NBTUtils
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 
@@ -27,10 +27,10 @@ trait InventoryTag extends InventorySimple {
   def saveTag(player: EntityPlayer): Unit
 
   def readItems(tag: NBTTagCompound): Unit =
-    for((slot, stack) <- NBTUtil.readInventory(tag)){
+    for((slot, stack) <- NBTUtils.readInventory(tag)){
       setInventorySlotContents(slot, stack)
     }
 
   def writeItems(tag: NBTTagCompound): NBTTagCompound =
-    NBTUtil.writeInventory(tag, this)
+    NBTUtils.writeInventory(tag, this)
 }

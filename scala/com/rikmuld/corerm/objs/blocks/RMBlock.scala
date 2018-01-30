@@ -2,13 +2,13 @@ package com.rikmuld.corerm.objs.blocks
 
 import java.util.Random
 
-import com.rikmuld.corerm.RMMod
-import com.rikmuld.corerm.gui.GuiSender
+import com.rikmuld.corerm.gui.GuiHelper
 import com.rikmuld.corerm.objs.PropType._
 import com.rikmuld.corerm.objs.items.RMItemBlock
 import com.rikmuld.corerm.objs.{ObjInfo, PropType, Properties}
 import com.rikmuld.corerm.tileentity.TileEntitySimple
 import com.rikmuld.corerm.utils.CoreUtils._
+import com.rikmuld.corerm.utils.MathUtils
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.IProperty
@@ -49,14 +49,11 @@ trait RMCoreBlock extends Block {
   def getInfo:ObjInfo
   override def isOpaqueCube(state:IBlockState) = !getInfo.hasProp(PropType.OPACITY)
   override def onBlockActivated(world: World, pos:BlockPos, state:IBlockState, player: EntityPlayer, hand:EnumHand, side: EnumFacing, xHit: Float, yHit: Float, zHit: Float): Boolean = {
-    if(!world.isRemote){
-      if (getInfo.hasProp(GUITRIGGER)) {
-        GuiSender.openGui(getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[ResourceLocation], player, pos)
-        true
-      } else false
-    } else true  
+    if (getInfo.hasProp(GUITRIGGER)) {
+      GuiHelper.forceOpenGui(getInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[ResourceLocation], player, pos)
+      true
+    } else false
   }
-  def openGui(bd:BlockData, player:EntityPlayer, id:Int) = player.openGui(RMMod, id, bd.world, bd.x, bd.y, bd.z)
 }
 
 trait WithInstable extends Block {
@@ -104,8 +101,8 @@ trait WithProperties extends Block {
 }
 
 abstract class RMProp(val prop:IProperty[_], size:Int, bitPos:Int) {
-  def getBitData(meta:Int) = meta.bitGet(bitPos, size)
-  def putBitData(data:Int, meta:Int) = meta.bitPut(bitPos, data)
+  def getBitData(meta:Int) = MathUtils.bitGet(meta, bitPos, size)
+  def putBitData(data:Int, meta:Int) = MathUtils.bitPut(meta, bitPos, data)
   def toIntAndPut(data:Comparable[_], meta:Int) = putBitData(toIntData(data), meta)
   def toIntData(data:Comparable[_]):Int
   def fromIntData[V](data:Int):V
@@ -117,7 +114,7 @@ class RMIntProp(prop:IProperty[java.lang.Integer], size:Int, bitPos:Int) extends
 }
 
 class RMBoolProp(prop:IProperty[java.lang.Boolean], bitPos:Int) extends RMProp(prop, 1, bitPos){
-  def toIntData(data:Comparable[_]):Int = data.asInstanceOf[Boolean].intValue
+  def toIntData(data:Comparable[_]):Int = MathUtils.toInt(data.asInstanceOf[Boolean])
   def fromIntData[V](data:Int):V = (data==1).asInstanceOf[V]
 }
 

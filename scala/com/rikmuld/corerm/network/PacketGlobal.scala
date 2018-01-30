@@ -1,7 +1,7 @@
 package com.rikmuld.corerm.network
 
-import com.rikmuld.corerm.Registry
 import com.rikmuld.corerm.network.packets.PacketBasic
+import com.rikmuld.corerm.registry.Registry
 import io.netty.buffer.ByteBuf
 import net.minecraft.client.Minecraft
 import net.minecraft.network.PacketBuffer

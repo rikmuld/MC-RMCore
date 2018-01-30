@@ -1,8 +1,8 @@
 package com.rikmuld.corerm.network
 
-import com.rikmuld.corerm.Registry
 import com.rikmuld.corerm.network.PacketSender.network
 import com.rikmuld.corerm.network.packets.PacketBasic
+import com.rikmuld.corerm.registry.Registry
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.registries.IForgeRegistryEntry

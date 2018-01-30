@@ -1,9 +1,9 @@
 package com.rikmuld.corerm.gui.gui
 
-import com.rikmuld.corerm.Lib._
+import com.rikmuld.corerm.Library.TextureInfo
 import com.rikmuld.corerm.gui.container.ContainerTabbed
 import com.rikmuld.corerm.gui.gui.buttons.ButtonTabbed
-import com.rikmuld.corerm.utils.CoreUtils
+import com.rikmuld.corerm.utils.MathUtils
 import net.minecraft.client.gui.FontRenderer
 import net.minecraft.client.renderer.RenderItem
 import net.minecraft.entity.player.EntityPlayer
@@ -146,7 +146,7 @@ class Tab(name: String, offset: Int, parent: GuiTabbed, id: Int) {
       parent.setTab(id)
 
   def isHover(mouseX: Int, mouseY: Int): Boolean =
-    CoreUtils.isInBox(left, top, 24, 20)(mouseX, mouseY)
+    MathUtils.isInBox(left, top, 24, 20)(mouseX, mouseY)
 
   def drawBackground(): Unit = {
     if(!enabled)

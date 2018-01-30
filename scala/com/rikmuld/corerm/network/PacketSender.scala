@@ -1,8 +1,8 @@
 package com.rikmuld.corerm.network
 
 import com.rikmuld.corerm.Library.ModInfo._
-import com.rikmuld.corerm.Registry
 import com.rikmuld.corerm.network.packets.PacketBasic
+import com.rikmuld.corerm.registry.Registry
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper

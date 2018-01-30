@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.gui
 
-import com.rikmuld.corerm.Registry
+import com.rikmuld.corerm.registry.Registry
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.{Container, IInventory}
 import net.minecraft.util.ResourceLocation
@@ -37,9 +37,10 @@ class ContainerWrapper(container: Class[Container]) extends IForgeRegistryEntry.
         case 1 =>
           container.getConstructor(classOf[EntityPlayer]).newInstance(player)
         case 2 =>
-          println(player, world.getTileEntity(pos))
-          container.getConstructor(classOf[EntityPlayer], classOf[IInventory])
-            .newInstance(player, world.getTileEntity(pos))
+          Option(world.getTileEntity(pos)).map(tile =>
+            container.getConstructor(classOf[EntityPlayer], classOf[IInventory])
+              .newInstance(player, tile)
+          ).orNull
       }
     )(_.apply(player, world, pos))
 

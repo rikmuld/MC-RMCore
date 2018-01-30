@@ -2,7 +2,7 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketBounds
-import com.rikmuld.corerm.utils.Bounds
+import com.rikmuld.corerm.objs.blocks.Bounds
 import com.rikmuld.corerm.utils.WorldBlock._
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ITickable

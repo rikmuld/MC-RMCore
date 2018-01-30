@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.gui
 
-import com.rikmuld.corerm.Registry
+import com.rikmuld.corerm.registry.Registry
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World

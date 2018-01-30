@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.gui
 
-import com.rikmuld.corerm.Registry
+import com.rikmuld.corerm.registry.Registry
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.IInventory
@@ -37,7 +37,6 @@ class ScreenWrapper(screen: Option[Class[GuiScreen]]) extends IForgeRegistryEntr
   def getID: Int =
     Registry.screenRegistry.getID(this)
 
-  //dangerous!
   def create(player: EntityPlayer, world: World, pos: BlockPos): GuiScreen =
     Option(createFunction).fold(
       typ match {
@@ -46,8 +45,10 @@ class ScreenWrapper(screen: Option[Class[GuiScreen]]) extends IForgeRegistryEntr
         case 1 =>
           screen.get.getConstructor(classOf[EntityPlayer]).newInstance(player)
         case 2 =>
-          screen.get.getConstructor(classOf[EntityPlayer], classOf[IInventory])
-            .newInstance(player, world.getTileEntity(pos))
+          Option(world.getTileEntity(pos)).map(tile =>
+            screen.get.getConstructor(classOf[EntityPlayer], classOf[IInventory])
+              .newInstance(player, tile)
+          ).orNull
       }
     )(_.apply(player, world, pos))
 

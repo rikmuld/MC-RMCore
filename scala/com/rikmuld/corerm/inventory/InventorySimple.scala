@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.inventory
 
-import com.rikmuld.corerm.utils.StackHelper
+import com.rikmuld.corerm.utils.StackUtils
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
 import net.minecraft.util.text.{ITextComponent, TextComponentString}
@@ -56,7 +56,7 @@ trait InventorySimple extends IInventory {
   def setInventorySlotContents(index: Int, stack: ItemStack): Unit = {
     changeInventory(
       if (stack == null) getInventory.updated(index, ItemStack.EMPTY)
-      else getInventory.updated(index, StackHelper.limit(stack, getInventoryStackLimit))
+      else getInventory.updated(index, StackUtils.limit(stack, getInventoryStackLimit))
     )
     onChange(index)
   }

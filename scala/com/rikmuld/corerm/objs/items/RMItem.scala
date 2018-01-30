@@ -2,7 +2,7 @@ package com.rikmuld.corerm.objs.items
 
 import java.util.List
 
-import com.rikmuld.corerm.gui.GuiSender
+import com.rikmuld.corerm.gui.GuiHelper
 import com.rikmuld.corerm.objs.PropType._
 import com.rikmuld.corerm.objs.Properties.{Metadata, Tab}
 import com.rikmuld.corerm.objs.{ObjInfo, PropType, Properties}
@@ -80,7 +80,7 @@ abstract trait RMCoreItem extends Item {
     } else subItems.asInstanceOf[List[ItemStack]].add(new ItemStack(this, 1, 0))
   }
   override def onItemRightClick(world: World, player: EntityPlayer, hand:EnumHand): ActionResult[ItemStack] = {
-    if (!world.isRemote && hand == EnumHand.MAIN_HAND) {
+    if (hand == EnumHand.MAIN_HAND) {
       val stack = player.getHeldItem(hand)
       var success = false
       if(getItemInfo.hasProp(GUITRIGGER_META)){
@@ -90,13 +90,13 @@ abstract trait RMCoreItem extends Item {
         val gui = guis.filter { ids => ids._1 == damage }
 
         if(gui.length>0){
-          GuiSender.openGui(gui(0)._2, player)
+          GuiHelper.openGui(gui(0)._2, player)
           success = true
         }
       }
       if(getItemInfo.hasProp(GUITRIGGER)&&(!success)){
         val gui = getItemInfo.getProp[Properties.GuiTrigger](GUITRIGGER).value.asInstanceOf[ResourceLocation]
-        GuiSender.openGui(gui, player)
+        GuiHelper.openGui(gui, player)
       }
     }
     super.onItemRightClick(world, player, hand)

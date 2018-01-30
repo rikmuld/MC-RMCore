@@ -1,10 +1,10 @@
-package com.rikmuld.corerm
+package com.rikmuld.corerm.registry
 
 import com.rikmuld.corerm.Library._
+import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.advancements.TriggerRegistry
 import com.rikmuld.corerm.gui.{ContainerWrapper, GuiHandler, ScreenWrapper}
 import com.rikmuld.corerm.network.{PacketSender, PacketWrapper}
-import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.registries.{ForgeRegistry, RegistryBuilder}
@@ -50,9 +50,5 @@ object Registry {
 
     advancementRegistry =
       new TriggerRegistry
-
-    MinecraftForge.EVENT_BUS.post(new RegistryEvent.Register[PacketWrapper](Registries.PACKETS, packetRegistry))
-    MinecraftForge.EVENT_BUS.post(new RegistryEvent.Register[ScreenWrapper](Registries.SCREEN, screenRegistry))
-    MinecraftForge.EVENT_BUS.post(new RegistryEvent.Register[ContainerWrapper](Registries.CONTAINER, containerRegistry))
   }
 }

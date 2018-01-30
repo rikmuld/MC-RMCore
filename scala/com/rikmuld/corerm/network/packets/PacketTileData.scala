@@ -1,7 +1,7 @@
 package com.rikmuld.corerm.network.packets
 
 import com.rikmuld.corerm.tileentity.TileEntitySimple
-import com.rikmuld.corerm.utils.CoreUtils._
+import com.rikmuld.corerm.utils.MathUtils._
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer
 import net.minecraft.util.math.BlockPos

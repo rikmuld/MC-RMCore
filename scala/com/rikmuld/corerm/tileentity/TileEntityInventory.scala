@@ -1,7 +1,7 @@
 package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.inventory.InventorySimple
-import com.rikmuld.corerm.utils.NBTUtil
+import com.rikmuld.corerm.utils.NBTUtils
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.tileentity.TileEntity
@@ -13,7 +13,7 @@ trait TileEntityInventory extends TileEntity with InventorySimple {
     else player.getDistanceSq(getPos.getX + 0.5D, getPos.getY + 0.5D, getPos.getZ + 0.5D) <= 64.0D
 
   override def readFromNBT(tag: NBTTagCompound): Unit = {
-    for((slot, stack) <- NBTUtil.readInventory(tag)) {
+    for((slot, stack) <- NBTUtils.readInventory(tag)) {
       setInventorySlotContents(slot, stack)
     }
 
@@ -21,7 +21,7 @@ trait TileEntityInventory extends TileEntity with InventorySimple {
   }
 
   override def writeToNBT(tag: NBTTagCompound): NBTTagCompound =
-    super.writeToNBT(NBTUtil.writeInventory(tag, this))
+    super.writeToNBT(NBTUtils.writeInventory(tag, this))
 
   def openInventory(player: EntityPlayer): Unit =
     Unit

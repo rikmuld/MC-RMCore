@@ -65,5 +65,11 @@ object Library {
     final val TILE_DATA = "tile_data"
     final val BOUNDS = "bounds"
     final val TAB_SWITCH = "tab_switch"
+    final val OPEN_GUI = "open_gui"
+  }
+
+  object TileEntities {
+    final val BOUNDS = MOD_ID + ":bounds"
+    final val SIMPLE = MOD_ID + ":simple"
   }
 }
