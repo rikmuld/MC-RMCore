@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-case class BlockPosUtils(world:World, pos:BlockPos) {
+case class BlockData(world:World, pos:BlockPos) {
   def state: IBlockState =
     world.getBlockState(pos)
 
@@ -60,27 +60,27 @@ case class BlockPosUtils(world:World, pos:BlockPos) {
   def isAir: Boolean =
     world.isAirBlock(pos)
 
-  def north:BlockPosUtils =
+  def north:BlockData =
     newFrom(pos.north)
 
-  def south:BlockPosUtils =
+  def south:BlockData =
     newFrom(pos.south)
 
-  def west:BlockPosUtils =
+  def west:BlockData =
     newFrom(pos.west)
 
-  def east:BlockPosUtils =
+  def east:BlockData =
     newFrom(pos.east)
 
-  def up:BlockPosUtils =
+  def up:BlockData =
     newFrom(pos.up)
 
-  def down:BlockPosUtils =
+  def down:BlockData =
     newFrom(pos.down)
 
-  def newFrom(pos:BlockPos):BlockPosUtils =
-    BlockPosUtils(world, pos)
+  def newFrom(pos:BlockPos):BlockData =
+    BlockData(world, pos)
 
-  def newFrom(facing:EnumFacing):BlockPosUtils =
-    BlockPosUtils(world, pos.offset(facing))
+  def newFrom(facing:EnumFacing):BlockData =
+    BlockData(world, pos.offset(facing))
 }

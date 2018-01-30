@@ -1,8 +1,8 @@
 package com.rikmuld.corerm.objs.blocks
 
 import com.rikmuld.corerm.tileentity.TileEntityBounds
+import com.rikmuld.corerm.utils.BlockData
 import net.minecraft.block.state.IBlockState
-import net.minecraft.init.Blocks
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.math.{AxisAlignedBB, BlockPos}
@@ -47,24 +47,32 @@ object BoundsStructure {
 
 class BoundsStructure(var blocks: Array[Array[Int]]) {
   def canBePlaced(world: World, tracker: BoundsTracker): Boolean = {
-    for (i <- 0 until blocks(0).length) {
-      val bd = getBD(world, tracker, i)
-      if (bd.block != Blocks.AIR && !bd.isReplaceable) return false
+    for (i <- blocks(0).indices if !BlockData(world, getPos(world, tracker, i)).isReplaceable) {
+       return false
     }
-    if (hadSolidUnderGround(world, tracker)) true else false
+    hadSolidUnderGround(world, tracker)
   }
   def createStructure(world: World, tracker: BoundsTracker, boundsBlockState:IBlockState) {
     if(boundsBlockState.getBlock.isInstanceOf[IBoundsBlock]){
-      for (i <- 0 until blocks(0).length) {
-        val bd = getBD(world, tracker, i)
-        bd.setState(boundsBlockState, 2)
+      for (i <- blocks(0).indices) {
+        val bd = getBlockData(world, tracker, i)
+        bd.setState(boundsBlockState)
         bd.tile.asInstanceOf[TileEntityBounds].setBounds(tracker.getBoundsOnRelativePoistion(blocks(0)(i), blocks(1)(i), blocks(2)(i)))
         bd.tile.asInstanceOf[TileEntityBounds].setBaseCoords(tracker.baseX, tracker.baseY, tracker.baseZ)
       }
     }
   }
-  def getBD(world:World, tracker:BoundsTracker, index:Int):BlockData = (world, new BlockPos(tracker.baseX + blocks(0)(index), tracker.baseY + blocks(1)(index), tracker.baseZ + blocks(2)(index)))
-  def destroyStructure(world: World, tracker: BoundsTracker) = for (i <- 0 until blocks(0).length) getBD(world, tracker, i).toAir
+
+  def getPos(world:World, tracker:BoundsTracker, index:Int):BlockPos =
+    new BlockPos(tracker.baseX + blocks(0)(index), tracker.baseY + blocks(1)(index), tracker.baseZ + blocks(2)(index))
+
+  def getBlockData(world:World, tracker:BoundsTracker, index:Int): BlockData =
+    BlockData(world, getPos(world, tracker, index))
+
+  def destroyStructure(world: World, tracker: BoundsTracker) =
+    for (i <- blocks(0).indices)
+      getBlockData(world, tracker, i).toAir
+
   def hadSolidUnderGround(world: World, tracker: BoundsTracker): Boolean = {
     (0 until blocks(0).length).find(i => !world.isSideSolid(new BlockPos(tracker.baseX + blocks(0)(i), tracker.baseY - 1, tracker.baseZ + blocks(2)(i)), EnumFacing.UP)).map(_ => false).getOrElse(true)
   }

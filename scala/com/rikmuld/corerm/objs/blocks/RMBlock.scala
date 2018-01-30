@@ -2,11 +2,9 @@ package com.rikmuld.corerm.objs.blocks
 
 
 import com.rikmuld.corerm.gui.GuiHelper
-import com.rikmuld.corerm.objs.PropType._
-import com.rikmuld.corerm.objs.items.RMItemBlock
-import com.rikmuld.corerm.objs.{ObjInfo, PropType, Properties}
+import com.rikmuld.corerm.objs.Properties
 import com.rikmuld.corerm.tileentity.TileEntitySimple
-import com.rikmuld.corerm.utils.{MathUtils, WorldUtils}
+import com.rikmuld.corerm.utils.{BlockData, MathUtils, WorldUtils}
 import net.minecraft.block.material.Material
 import net.minecraft.block.properties.IProperty
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
@@ -29,7 +27,7 @@ abstract class RMBlockContainer(modId:String, info:ObjInfo) extends BlockContain
   override def createNewTileEntity(world:World, meta:Int):TileEntitySimple = new TileEntitySimple
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.MODEL
   override def breakBlock(world:World, pos:BlockPos, state:IBlockState) {
-    if((world, pos).tile.isInstanceOf[IInventory]) WorldUtils.dropBlockItems(world, pos)
+    if(world.getTileEntity(pos).isInstanceOf[IInventory]) WorldUtils.dropBlockItems(world, pos)
     super.breakBlock(world, pos, state)
   }
 }
@@ -54,19 +52,28 @@ trait RMCoreBlock extends Block {
 }
 
 trait WithInstable extends Block {
-  def dropIfCantStay(bd:BlockData) {
-    if (!canStay(bd)) {
-      breakBlock(bd.world, bd.pos, bd.state)
-      dropBlockAsItemWithChance(bd.world, bd.pos, bd.state, 1, 1)
-      bd.toAir
-      bd.update
-    } else couldStay(bd)
-  }
-  override def canPlaceBlockAt(world: World, pos:BlockPos) = (world, pos).canInstableStand && canStay((world, pos))
-  override def onBlockAdded(world: World, pos:BlockPos, state:IBlockState) = if (!world.isRemote) dropIfCantStay((world, pos))
-  override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block, fromPos: BlockPos) = dropIfCantStay((world, pos))
-  def canStay(bd:BlockData): Boolean = bd.solidBelow
-  def couldStay(bd:BlockData) = {}
+  def dropIfCantStay(world: World, pos:BlockPos): Unit =
+    if (!canStay(world, pos)) {
+      breakBlock(world, pos, world.getBlockState(pos))
+      dropBlockAsItemWithChance(world, pos, world.getBlockState(pos), 1, 1)
+      world.setBlockToAir(pos)
+    } else couldStay(world, pos)
+
+  override def canPlaceBlockAt(world: World, pos:BlockPos):Boolean =
+    super.canPlaceBlockAt(world, pos) && canStay(world, pos)
+
+  override def onBlockAdded(world: World, pos:BlockPos, state:IBlockState):Unit =
+    if (!world.isRemote)
+      dropIfCantStay(world, pos)
+
+  override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block, fromPos: BlockPos):Unit =
+    dropIfCantStay(world, pos)
+
+  def canStay(world: World, pos:BlockPos): Boolean =
+    BlockData(world, pos).solidBelow
+
+  def couldStay(world: World, pos:BlockPos): Unit =
+    Unit
 }
 
 trait WithModel extends Block {
