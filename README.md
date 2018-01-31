@@ -1,2 +1,0 @@
-RikMuldsCore-mcmod
-==================
