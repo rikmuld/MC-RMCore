@@ -2,7 +2,7 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketBounds
-import com.rikmuld.corerm.objs.blocks.Bounds
+import com.rikmuld.corerm.old.Bounds
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ITickable
 import net.minecraft.util.math.BlockPos

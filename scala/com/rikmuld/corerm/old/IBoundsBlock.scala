@@ -1,4 +1,4 @@
-package com.rikmuld.corerm.objs.blocks
+package com.rikmuld.corerm.old
 
 import java.util.Random
 
@@ -16,7 +16,7 @@ object BoundsBlock {
   final val EMPTY = new AxisAlignedBB(0, 0, 0, 0, 0, 0)
 }
 
-abstract trait IBoundsBlock extends RMBlockContainer with WithModel {
+abstract trait IBoundsBlock extends Block {
   override def getRenderType(state:IBlockState) = EnumBlockRenderType.INVISIBLE
   override def getCollisionBoundingBox(state:IBlockState, world: IBlockAccess, pos:BlockPos):AxisAlignedBB =
     if(world.getTileEntity(pos)!=null) 

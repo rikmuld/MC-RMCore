@@ -1,4 +1,4 @@
-package com.rikmuld.corerm.objs.blocks
+package com.rikmuld.corerm.old
 
 import com.rikmuld.corerm.tileentity.TileEntityBounds
 import com.rikmuld.corerm.utils.BlockData

@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.network.packets
 
-import com.rikmuld.corerm.objs.blocks.Bounds
+import com.rikmuld.corerm.old.Bounds
 import com.rikmuld.corerm.tileentity.TileEntityBounds
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer

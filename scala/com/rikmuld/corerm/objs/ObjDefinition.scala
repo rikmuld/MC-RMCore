@@ -1,11 +1,12 @@
 package com.rikmuld.corerm.objs
 
 import com.rikmuld.corerm.objs.Properties._
-import com.rikmuld.corerm.objs.blocks.RMCoreBlock
+import com.rikmuld.corerm.objs.blocks.BlockSimple
 import com.rikmuld.corerm.objs.items._
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 
+//add default values for saturation, wolf meat etc...
 class ObjDefinition(props: Property*) {
   val properties: Set[Property] =
     props.toSet
@@ -15,6 +16,9 @@ class ObjDefinition(props: Property*) {
 
   def get[A <: Property](property: Class[A]): Option[A] =
     properties.find(_.getClass == property).map(_.asInstanceOf[A])
+
+  def has[A <: Property](property: Class[A]): Boolean =
+    properties.exists(_.getClass == property)
 
   def apply(block: Block, modId: String): Unit =
     properties.foreach(prop => ObjDefinition.apply(block, prop, modId))
@@ -64,7 +68,7 @@ object ObjDefinition {
 
   //TODO Item class, Block class
   def instantiateItem(definition: ObjDefinition, modId: String): ItemSimple =
-    if(definition.contains(classOf[FoodPoints]))
+    if(definition.contains(classOf[FoodPoints]) || definition.contains(classOf[Saturation]))
       new ItemFoodRM(modId, definition)
     else if(definition.contains(classOf[ArmorType]))
       new ItemArmorRM(modId, definition)
@@ -72,19 +76,19 @@ object ObjDefinition {
       new ItemRM(modId, definition)
 
   def instantiateItemBlock(definition: ObjDefinition, modId: String, block: Block): ItemBlockRM =
-    definition.get(classOf[ItemBlockClass[_]]).fold { //not sure how this will work with the generic type
+    definition.get(classOf[ItemBlockClass[_ <: ItemBlockRM]]).fold {
       classOf[ItemBlockRM].getConstructor(
         classOf[String],
         classOf[ObjDefinition],
         classOf[Block]
       ).newInstance(modId, definition, block)
     } { itemClass =>
-      itemClass.item.getConstructor(classOf[Block]).newInstance(block).asInstanceOf[ItemBlockRM]
+      itemClass.item.getConstructor(classOf[Block]).newInstance(block)
     }
 
-  def instantiateBlock(definition: ObjDefinition, modId: String): RMCoreBlock =
+  def instantiateBlock(definition: ObjDefinition, modId: String): BlockSimple =
     ???
 
-  def instantiateAll(definition: ObjDefinition, modId: String): (RMCoreBlock, ItemBlockRM) =
+  def instantiateAll(definition: ObjDefinition, modId: String): (BlockSimple, ItemBlockRM) =
     ???
 }

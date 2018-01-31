@@ -1,12 +1,13 @@
 package com.rikmuld.corerm.objs
 
-import com.rikmuld.corerm.objs.blocks.RMCoreBlock
+import com.rikmuld.corerm.objs.blocks.BlockSimple
 import com.rikmuld.corerm.objs.items.{ItemBlockRM, ItemSimple}
 import net.minecraft.block.SoundType
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.inventory.EntityEquipmentSlot
 import net.minecraft.item.ItemArmor.ArmorMaterial
+import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.ResourceLocation
 
 object Properties {
@@ -66,17 +67,29 @@ object Properties {
     final val DIAMOND = 3
   }
 
+  case object Unstable extends Property
+
+  case object HasTileModel extends Property
+
+  case object NonCube extends Property
+
+  case object Invisible extends Property
+
   case class ItemBlockClass[T <: ItemBlockRM](item: Class[T]) extends Property
 
   case class ItemClass[T <: ItemSimple](item: Class[T]) extends Property
 
-  case class BlockClass[T <: RMCoreBlock](item: Class[T]) extends Property
+  case class BlockClass[T <: BlockSimple](block: Class[T]) extends Property
+
+  case class TileEntityClass[T <: TileEntity](tile: Class[T]) extends Property
 
   case class MaxDamage(damage: Int) extends Property
 
   case class MaxStackSize(size: Int) extends Property
 
   case class ItemMetaData(names: String*) extends Property
+
+  case class BlockStates(states: States) extends Property
 
   case class FoodPoints(amount: Int) extends Property
 
@@ -113,11 +126,4 @@ object Properties {
   case class GuiTrigger(id: ResourceLocation) extends Property
 
   case class GuiTriggerMeta(ids: (Int, ResourceLocation)*) extends Property
-
-  //below two, success not guaranteed, actually it does nothing currently
-  //gui trigger and other can be implemented with these
-  //TODO
-  case class MetaProperties(data: (Int, Property)*) extends Property
-
-  case class MetaProperty(meta: Int, property: Property) extends Property
 }

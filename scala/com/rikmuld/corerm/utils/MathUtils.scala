@@ -6,6 +6,12 @@ object MathUtils {
   def intToBytes(int: Int): Array[Byte] =
     ByteBuffer.allocate(4).putInt(int).array
 
+  def log2(int: Double): Double =
+    Math.log(int) / Math.log(2)
+
+  def bitsNeeded(int: Int): Int =
+    Math.ceil(log2(int)).toInt
+
   def bytesToInt(bytes: Seq[Byte]): Int =
     ByteBuffer.wrap(bytes.toArray).getInt
 
