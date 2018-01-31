@@ -1,7 +1,7 @@
 package com.rikmuld.corerm.objs
 
 import com.rikmuld.corerm.objs.blocks.BlockSimple
-import com.rikmuld.corerm.objs.items.{ItemBlockRM, ItemSimple}
+import com.rikmuld.corerm.objs.items.ItemSimple
 import net.minecraft.block.SoundType
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
@@ -75,8 +75,6 @@ object Properties {
 
   case object Invisible extends Property
 
-  case class ItemBlockClass[T <: ItemBlockRM](item: Class[T]) extends Property
-
   case class ItemClass[T <: ItemSimple](item: Class[T]) extends Property
 
   case class BlockClass[T <: BlockSimple](block: Class[T]) extends Property
@@ -88,6 +86,8 @@ object Properties {
   case class MaxStackSize(size: Int) extends Property
 
   case class ItemMetaData(names: String*) extends Property
+
+  case class ItemMetaFromState(property: String) extends Property
 
   case class BlockStates(states: States) extends Property
 

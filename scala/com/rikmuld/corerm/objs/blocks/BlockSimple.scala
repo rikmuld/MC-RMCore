@@ -28,6 +28,17 @@ trait BlockSimple extends Block {
 
   def getInfo: ObjDefinition
 
+  def setState[A](world: World, pos: BlockPos, property: String, data: A): Unit =
+    world.setBlockState(pos,
+      states.get.set(property, data, world.getBlockState(pos))
+    )
+
+  def getState[A](world: World, pos: BlockPos, property: String): Option[A] =
+    getState(world.getBlockState(pos), property)
+
+  def getState[A](state: IBlockState, property: String): Option[A] =
+    states.get.get(property, state)
+
   protected override def createBlockState: BlockStateContainer =
     states.fold(super.createBlockState)(state =>
       state.createState(this)
@@ -85,10 +96,13 @@ trait BlockSimple extends Block {
   override def neighborChanged(state:IBlockState, world:World, pos:BlockPos, block:Block, fromPos: BlockPos): Unit =
     dropIfCantStay(world, pos)
 
-  def dropIfCantStay(world: World, pos:BlockPos): Unit =
-    if (!canStay(world, pos))
+  def dropIfCantStay(world: World, pos:BlockPos): Boolean =
+    if (canStay(world, pos)) false
+    else {
       world.destroyBlock(pos, true)
       //breakBlock(world, pos, world.getBlockState(pos)) not sure if need to call this myself
+      true
+    }
 
   def canStay(world: World, pos:BlockPos): Boolean =
     if(getInfo.has(classOf[Unstable.type]))

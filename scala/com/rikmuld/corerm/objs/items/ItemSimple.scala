@@ -15,8 +15,15 @@ import net.minecraftforge.fml.relauncher.{Side, SideOnly}
 trait ItemSimple extends Item {
   getItemInfo.apply(this, getModId)
 
-  val metadata: Option[ItemMetaData] =
-    getItemInfo.get(classOf[ItemMetaData])
+  val metadata: Option[Seq[String]] = getItemInfo.get(classOf[ItemMetaData]) match {
+    case None =>
+      for {
+        metaInfo <- getItemInfo.get(classOf[ItemMetaFromState])
+        state <- getItemInfo.get(classOf[BlockStates])
+      } yield state.states.metaNames(metaInfo.property).get
+    case Some(names) =>
+      Some(names.names)
+  }
 
   private val simpleName: String =
     getItemInfo.get(classOf[Name]).get.name
@@ -47,7 +54,7 @@ trait ItemSimple extends Item {
       metadata.fold[Unit] {
         subItems.add(new ItemStack(this, 1, 0))
       }{ meta =>
-        for(i <- meta.names.indices)
+        for(i <- meta.indices)
           subItems.add(new ItemStack(this, 1, i))
       }
 
@@ -77,7 +84,7 @@ trait ItemSimple extends Item {
     metadata.fold {
       ModelLoader.setCustomModelResourceLocation(this, 0, modelResource(getRegistryName))
     } { meta =>
-      for(i <- meta.names.indices){
+      for(i <- meta.indices){
         ModelBakery.registerItemVariants(this, registryName(i))
         ModelLoader.setCustomModelResourceLocation(this, i, modelResource(registryName(i)))
       }

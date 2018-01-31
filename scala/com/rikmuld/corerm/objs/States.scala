@@ -65,4 +65,7 @@ class States(props: StateProperty[_]*) {
 
   def set[A](name: String, data: A, state: IBlockState): IBlockState =
     getProperty(name).fold(state)(prop => state.withProperty(prop, data))
+
+  def metaNames(name: String): Option[Seq[String]] =
+    props.find(_.name  == name).map(_.metaNames)
 }

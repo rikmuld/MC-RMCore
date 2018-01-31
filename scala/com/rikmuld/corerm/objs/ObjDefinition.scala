@@ -6,7 +6,6 @@ import com.rikmuld.corerm.objs.items._
 import net.minecraft.block.Block
 import net.minecraft.item.Item
 
-//add default values for saturation, wolf meat etc...
 class ObjDefinition(props: Property*) {
   val properties: Set[Property] =
     props.toSet
@@ -66,17 +65,21 @@ object ObjDefinition {
     case _ =>
   }
 
-  //TODO Item class, Block class
   def instantiateItem(definition: ObjDefinition, modId: String): ItemSimple =
-    if(definition.contains(classOf[FoodPoints]) || definition.contains(classOf[Saturation]))
-      new ItemFoodRM(modId, definition)
-    else if(definition.contains(classOf[ArmorType]))
-      new ItemArmorRM(modId, definition)
-    else
-      new ItemRM(modId, definition)
+    definition.get(classOf[ItemClass[_ <: ItemSimple]]).fold(
+      if(definition.contains(classOf[FoodPoints]) || definition.contains(classOf[Saturation]))
+        new ItemFoodRM(modId, definition)
+      else if(definition.contains(classOf[ArmorType]))
+        new ItemArmorRM(modId, definition)
+      else
+        new ItemRM(modId, definition)
+    )(_.item.getConstructor(
+      classOf[String],
+      classOf[ObjDefinition]
+    ).newInstance(modId, definition))
 
   def instantiateItemBlock(definition: ObjDefinition, modId: String, block: Block): ItemBlockRM =
-    definition.get(classOf[ItemBlockClass[_ <: ItemBlockRM]]).fold {
+    definition.get(classOf[ItemClass[_ <: ItemBlockRM]]).fold {
       classOf[ItemBlockRM].getConstructor(
         classOf[String],
         classOf[ObjDefinition],
@@ -87,8 +90,13 @@ object ObjDefinition {
     }
 
   def instantiateBlock(definition: ObjDefinition, modId: String): BlockSimple =
-    ???
+    definition.get(classOf[BlockClass[_ <: BlockSimple]]).getOrElse(Class[BlockSimple]).block.getConstructor(
+      classOf[String],
+      classOf[ObjDefinition]
+    ).newInstance(modId, definition)
 
-  def instantiateAll(definition: ObjDefinition, modId: String): (BlockSimple, ItemBlockRM) =
-    ???
+  def instantiateAll(definition: ObjDefinition, modId: String): (BlockSimple, ItemBlockRM) = {
+    val block = instantiateBlock(definition, modId)
+    (block, instantiateItemBlock(definition, modId, block))
+  }
 }
