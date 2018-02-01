@@ -20,10 +20,19 @@ trait ItemSimple extends Item {
       for {
         metaInfo <- getItemInfo.get(classOf[ItemMetaFromState])
         state <- getItemInfo.get(classOf[BlockStates])
-      } yield state.states.metaNames(metaInfo.property).get
+      } yield {
+        state.states.metaNames(metaInfo.property).get
+      }
     case Some(names) =>
       Some(names.names)
   }
+
+
+  metadata.foreach(_ => this.setHasSubtypes(true))
+
+  getItemInfo.get(classOf[ForceSubtypes]).map(_.hasSubtypes).foreach(types =>
+    this.setHasSubtypes(types)
+  )
 
   private val simpleName: String =
     getItemInfo.get(classOf[Name]).get.name
@@ -36,7 +45,9 @@ trait ItemSimple extends Item {
   def getModId: String
 
   override def getCreativeTabs: Array[CreativeTabs] =
-    Option(getCreativeTab).fold(Array(CreativeTabs.SEARCH))(tab => Array(tab, CreativeTabs.SEARCH))
+    Option(getCreativeTab).fold[Array[CreativeTabs]](Array())(tab =>
+      Array(tab, CreativeTabs.SEARCH)
+    )
 
   override def getMetadata(damageValue: Int): Int =
     metadata.fold(0)(_ => damageValue)
@@ -61,7 +72,6 @@ trait ItemSimple extends Item {
     if (hand == EnumHand.MAIN_HAND) {
       val item = player.getHeldItem(hand)
       val success = new ActionResult(EnumActionResult.SUCCESS, item)
-      val fail = new ActionResult(EnumActionResult.PASS, item)
 
       if(getItemInfo.get(classOf[GuiTriggerMeta]).exists(
         _.ids.find(_._1 == item.getItemDamage).fold(false)(gui => {
@@ -69,11 +79,13 @@ trait ItemSimple extends Item {
           true
         })
       )) success
-
-      else getItemInfo.get(classOf[GuiTrigger]).fold(fail)(trigger => {
-        GuiHelper.openGui(trigger.id, player)
-        success
-      })
+      else if(getItemInfo.get(classOf[GuiTrigger]).exists(
+        trigger => {
+          GuiHelper.openGui(trigger.id, player)
+          true
+        }
+      )) success
+      else super.onItemRightClick(world, player, hand)
     } else super.onItemRightClick(world, player, hand)
   }
 

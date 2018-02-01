@@ -19,35 +19,35 @@ object StateProperty {
     def fromInt(int: Int): A
   }
 
-  case class PropBool(name: String, default: Boolean = false)
-    extends StateProperty[Boolean] {
+  case class PropBool(name: String, default: java.lang.Boolean = false)
+    extends StateProperty[java.lang.Boolean] {
 
     val size:Int =
       1
 
     val metaNames: Seq[String] =
-      Seq("false", "true")
+      Seq(s"${name}_false", s"${name}_true")
 
-    def toInt(a: Boolean): Int =
+    def toInt(a: java.lang.Boolean): Int =
       MathUtils.toInt(a)
 
-    def fromInt(int: Int): Boolean =
+    def fromInt(int: Int): java.lang.Boolean =
       int == 1
   }
 
-  case class PropInt(name: String, min: Int, max: Int, default: Int = 0)
-    extends StateProperty[Int] {
+  case class PropInt(name: String, min: Int, max: Int, default: java.lang.Integer = 0)
+    extends StateProperty[java.lang.Integer] {
 
     val size:Int =
       MathUtils.bitsNeeded(max - min)
 
     val metaNames: Seq[String] =
-      min until max map(_.toString)
+      min until max map(name + "_" + _.toString)
 
-    def toInt(a: Int): Int =
+    def toInt(a: java.lang.Integer): Int =
       a - min
 
-    def fromInt(int: Int): Int =
+    def fromInt(int: Int): java.lang.Integer =
       int + min
   }
 
@@ -70,11 +70,11 @@ object StateProperty {
 
     val metaNames: Seq[String] = typ match {
       case All =>
-        EnumFacing.VALUES.map(_.name)
+        EnumFacing.VALUES.map(name + "_" + _.name)
       case Horizontal =>
-        EnumFacing.HORIZONTALS.map(_.name)
+        EnumFacing.HORIZONTALS.map(name + "_" + _.name)
       case Split =>
-        Seq("south", "west")
+        Seq(s"${name}_south", s"${name}_west")
     }
 
     def fromInt(int: Int): EnumFacing = typ match {

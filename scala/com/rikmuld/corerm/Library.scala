@@ -7,7 +7,7 @@ object Library {
   object ModInfo {
     final val MOD_ID = "corerm"
     final val MOD_NAME = "RikMuld's Core"
-    final val MOD_VERSION = "1.2h"
+    final val MOD_VERSION = "1.3.0"
     final val MOD_LANUAGE = "scala"
     final val MOD_DEPENDENCIES = "required-after:forge@[v13.20.1.2386,)"
     final val PACKET_CHANEL = MOD_ID

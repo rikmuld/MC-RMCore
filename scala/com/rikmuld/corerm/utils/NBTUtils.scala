@@ -18,6 +18,11 @@ object NBTUtils {
   def writeInventory(tag: NBTTagCompound, inventory: IInventory): NBTTagCompound =
     writeInventory(tag, inventoryToItems(inventory).toMap)
 
+  def writeInventory2(tag: NBTTagCompound, inventory: Map[Int, ItemStack]): NBTTagCompound =
+    writeInventory(tag, inventory.map{
+      case(int, stack) => int.toByte -> stack
+    })
+
   def writeInventory(tag: NBTTagCompound, inventory: Map[Byte, ItemStack]): NBTTagCompound = {
     val data = new NBTTagList()
 

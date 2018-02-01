@@ -8,7 +8,7 @@ import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.inventory.EntityEquipmentSlot
 import net.minecraft.item.ItemArmor.ArmorMaterial
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.ResourceLocation
+import net.minecraft.util.{BlockRenderLayer, ResourceLocation}
 
 object Properties {
   trait Property
@@ -113,7 +113,11 @@ object Properties {
     final val Poor = Nourishment(0.2f)
   }
 
+  case class RenderType(layer: BlockRenderLayer) extends Property
+
   case class StepType(step: SoundType) extends Property
+
+  case class ForceSubtypes(hasSubtypes: Boolean) extends Property
 
   case class LikedByWolfs(wolfMeat: Boolean) extends Property
 

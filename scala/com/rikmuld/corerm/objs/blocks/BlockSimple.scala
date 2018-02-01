@@ -11,16 +11,12 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.math.BlockPos
-import net.minecraft.util.{EnumBlockRenderType, EnumFacing, EnumHand}
-import net.minecraft.world.{IBlockAccess, World}
+import net.minecraft.util.{BlockRenderLayer, EnumBlockRenderType, EnumFacing, EnumHand}
+import net.minecraft.world.World
 
 trait BlockSimple extends Block {
   getInfo.apply(this, getModId)
-
-  val states: Option[States] =
-    getInfo.get(classOf[BlockStates]).map(_.states)
-
-  states.foreach(state =>
+  getStates.foreach(state =>
     setInitialState(state.getDefaultState(getBlockState))
   )
 
@@ -30,19 +26,40 @@ trait BlockSimple extends Block {
 
   def getInfo: ObjDefinition
 
+  private def getStates: Option[States] =
+    getInfo.get(classOf[BlockStates]).map(_.states)
+
   def setState[B <: Comparable[B], A <: B](world: World, pos: BlockPos, property: String, data: A): Unit =
     world.setBlockState(pos,
-      states.get.set[B, A](property, data, world.getBlockState(pos))
+      getStates.get.set[B, A](property, data, world.getBlockState(pos))
     )
 
   def getState[A](world: World, pos: BlockPos, property: String): Option[A] =
     getState(world.getBlockState(pos), property)
 
   def getState[A](state: IBlockState, property: String): Option[A] =
-    states.get.get(property, state)
+    getStates.get.get(property, state)
+
+  def getBool(world: World, pos: BlockPos, property: String): Boolean =
+    getBool(world.getBlockState(pos), property)
+
+  def getBool(state: IBlockState, property: String): Boolean =
+    getState(state, property).getOrElse(false)
+
+  def getInt(world: World, pos: BlockPos, property: String): Int =
+    getInt(world.getBlockState(pos), property)
+
+  def getInt(state: IBlockState, property: String): Int =
+    getState(state, property).getOrElse(-1)
+
+  def getDirection(world: World, pos: BlockPos, property: String): EnumFacing =
+    getDirection(world.getBlockState(pos), property)
+
+  def getDirection(state: IBlockState, property: String): EnumFacing =
+    getState(state, property).getOrElse(EnumFacing.SOUTH)
 
   protected override def createBlockState: BlockStateContainer =
-    states.fold(super.createBlockState)(state =>
+    getStates.fold(super.createBlockState)(state =>
       state.createState(this)
     )
 
@@ -52,10 +69,10 @@ trait BlockSimple extends Block {
     )
 
   override def getStateFromMeta(meta:Int):IBlockState =
-    states.fold(getDefaultState)(states => states.fromMeta(getBlockState, meta))
+    getStates.fold(getDefaultState)(states => states.fromMeta(getBlockState, meta))
 
   override def getMetaFromState(state:IBlockState):Int =
-    states.fold(0)(states => states.toMeta(state))
+    getStates.fold(0)(states => states.toMeta(state))
 
   override def onBlockActivated(world: World, pos: BlockPos, state: IBlockState,
                                 player: EntityPlayer, hand:EnumHand, side: EnumFacing,
@@ -70,27 +87,30 @@ trait BlockSimple extends Block {
   override def onBlockPlacedBy(world: World, pos: BlockPos, state: IBlockState,
                                placer: EntityLivingBase, stack: ItemStack): Unit = {
 
-    states.foreach(states =>
+    getStates.foreach(states =>
       // TODO only works for horizontal now, switch for other types
       world.setBlockState(pos, states.set("facing", placer.getHorizontalFacing, state))
     )
   }
 
   override def getRenderType(state: IBlockState): EnumBlockRenderType =
-    if(getInfo.has(Unstable))
+    if(getInfo.has(Invisible))
       EnumBlockRenderType.INVISIBLE
     else if(getInfo.has(HasTileModel))
       EnumBlockRenderType.ENTITYBLOCK_ANIMATED
     else
       EnumBlockRenderType.MODEL
 
-  override def isNormalCube(state: IBlockState, world: IBlockAccess, pos: BlockPos): Boolean =
-    !getInfo.has(NonCube)
-
   override def isOpaqueCube(state: IBlockState): Boolean =
     !getInfo.has(Invisible) &&
       !getInfo.has(NonCube) &&
-      !getInfo.get(classOf[LightOpacity]).fold(false)(_ != 255)
+      !getInfo.get(classOf[LightOpacity]).fold(false)(_.opacity != 255)
+
+  override def isFullCube(state: IBlockState): Boolean =
+    !getInfo.has(NonCube)
+
+  override def getBlockLayer: BlockRenderLayer =
+    getInfo.get(classOf[RenderType]).fold(BlockRenderLayer.SOLID)(_.layer)
 
   override def canPlaceBlockAt(world: World, pos:BlockPos):Boolean =
     super.canPlaceBlockAt(world, pos) && canStay(world, pos)

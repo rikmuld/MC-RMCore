@@ -1,7 +1,7 @@
 package com.rikmuld.corerm.objs
 
 import com.rikmuld.corerm.objs.Properties._
-import com.rikmuld.corerm.objs.blocks.BlockSimple
+import com.rikmuld.corerm.objs.blocks.{BlockRM, BlockSimple}
 import com.rikmuld.corerm.objs.items._
 import net.minecraft.block.Block
 import net.minecraft.item.Item
@@ -62,6 +62,8 @@ object ObjDefinition {
       block.setLightLevel(light)
     case HarvestLevel(level, tool) =>
       block.setHarvestLevel(tool, level)
+    case Tab(tab) =>
+      block.setCreativeTab(tab)
     case _ =>
   }
 
@@ -75,8 +77,6 @@ object ObjDefinition {
       item.setMaxStackSize(size)
     case MaxDamage(damage) =>
       item.setMaxDamage(damage)
-    case ItemMetaData(_) =>
-      item.setHasSubtypes(true)
     case _ =>
   }
 
@@ -105,7 +105,7 @@ object ObjDefinition {
     }
 
   def instantiateBlock(definition: ObjDefinition, modId: String): BlockSimple =
-    definition.get(classOf[BlockClass[_ <: BlockSimple]]).map(_.block).getOrElse(classOf[BlockSimple]).getConstructor(
+    definition.get(classOf[BlockClass[_ <: BlockSimple]]).map(_.block).getOrElse(classOf[BlockRM]).getConstructor(
       classOf[String],
       classOf[ObjDefinition]
     ).newInstance(modId, definition)
