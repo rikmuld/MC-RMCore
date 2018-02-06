@@ -2,12 +2,12 @@ package com.rikmuld.corerm.objs
 
 import com.rikmuld.corerm.objs.blocks.BlockSimple
 import com.rikmuld.corerm.objs.items.ItemSimple
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import net.minecraft.block.SoundType
 import net.minecraft.block.material.Material
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.inventory.EntityEquipmentSlot
 import net.minecraft.item.ItemArmor.ArmorMaterial
-import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.{BlockRenderLayer, ResourceLocation}
 
 object Properties {
@@ -79,7 +79,7 @@ object Properties {
 
   case class BlockClass[T <: BlockSimple](block: Class[T]) extends Property
 
-  case class TileEntityClass[T <: TileEntity](tile: Class[T]) extends Property
+  case class TileEntityClass[T <: TileEntitySimple](tile: Class[T]) extends Property
 
   case class MaxDamage(damage: Int) extends Property
 

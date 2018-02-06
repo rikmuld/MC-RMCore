@@ -3,6 +3,7 @@ package com.rikmuld.corerm.objs.blocks
 import com.rikmuld.corerm.gui.GuiHelper
 import com.rikmuld.corerm.objs.Properties._
 import com.rikmuld.corerm.objs.{ObjDefinition, States}
+import com.rikmuld.corerm.tileentity.TileEntitySimple
 import com.rikmuld.corerm.utils.BlockData
 import net.minecraft.block.Block
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
@@ -29,9 +30,9 @@ trait BlockSimple extends Block {
   private def getStates: Option[States] =
     getInfo.get(classOf[BlockStates]).map(_.states)
 
-  def setState[B <: Comparable[B], A <: B](world: World, pos: BlockPos, property: String, data: A): Unit =
+  def setState[A](world: World, pos: BlockPos, property: String, data: A): Unit =
     world.setBlockState(pos,
-      getStates.get.set[B, A](property, data, world.getBlockState(pos))
+      getStates.get.set(property, data, world.getBlockState(pos))
     )
 
   def getState[A](world: World, pos: BlockPos, property: String): Option[A] =
@@ -64,9 +65,12 @@ trait BlockSimple extends Block {
     )
 
   override def createTileEntity(world: World, state: IBlockState): TileEntity =
-    getInfo.get(classOf[TileEntityClass[_ <: TileEntity]]).fold[TileEntity](null)(
+    getInfo.get(classOf[TileEntityClass[_ <: TileEntitySimple]]).fold[TileEntity](null)(
       tile => tile.tile.newInstance()
     )
+
+  override def hasTileEntity(state: IBlockState): Boolean =
+    getInfo.has(classOf[TileEntityClass[_ <: TileEntitySimple]])
 
   override def getStateFromMeta(meta:Int):IBlockState =
     getStates.fold(getDefaultState)(states => states.fromMeta(getBlockState, meta))

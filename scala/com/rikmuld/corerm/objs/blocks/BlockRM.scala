@@ -8,8 +8,6 @@ import net.minecraft.block.state.IBlockState
 class BlockRM(modId:String, info:ObjDefinition)
   extends Block(info.get(classOf[PropMaterial]).get.material) with BlockSimple {
 
-  println(fullBlock)
-
   override def getModId: String =
     modId
 

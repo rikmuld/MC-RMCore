@@ -94,15 +94,14 @@ object ObjDefinition {
     ).newInstance(modId, definition))
 
   def instantiateItemBlock(definition: ObjDefinition, modId: String, block: Block): ItemBlockRM =
-    definition.get(classOf[ItemClass[_ <: ItemBlockRM]]).fold {
-      classOf[ItemBlockRM].getConstructor(
+    definition.get(classOf[ItemClass[_ <: ItemBlockRM]]).fold(
+      new ItemBlockRM(modId, definition, block)
+    )( _.item.getConstructor(
         classOf[String],
         classOf[ObjDefinition],
         classOf[Block]
       ).newInstance(modId, definition, block)
-    } { itemClass =>
-      itemClass.item.getConstructor(classOf[Block]).newInstance(block)
-    }
+    )
 
   def instantiateBlock(definition: ObjDefinition, modId: String): BlockSimple =
     definition.get(classOf[BlockClass[_ <: BlockSimple]]).map(_.block).getOrElse(classOf[BlockRM]).getConstructor(

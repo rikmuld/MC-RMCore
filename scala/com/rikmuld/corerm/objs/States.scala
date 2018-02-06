@@ -61,11 +61,11 @@ class States(props: StateProperty[_ <: Comparable[_]]*) {
   def get[B <: Comparable[B], A <: B](name: String, state: IBlockState): Option[A] =
     getProperty(name).map(prop => state.getValue(prop.asInstanceOf[IProperty[B]]).asInstanceOf[A])
 
-  def is[B <: Comparable[B], A <: B](name: String, data: A, state: IBlockState): Boolean =
-    get[B, A](name, state).contains(data)
+  def is[B <: Comparable[B], A <: B](name: String, data: Any, state: IBlockState): Boolean =
+    get[B, A](name, state).contains(data.asInstanceOf[A])
 
-  def set[B <: Comparable[B], A <: B](name: String, data: A, state: IBlockState): IBlockState =
-    getProperty(name).fold(state)(prop => state.withProperty[B, A](prop.asInstanceOf[IProperty[B]], data))
+  def set[B <: Comparable[B], A <: B](name: String, data: Any, state: IBlockState): IBlockState =
+    getProperty(name).fold(state)(prop => state.withProperty[B, A](prop.asInstanceOf[IProperty[B]], data.asInstanceOf[A]))
 
   def metaNames(name: String): Option[Seq[String]] =
     props.find(_.name  == name).map(_.metaNames)

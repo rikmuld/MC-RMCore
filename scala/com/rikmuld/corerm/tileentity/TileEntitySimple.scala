@@ -2,10 +2,14 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketTileData
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.NetworkManager
 import net.minecraft.network.play.server.SPacketUpdateTileEntity
 import net.minecraft.tileentity.TileEntity
+import net.minecraft.util.math.BlockPos
+import net.minecraft.world.World
 
 class TileEntitySimple extends TileEntity {
   override def readFromNBT(tag: NBTTagCompound): Unit =
@@ -31,4 +35,7 @@ class TileEntitySimple extends TileEntity {
 
   override def getUpdateTag: NBTTagCompound =
     this.writeToNBT(super.getUpdateTag)
+
+  def init(stack: ItemStack, player: EntityPlayer, world: World, pos: BlockPos): Unit =
+    Unit
 }
