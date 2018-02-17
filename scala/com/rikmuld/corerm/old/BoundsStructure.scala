@@ -1,7 +1,6 @@
 package com.rikmuld.corerm.old
 
 import com.rikmuld.corerm.tileentity.TileEntityBounds
-import com.rikmuld.corerm.utils.BlockData
 import net.minecraft.block.state.IBlockState
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumFacing

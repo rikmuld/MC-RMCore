@@ -8,12 +8,20 @@ trait InventoryTag extends InventorySimple {
   private val tag: NBTTagCompound =
     loadTag()
 
+  private var opened: Boolean =
+    false
+
+  override def isOpen: Boolean =
+    opened
+
   def closeInventory(player:EntityPlayer): Unit =
     saveTag(player)
 
   def openInventory(player:EntityPlayer): Unit = {
     readItems(tag)
     writeItems(tag)
+
+    opened = true
   }
 
   def markDirty(): Unit =

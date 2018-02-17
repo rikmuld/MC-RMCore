@@ -64,6 +64,8 @@ object ObjDefinition {
       block.setHarvestLevel(tool, level)
     case Tab(tab) =>
       block.setCreativeTab(tab)
+    case Ticker =>
+      block.setTickRandomly(true)
     case _ =>
   }
 

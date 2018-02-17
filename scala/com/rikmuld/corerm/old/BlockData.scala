@@ -1,4 +1,4 @@
-package com.rikmuld.corerm.utils
+package com.rikmuld.corerm.old
 
 import com.rikmuld.corerm.utils.WorldUtils._
 import net.minecraft.block.Block

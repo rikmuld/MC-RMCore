@@ -23,6 +23,9 @@ trait InventorySimple extends IInventory {
     setInventory(inventory)
   }
 
+  def isOpen: Boolean =
+    true
+
   def isEmpty: Boolean =
     getInventory.forall(_.isEmpty)
 
@@ -58,7 +61,9 @@ trait InventorySimple extends IInventory {
       if (stack == null) getInventory.updated(index, ItemStack.EMPTY)
       else getInventory.updated(index, StackUtils.limit(stack, getInventoryStackLimit))
     )
-    onChange(index)
+
+    if(isOpen)
+      onChange(index)
   }
 
   def onChange(slot: Int): Unit =

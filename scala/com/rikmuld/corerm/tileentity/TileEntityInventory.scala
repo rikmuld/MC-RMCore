@@ -4,10 +4,9 @@ import com.rikmuld.corerm.inventory.InventorySimple
 import com.rikmuld.corerm.utils.NBTUtils
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.text.ITextComponent
+import net.minecraft.util.text.{ITextComponent, TextComponentString}
 
-trait TileEntityInventory extends TileEntity with InventorySimple {
+abstract class TileEntityInventory extends TileEntitySimple with InventorySimple {
   override def isUsableByPlayer(player: EntityPlayer): Boolean =
     if (getWorld.getTileEntity(getPos) != this) false
     else player.getDistanceSq(getPos.getX + 0.5D, getPos.getY + 0.5D, getPos.getZ + 0.5D) <= 64.0D
@@ -30,5 +29,5 @@ trait TileEntityInventory extends TileEntity with InventorySimple {
     Unit
 
   override def getDisplayName: ITextComponent =
-    super.getDisplayName
+    new TextComponentString(getName)
 }

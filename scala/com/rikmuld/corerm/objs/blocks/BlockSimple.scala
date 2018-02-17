@@ -4,16 +4,21 @@ import com.rikmuld.corerm.gui.GuiHelper
 import com.rikmuld.corerm.objs.Properties._
 import com.rikmuld.corerm.objs.{ObjDefinition, States}
 import com.rikmuld.corerm.tileentity.TileEntitySimple
-import com.rikmuld.corerm.utils.BlockData
+import com.rikmuld.corerm.utils.WorldUtils
 import net.minecraft.block.Block
 import net.minecraft.block.state.{BlockStateContainer, IBlockState}
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.tileentity.TileEntity
-import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.{AxisAlignedBB, BlockPos}
 import net.minecraft.util.{BlockRenderLayer, EnumBlockRenderType, EnumFacing, EnumHand}
-import net.minecraft.world.World
+import net.minecraft.world.{IBlockAccess, World}
+
+object BlockSimple {
+  final val BOUNDS_EMPTY =
+    new AxisAlignedBB(0, 0, 0, 0, 0, 0)
+}
 
 trait BlockSimple extends Block {
   getInfo.apply(this, getModId)
@@ -34,6 +39,9 @@ trait BlockSimple extends Block {
     world.setBlockState(pos,
       getStates.get.set(property, data, world.getBlockState(pos))
     )
+
+  def setState[A](state: IBlockState, property: String, data: A): IBlockState =
+    getStates.get.set(property, data, state)
 
   def getState[A](world: World, pos: BlockPos, property: String): Option[A] =
     getState(world.getBlockState(pos), property)
@@ -91,6 +99,8 @@ trait BlockSimple extends Block {
   override def onBlockPlacedBy(world: World, pos: BlockPos, state: IBlockState,
                                placer: EntityLivingBase, stack: ItemStack): Unit = {
 
+    //TODO make sure that if no item metadata it spawns the block with state default
+
     getStates.foreach(states =>
       // TODO only works for horizontal now, switch for other types
       world.setBlockState(pos, states.set("facing", placer.getHorizontalFacing, state))
@@ -98,7 +108,7 @@ trait BlockSimple extends Block {
   }
 
   override def getRenderType(state: IBlockState): EnumBlockRenderType =
-    if(getInfo.has(Invisible))
+    if(getInfo.has(Invisible) | getInfo.has(Air))
       EnumBlockRenderType.INVISIBLE
     else if(getInfo.has(HasTileModel))
       EnumBlockRenderType.ENTITYBLOCK_ANIMATED
@@ -106,15 +116,24 @@ trait BlockSimple extends Block {
       EnumBlockRenderType.MODEL
 
   override def isOpaqueCube(state: IBlockState): Boolean =
-    !getInfo.has(Invisible) &&
+    !getInfo.has(Air) &&
+      !getInfo.has(Invisible) &&
       !getInfo.has(NonCube) &&
       !getInfo.get(classOf[LightOpacity]).fold(false)(_.opacity != 255)
 
   override def isFullCube(state: IBlockState): Boolean =
-    !getInfo.has(NonCube)
+    !getInfo.has(NonCube) && !getInfo.has(Air)
 
   override def getBlockLayer: BlockRenderLayer =
     getInfo.get(classOf[RenderType]).fold(BlockRenderLayer.SOLID)(_.layer)
+
+  override def getCollisionBoundingBox(state: IBlockState, world: IBlockAccess, pos: BlockPos): AxisAlignedBB =
+    if(getInfo.has(Air) || getInfo.has(NoCollision)) BlockSimple.BOUNDS_EMPTY
+    else super.getCollisionBoundingBox(state, world, pos)
+
+  override def getBoundingBox(state: IBlockState, source: IBlockAccess, pos: BlockPos): AxisAlignedBB =
+    if(getInfo.has(Air)) BlockSimple.BOUNDS_EMPTY
+    else super.getBoundingBox(state, source, pos)
 
   override def canPlaceBlockAt(world: World, pos:BlockPos):Boolean =
     super.canPlaceBlockAt(world, pos) && canStay(world, pos)
@@ -126,13 +145,18 @@ trait BlockSimple extends Block {
     if (canStay(world, pos)) false
     else {
       world.destroyBlock(pos, true)
-      //breakBlock(world, pos, world.getBlockState(pos)) not sure if need to call this myself
       true
     }
 
+  override def breakBlock(world: World, pos: BlockPos, state: IBlockState): Unit = {
+    WorldUtils.dropBlockItems(world, pos)
+
+    super.breakBlock(world, pos, state)
+  }
+
   def canStay(world: World, pos:BlockPos): Boolean =
     if(getInfo.has(Unstable))
-      BlockData(world, pos).solidBelow
+      world.isSideSolid(pos.down, EnumFacing.UP)
     else
       true
 }

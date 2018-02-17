@@ -75,6 +75,12 @@ object Properties {
 
   case object Invisible extends Property
 
+  case object Air extends Property
+
+  case object Ticker extends Property
+
+  case object NoCollision extends Property
+
   case class ItemClass[T <: ItemSimple](item: Class[T]) extends Property
 
   case class BlockClass[T <: BlockSimple](block: Class[T]) extends Property
