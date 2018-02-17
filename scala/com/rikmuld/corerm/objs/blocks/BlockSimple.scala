@@ -43,19 +43,25 @@ trait BlockSimple extends Block {
   def setState[A](state: IBlockState, property: String, data: A): IBlockState =
     getStates.get.set(property, data, state)
 
-  def getState[A](world: World, pos: BlockPos, property: String): Option[A] =
+  def getState[A](world: IBlockAccess, pos: BlockPos, property: String): Option[A] =
     getState(world.getBlockState(pos), property)
 
   def getState[A](state: IBlockState, property: String): Option[A] =
     getStates.get.get(property, state)
 
-  def getBool(world: World, pos: BlockPos, property: String): Boolean =
+  def getBool(world: IBlockAccess, pos: BlockPos, property: String): Boolean =
     getBool(world.getBlockState(pos), property)
 
   def getBool(state: IBlockState, property: String): Boolean =
     getState(state, property).getOrElse(false)
 
-  def getInt(world: World, pos: BlockPos, property: String): Int =
+  def getFacing(world: IBlockAccess, pos: BlockPos): EnumFacing =
+    getFacing(world.getBlockState(pos))
+
+  def getFacing(state: IBlockState): EnumFacing =
+    getDirection(state, "facing")
+
+  def getInt(world: IBlockAccess, pos: BlockPos, property: String): Int =
     getInt(world.getBlockState(pos), property)
 
   def getInt(state: IBlockState, property: String): Int =
