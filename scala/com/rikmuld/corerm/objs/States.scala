@@ -17,6 +17,8 @@ class States(props: StateProperty[_ <: Comparable[_]]*) {
         acc :+ (next -> (acc.last._1.size + acc.last._2))
     }.toMap
 
+  println(position)
+
   val properties: Seq[Property] = props.map({
     case PropInt(name, min, max, _) =>
       PropertyInteger.create(name, min, max)
@@ -33,7 +35,7 @@ class States(props: StateProperty[_ <: Comparable[_]]*) {
     props.find(_.name == prop.getName).get.asInstanceOf[StateProperty[B]]
 
   private def toMeta[A](prop: StateProperty[A], value: A): Int =
-    prop.toInt(value) >> position(prop)
+    prop.toInt(value) << position(prop)
 
   def toMeta[B <: Comparable[B], A <: B](state: IBlockState): Int =
     state.getProperties.foldLeft(0) {
