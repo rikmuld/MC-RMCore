@@ -64,8 +64,6 @@ object StateProperty {
         a.getIndex
       case Horizontal =>
         a.getHorizontalIndex
-      case Split =>
-        a.getHorizontalIndex % 2
     }
 
     val metaNames: Seq[String] = typ match {
@@ -73,14 +71,12 @@ object StateProperty {
         EnumFacing.VALUES.map(name + "_" + _.name)
       case Horizontal =>
         EnumFacing.HORIZONTALS.map(name + "_" + _.name)
-      case Split =>
-        Seq(s"${name}_south", s"${name}_west")
     }
 
     def fromInt(int: Int): EnumFacing = typ match {
       case All =>
         EnumFacing.getFront(int)
-      case Horizontal | Split =>
+      case Horizontal =>
         EnumFacing.getHorizontal(int)
     }
   }
@@ -90,19 +86,16 @@ object StateProperty {
       val size: Int = this match {
         case All => 3
         case Horizontal => 2
-        case Split => 1
       }
 
       val facings: Seq[EnumFacing] = this match {
         case All => EnumFacing.VALUES
         case Horizontal => EnumFacing.HORIZONTALS
-        case Split => Seq(EnumFacing.SOUTH, EnumFacing.WEST)
       }
     }
 
     case object All extends DirectionType
     case object Horizontal extends DirectionType
-    case object Split extends DirectionType
   }
 
   case class PropEnum[A <: Enum[A]](name: String, default: Enum[A]) extends StateProperty[Enum[A]] {
