@@ -21,6 +21,7 @@ trait TileEntityTicker extends ITickable {
     tickers(tickDelay) =
       tickers.getOrElse(tickDelay, Vector()) :+ ticker
 
+  //TODO change to counters, not modulus
   override def update(): Unit = {
     tickers.foreach {
       case(tickTime, tickerList) =>

@@ -20,8 +20,8 @@ class States(props: StateProperty[_ <: Comparable[_]]*) {
   println(position)
 
   val properties: Seq[Property] = props.map({
-    case PropInt(name, min, max, _) =>
-      PropertyInteger.create(name, min, max)
+    case PropInt(name, min, length, _) =>
+      PropertyInteger.create(name, min, min + length - 1)
     case PropBool(name, _) =>
       PropertyBool.create(name)
     case PropDirection(typ, name, _) =>

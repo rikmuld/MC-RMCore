@@ -92,15 +92,16 @@ trait BlockSimple extends Block {
   override def getMetaFromState(state:IBlockState):Int =
     getStates.fold(0)(states => states.toMeta(state))
 
+
+  //TODO for client only guis this may not work properly, using !world.remote check and force open may be better
   override def onBlockActivated(world: World, pos: BlockPos, state: IBlockState,
                                 player: EntityPlayer, hand:EnumHand, side: EnumFacing,
-                                xHit: Float, yHit: Float, zHit: Float): Boolean = {
+                                xHit: Float, yHit: Float, zHit: Float): Boolean =
 
     getInfo.get(classOf[GuiTrigger]).fold(false)(gui => {
-      GuiHelper.forceOpenGui(gui.id, player, pos)
+      GuiHelper.openGui(gui.id, player, pos)
       true
     })
-  }
 
   override def onBlockPlacedBy(world: World, pos: BlockPos, state: IBlockState,
                                placer: EntityLivingBase, stack: ItemStack): Unit = {

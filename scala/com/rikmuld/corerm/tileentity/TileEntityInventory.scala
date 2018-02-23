@@ -7,6 +7,9 @@ import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.text.{ITextComponent, TextComponentString}
 
 abstract class TileEntityInventory extends TileEntitySimple with InventorySimple {
+  private var open: Boolean =
+    false
+
   override def isUsableByPlayer(player: EntityPlayer): Boolean =
     if (getWorld.getTileEntity(getPos) != this) false
     else player.getDistanceSq(getPos.getX + 0.5D, getPos.getY + 0.5D, getPos.getZ + 0.5D) <= 64.0D
@@ -17,10 +20,20 @@ abstract class TileEntityInventory extends TileEntitySimple with InventorySimple
     }
 
     super.readFromNBT(tag)
+
+    open = true
   }
 
   override def writeToNBT(tag: NBTTagCompound): NBTTagCompound =
     super.writeToNBT(NBTUtils.writeInventory(tag, this))
+
+  override def isOpen: Boolean =
+    open
+
+  override def onLoad(): Unit = {
+    println(world.isRemote)
+    open = true
+  }
 
   def openInventory(player: EntityPlayer): Unit =
     Unit

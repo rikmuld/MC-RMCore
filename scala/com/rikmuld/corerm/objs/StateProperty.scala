@@ -35,14 +35,14 @@ object StateProperty {
       int == 1
   }
 
-  case class PropInt(name: String, min: Int, max: Int, default: java.lang.Integer = 0)
+  case class PropInt(name: String, min: Int, length: Int, default: java.lang.Integer = 0)
     extends StateProperty[java.lang.Integer] {
 
     val size:Int =
-      MathUtils.bitsNeeded(max - min)
+      MathUtils.bitsNeeded(length)
 
     val metaNames: Seq[String] =
-      min until max map(name + "_" + _.toString)
+      min until (min + length) map(name + "_" + _.toString)
 
     def toInt(a: java.lang.Integer): Int =
       a - min
