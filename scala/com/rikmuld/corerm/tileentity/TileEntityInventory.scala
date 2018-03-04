@@ -30,10 +30,8 @@ abstract class TileEntityInventory extends TileEntitySimple with InventorySimple
   override def isOpen: Boolean =
     open
 
-  override def onLoad(): Unit = {
-    println(world.isRemote)
+  override def onLoad(): Unit =
     open = true
-  }
 
   def openInventory(player: EntityPlayer): Unit =
     Unit

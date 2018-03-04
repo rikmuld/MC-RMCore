@@ -3,13 +3,15 @@ package com.rikmuld.corerm.registry
 import com.rikmuld.corerm.Library._
 import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.advancements.TriggerRegistry
+import com.rikmuld.corerm.advancements.triggers.TriggerOpenGUI
 import com.rikmuld.corerm.gui.{ContainerWrapper, GuiHandler, ScreenWrapper}
+import com.rikmuld.corerm.network.packets.{PacketBounds, PacketOpenGui, PacketTabSwitch, PacketTileData}
 import com.rikmuld.corerm.network.{PacketSender, PacketWrapper}
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.registries.{ForgeRegistry, RegistryBuilder}
 
-object Registry {
+object Registry extends RMRegistry {
   var packetRegistry: ForgeRegistry[PacketWrapper] =
     _
 
@@ -51,4 +53,17 @@ object Registry {
     advancementRegistry =
       new TriggerRegistry
   }
+
+  override def registerPackets(registry: ForgeRegistry[PacketWrapper]): Unit =
+    registry.registerAll(
+      PacketWrapper.create(classOf[PacketBounds], Packets.BOUNDS),
+      PacketWrapper.create(classOf[PacketTileData], Packets.TILE_DATA),
+      PacketWrapper.create(classOf[PacketTabSwitch], Packets.TAB_SWITCH),
+      PacketWrapper.create(classOf[PacketOpenGui], Packets.OPEN_GUI)
+    )
+
+  override def registerTriggers(registry: TriggerRegistry): Unit =
+    registry.registerAll(
+      new TriggerOpenGUI.Trigger
+    )
 }

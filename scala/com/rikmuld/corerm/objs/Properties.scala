@@ -13,13 +13,21 @@ import net.minecraft.util.{BlockRenderLayer, ResourceLocation}
 object Properties {
   trait Property
 
+  trait BlockProperty extends Property
+
+  trait ItemProperty extends Property
+
+  trait MetaDependable[A]
+
+  trait StateDependable[A]
+
   case class Name(name: String) extends Property
 
-  case class Tab(tab: CreativeTabs) extends Property
+  case class Tab(tab: CreativeTabs) extends ItemProperty
 
-  case class PropMaterial(material: Material) extends Property
+  case class PropMaterial(material: Material) extends BlockProperty
 
-  case class Hardness(hardness: Float) extends Property
+  case class Hardness(hardness: Float) extends BlockProperty //with StateDependable[Float]
 
   object Hardness {
     final val DIRT = 0.5f
@@ -30,7 +38,7 @@ object Properties {
     final val OBSIDIAN = 50f
   }
 
-  case class Resistance(resistance: Float) extends Property
+  case class Resistance(resistance: Float) extends BlockProperty //with StateDependable[Float]
 
   object Resistance {
     final val STONE = 10f
@@ -40,7 +48,7 @@ object Properties {
     final val OBSIDIAN = 2000f
   }
 
-  case class LightOpacity(opacity: Int) extends Property
+  case class LightOpacity(opacity: Int) extends BlockProperty //with StateDependable[Int]
 
   object LightOpacity {
     final val NON_FULL_CUBE = 0
@@ -49,7 +57,7 @@ object Properties {
     final val FULL_CUBE = 255
   }
 
-  case class LightLevel(light: Float) extends Property
+  case class LightLevel(light: Float) extends BlockProperty //with StateDependable[Float]
 
   object LightLevel {
     final val REDSTONE_TORCH = 0.5f
@@ -58,7 +66,7 @@ object Properties {
     final val LAVA = 1f
   }
 
-  case class HarvestLevel(level: Int, tool: String) extends Property
+  case class HarvestLevel(level: Int, tool: String) extends BlockProperty //with StateDependable[(Int, String)]
 
   object HarvestLevel {
     final val WOOD = 0
@@ -67,39 +75,39 @@ object Properties {
     final val DIAMOND = 3
   }
 
-  case object Unstable extends Property
+  case object Unstable extends BlockProperty
 
-  case object HasTileModel extends Property
+  case object TileModelOnly extends BlockProperty //with StateDependable[Boolean]
 
-  case object NonCube extends Property
+  case object NonCube extends BlockProperty //with StateDependable[Boolean]
 
-  case object Invisible extends Property
+  case object Invisible extends BlockProperty //with StateDependable[Boolean]
 
-  case object Air extends Property
+  case object Air extends BlockProperty //with StateDependable[Boolean]
 
-  case object Ticker extends Property
+  case object Ticker extends BlockProperty
 
-  case object NoCollision extends Property
+  case object NoCollision extends BlockProperty //with StateDependable[Boolean]
 
-  case class ItemClass[T <: ItemSimple](item: Class[T]) extends Property
+  case class ItemClass[T <: ItemSimple](item: Class[T]) extends ItemProperty
 
-  case class BlockClass[T <: BlockSimple](block: Class[T]) extends Property
+  case class BlockClass[T <: BlockSimple](block: Class[T]) extends BlockProperty
 
-  case class TileEntityClass[T <: TileEntitySimple](tile: Class[T]) extends Property
+  case class TileEntityClass[T <: TileEntitySimple](tile: Class[T]) extends BlockProperty //with StateDependable[Class[T]
 
-  case class MaxDamage(damage: Int) extends Property
+  case class MaxDamage(damage: Int) extends ItemProperty
 
-  case class MaxStackSize(size: Int) extends Property
+  case class MaxStackSize(size: Int) extends ItemProperty //with MetaDependable[Int]
 
-  case class ItemMetaData(names: String*) extends Property
+  case class ItemMetaData(names: String*) extends ItemProperty
 
-  case class ItemMetaFromState(property: String) extends Property
+  case class ItemMetaFromState(property: String) extends ItemProperty
 
-  case class BlockStates(states: States) extends Property
+  case class BlockStates(states: States) extends BlockProperty
 
-  case class FoodPoints(amount: Int) extends Property
+  case class FoodPoints(amount: Int) extends ItemProperty
 
-  case class Saturation(kind: Saturation.Saturation) extends Property
+  case class Saturation(kind: Saturation.Saturation) extends ItemProperty
 
   object Saturation {
     trait Saturation {
@@ -119,21 +127,36 @@ object Properties {
     final val Poor = Nourishment(0.2f)
   }
 
-  case class RenderType(layer: BlockRenderLayer) extends Property
+  case class RenderType(layer: BlockRenderLayer) extends BlockProperty
 
-  case class StepType(step: SoundType) extends Property
+  case class StepType(step: SoundType) extends BlockProperty
 
-  case class ForceSubtypes(hasSubtypes: Boolean) extends Property
+  case class ForceSubtypes(hasSubtypes: Boolean) extends ItemProperty
 
-  case class LikedByWolfs(wolfMeat: Boolean) extends Property
+  case class LikedByWolfs(wolfMeat: Boolean) extends ItemProperty
 
-  case class PropArmorMaterial(material: ArmorMaterial) extends Property
+  case class PropArmorMaterial(material: ArmorMaterial) extends ItemProperty
 
-  case class ArmorType(typ: EntityEquipmentSlot) extends Property
+  case class ArmorType(typ: EntityEquipmentSlot) extends ItemProperty
 
-  case class ArmorTexture(texture: String) extends Property
+  case class ArmorTexture(texture: String) extends ItemProperty
 
-  case class GuiTrigger(id: ResourceLocation) extends Property
+  case class GuiTrigger(id: ResourceLocation)
+    extends ItemProperty
+      with BlockProperty
+      //with StateDependable[ResourceLocation]
+      //with MetaDependable[ResourceLocation]
 
-  case class GuiTriggerMeta(ids: (Int, ResourceLocation)*) extends Property
+  case class GuiTriggerMeta(ids: (Int, ResourceLocation)*) extends ItemProperty //TODO remove once meta dependable is implemented
+
+  case class ForMeta[A](defaultProperty: MetaDependable[A],
+                        metaOverride: Int => Option[A]) extends ItemProperty
+
+  case class ForState[A, S](state: String,
+                            defaultProperty: StateDependable[A],
+                            stateOverride: S => Option[A]) extends BlockProperty
+
+  //add props for bounding box, item dropped and quantity dropped, the first two state dependable
+  //add prop for bounds structure
 }
+

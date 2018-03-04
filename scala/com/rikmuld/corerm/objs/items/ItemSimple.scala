@@ -68,9 +68,7 @@ trait ItemSimple extends Item {
       }
 
   //TODO
-  override def onItemRightClick(world: World, player: EntityPlayer, hand:EnumHand): ActionResult[ItemStack] = {
-    println(world.isRemote)
-
+  override def onItemRightClick(world: World, player: EntityPlayer, hand:EnumHand): ActionResult[ItemStack] =
     if (hand == EnumHand.MAIN_HAND) {
       val item = player.getHeldItem(hand)
       val success = new ActionResult(EnumActionResult.SUCCESS, item)
@@ -89,7 +87,6 @@ trait ItemSimple extends Item {
       )) success
       else super.onItemRightClick(world, player, hand)
     } else super.onItemRightClick(world, player, hand)
-  }
 
   @SideOnly(Side.CLIENT)
   def registerRenders(): Unit =

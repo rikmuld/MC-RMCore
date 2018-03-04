@@ -2,7 +2,7 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketTileData
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.network.NetworkManager
@@ -30,9 +30,16 @@ class TileEntitySimple extends TileEntity {
 
   def sendTileData(id: Int, toClient: Boolean, data: Int*): Unit =
     if (!toClient && world.isRemote)
-      PacketSender.sendToServer(new PacketTileData(id, pos.getX, pos.getY, pos.getZ, data))
+      PacketSender.sendToServer(getDataPacket(id, data))
     else if (toClient && !world.isRemote)
-      PacketSender.sendToClient(new PacketTileData(id, pos.getX, pos.getY, pos.getZ, data))
+      PacketSender.sendToClient(getDataPacket(id, data))
+
+  def sendTileDataTo(id: Int, player: EntityPlayer, data: Int*): Unit =
+    if(!world.isRemote)
+      PacketSender.sendToPlayer(getDataPacket(id, data), player.asInstanceOf[EntityPlayerMP])
+
+  private def getDataPacket(id: Int, data: Seq[Int]): PacketTileData =
+    new PacketTileData(id, pos.getX, pos.getY, pos.getZ, data)
 
   override def getUpdateTag: NBTTagCompound =
     this.writeToNBT(super.getUpdateTag)

@@ -17,8 +17,6 @@ class States(props: StateProperty[_ <: Comparable[_]]*) {
         acc :+ (next -> (acc.last._1.size + acc.last._2))
     }.toMap
 
-  println(position)
-
   val properties: Seq[Property] = props.map({
     case PropInt(name, min, length, _) =>
       PropertyInteger.create(name, min, min + length - 1)

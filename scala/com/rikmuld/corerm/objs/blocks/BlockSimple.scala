@@ -117,7 +117,7 @@ trait BlockSimple extends Block {
   override def getRenderType(state: IBlockState): EnumBlockRenderType =
     if(getInfo.has(Invisible) | getInfo.has(Air))
       EnumBlockRenderType.INVISIBLE
-    else if(getInfo.has(HasTileModel))
+    else if(getInfo.has(TileModelOnly))
       EnumBlockRenderType.ENTITYBLOCK_ANIMATED
     else
       EnumBlockRenderType.MODEL
