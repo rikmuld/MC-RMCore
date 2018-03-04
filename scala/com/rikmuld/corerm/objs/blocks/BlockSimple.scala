@@ -108,10 +108,11 @@ trait BlockSimple extends Block {
 
     //TODO make sure that if no item metadata it spawns the block with state default
 
-    getStates.foreach(states =>
-      // TODO only works for horizontal now, switch for other types
-      world.setBlockState(pos, states.set("facing", placer.getHorizontalFacing, state))
-    )
+    if(Option(placer).isDefined)
+      getStates.foreach(states =>
+        // TODO only works for horizontal now, switch for other types
+        world.setBlockState(pos, states.set("facing", placer.getHorizontalFacing, state))
+      )
   }
 
   override def getRenderType(state: IBlockState): EnumBlockRenderType =

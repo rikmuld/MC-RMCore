@@ -2,17 +2,23 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketBounds
-import com.rikmuld.corerm.old.Bounds
+import com.rikmuld.corerm.objs.blocks.BlockSimple
+import com.rikmuld.corerm.objs.blocks.bounds.Bounds
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.ITickable
-import net.minecraft.util.math.BlockPos
+import net.minecraft.util.math.{AxisAlignedBB, BlockPos}
 
-class TileEntityBounds extends TileEntitySimple with ITickable {
-  var bounds: Bounds = _
-  var baseX: Int = _
-  var baseY: Int = _
-  var baseZ: Int = _
-  private var updateNeed: Boolean = _
+class TileEntityBounds extends TileEntitySimple {
+  private var bounds: Bounds =
+    _
+
+  private var baseX: Int =
+    _
+
+  private var baseY: Int =
+    _
+
+  private var baseZ: Int =
+    _
 
   override def readFromNBT(tag: NBTTagCompound) {
     super.readFromNBT(tag)
@@ -21,9 +27,27 @@ class TileEntityBounds extends TileEntitySimple with ITickable {
     baseY = tag.getInteger("baseY")
     baseZ = tag.getInteger("baseZ")
 
-    if (tag.hasKey("xMin"))
-      setBounds(Bounds.readBoundsToNBT(tag))
+    if(Bounds.canRead(tag))
+      bounds = Bounds.readFromNBT(tag)
   }
+
+  override def writeToNBT(tag: NBTTagCompound):NBTTagCompound = {
+    tag.setInteger("baseX", baseX)
+    tag.setInteger("baseY", baseY)
+    tag.setInteger("baseZ", baseZ)
+
+    Option(bounds).foreach(_.writeToNBT(tag))
+
+    super.writeToNBT(tag)
+  }
+
+  override def setTileData(id: Int, data: Seq[Int]): Unit =
+    if (id == 0) {
+      baseX = data.head
+      baseY = data(1)
+      baseZ = data(2)
+    }
+
 
   def setBaseCoords(x: Int, y: Int, z: Int) {
     baseX = x
@@ -35,32 +59,17 @@ class TileEntityBounds extends TileEntitySimple with ITickable {
 
   def setBounds(bounds: Bounds) {
     this.bounds = bounds
-    updateNeed = true
-  }
 
-  def basePos =
-    new BlockPos(baseX, baseY, baseZ)
-
-  override def setTileData(id: Int, data: Seq[Int]): Unit =
-    if (id == 0) {
-      baseX = data(0)
-      baseY = data(1)
-      baseZ = data(2)
-    }
-
-  override def update(): Unit =
-    if (!world.isRemote && updateNeed) {
+    if (!world.isRemote)
       PacketSender.sendToClient(new PacketBounds(Some(bounds), getPos.getX, getPos.getY, getPos.getZ))
-      updateNeed = false
-    }
-
-  override def writeToNBT(tag: NBTTagCompound):NBTTagCompound = {
-    tag.setInteger("baseX", baseX)
-    tag.setInteger("baseY", baseY)
-    tag.setInteger("baseZ", baseZ)
-
-    Option(bounds).foreach(_.writeBoundsToNBT(tag))
-
-    super.writeToNBT(tag)
   }
+
+  def getBounds: AxisAlignedBB =
+    Option(bounds).fold(BlockSimple.BOUNDS_EMPTY)(_.bounds)
+
+  def getCollisionBounds: AxisAlignedBB =
+    Option(bounds).fold(BlockSimple.BOUNDS_EMPTY)(_.collisionBounds)
+
+  def getBasePos: BlockPos =
+    new BlockPos(baseX, baseY, baseZ)
 }
