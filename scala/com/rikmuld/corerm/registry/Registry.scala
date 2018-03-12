@@ -1,14 +1,12 @@
 package com.rikmuld.corerm.registry
 
 import com.rikmuld.corerm.Library._
-import com.rikmuld.corerm.RMMod
 import com.rikmuld.corerm.advancements.TriggerRegistry
 import com.rikmuld.corerm.advancements.triggers.TriggerOpenGUI
-import com.rikmuld.corerm.gui.{ContainerWrapper, GuiHandler, ScreenWrapper}
+import com.rikmuld.corerm.gui.{ContainerWrapper, ScreenWrapper}
 import com.rikmuld.corerm.network.packets.{PacketBounds, PacketOpenGui, PacketTabSwitch, PacketTileData}
 import com.rikmuld.corerm.network.{PacketSender, PacketWrapper}
 import net.minecraftforge.event.RegistryEvent
-import net.minecraftforge.fml.common.network.NetworkRegistry
 import net.minecraftforge.registries.{ForgeRegistry, RegistryBuilder}
 
 object Registry extends RMRegistry {
@@ -38,8 +36,6 @@ object Registry extends RMRegistry {
 
     registryBuilderContainer.setName(Registries.CONTAINER)
     registryBuilderContainer.setType(classOf[ContainerWrapper])
-
-    NetworkRegistry.INSTANCE.registerGuiHandler(RMMod, new GuiHandler())
 
     packetRegistry =
       registryBuilderPacket.create().asInstanceOf[ForgeRegistry[PacketWrapper]]

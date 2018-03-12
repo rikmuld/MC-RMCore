@@ -11,7 +11,6 @@ import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.math.BlockPos
 import net.minecraft.world.World
 
-//TODO perhaps add tile class for ticker with options for tick speed
 class TileEntitySimple extends TileEntity {
   override def readFromNBT(tag: NBTTagCompound): Unit =
     super.readFromNBT(tag)

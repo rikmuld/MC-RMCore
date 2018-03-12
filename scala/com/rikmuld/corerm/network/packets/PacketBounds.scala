@@ -7,7 +7,6 @@ import net.minecraft.network.PacketBuffer
 import net.minecraft.util.math.BlockPos
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
 
-//TODO should not be necessary
 class PacketBounds(bounds: Option[Bounds], var x: Int, var y: Int, var z: Int) extends PacketBasic {
   var xMin,
       yMin,
