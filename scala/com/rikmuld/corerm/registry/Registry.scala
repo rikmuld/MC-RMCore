@@ -4,7 +4,7 @@ import com.rikmuld.corerm.Library._
 import com.rikmuld.corerm.advancements.TriggerRegistry
 import com.rikmuld.corerm.advancements.triggers.TriggerOpenGUI
 import com.rikmuld.corerm.gui.{ContainerWrapper, ScreenWrapper}
-import com.rikmuld.corerm.network.packets.{PacketBounds, PacketOpenGui, PacketTabSwitch, PacketTileData}
+import com.rikmuld.corerm.network.packets._
 import com.rikmuld.corerm.network.{PacketSender, PacketWrapper}
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.registries.{ForgeRegistry, RegistryBuilder}
@@ -55,7 +55,8 @@ object Registry extends RMRegistry {
       PacketWrapper.create(classOf[PacketBounds], Packets.BOUNDS),
       PacketWrapper.create(classOf[PacketTileData], Packets.TILE_DATA),
       PacketWrapper.create(classOf[PacketTabSwitch], Packets.TAB_SWITCH),
-      PacketWrapper.create(classOf[PacketOpenGui], Packets.OPEN_GUI)
+      PacketWrapper.create(classOf[PacketOpenGui], Packets.OPEN_GUI),
+      PacketWrapper.create(classOf[PacketItemData], Packets.ITEM_DATA)
     )
 
   override def registerTriggers(registry: TriggerRegistry): Unit =

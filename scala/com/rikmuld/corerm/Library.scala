@@ -66,6 +66,7 @@ object Library {
     final val BOUNDS = "bounds"
     final val TAB_SWITCH = "tab_switch"
     final val OPEN_GUI = "open_gui"
+    final val ITEM_DATA = "item_data"
   }
 
   object TileEntities {

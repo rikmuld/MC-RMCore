@@ -61,7 +61,7 @@ class BoundsStructure(bounds: AxisAlignedBB) {
       world.setBlockToAir(getPos(pos, i))
 
   def createStructure(fillWith: IBlockState, world: World, pos: BlockPos): Unit =
-    if(fillWith.getBlock.isInstanceOf[BlockBounds])
+    if(!exists(fillWith, world, pos) && fillWith.getBlock.isInstanceOf[BlockBounds])
       for (i <- allIds) {
         val relPos = getPos(pos, i)
 
@@ -74,6 +74,11 @@ class BoundsStructure(bounds: AxisAlignedBB) {
           }
         }
       }
+
+  def exists(fillWith: IBlockState, world: World, pos: BlockPos): Boolean =
+    allIds.exists(i =>
+      world.getBlockState(getPos(pos, i)).getBlock == fillWith.getBlock
+    )
 
   def getBoundsFor(base: AxisAlignedBB, i: Int): Bounds =
     new Bounds(

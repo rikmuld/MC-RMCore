@@ -29,7 +29,8 @@ abstract class BlockBoundsStructure(modId:String, info:ObjDefinition) extends Bl
     super.breakBlock(world, pos, state)
   }
 
-  override def onBlockAdded(world: World, pos: BlockPos, state: IBlockState): Unit =
+  //TODO call self from tile
+  def createStructure(world: World, pos: BlockPos): Unit =
     if (!world.isRemote)
-      getStructure(None).createStructure(getBoundsBlock.getDefaultState, world, pos)
+      getStructure(Some(world.getBlockState(pos))).createStructure(getBoundsBlock.getDefaultState, world, pos)
 }
