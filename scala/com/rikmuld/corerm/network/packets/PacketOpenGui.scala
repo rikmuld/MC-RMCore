@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.network.PacketBuffer
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.BlockPos
+import net.minecraft.world.WorldServer
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext
 
 class PacketOpenGui(var id: Int) extends PacketBasic {
@@ -46,6 +47,27 @@ class PacketOpenGui(var id: Int) extends PacketBasic {
     z = stream.readInt
   }
 
-  override def handlePacket(player: EntityPlayer, ctx: MessageContext) =
-    GuiHelper.openGui(id, player, x, y, z)
+  /* Scala 2.12 version
+  override def handlePacket(player: EntityPlayer, ctx: MessageContext): Unit = {
+    val doOpen: Runnable = () => GuiHelper.openGui(id, player, x, y, z)
+
+    if (!player.world.isRemote)
+      player.world.asInstanceOf[WorldServer].addScheduledTask(doOpen)
+    else
+      doOpen()
+  }
+  */
+
+  // TODO replace below with 2.12 version after updating to scala 2.12
+  override def handlePacket(player: EntityPlayer, ctx: MessageContext): Unit = {
+    val doOpen: Runnable = new Runnable {
+      override def run(): Unit =
+        GuiHelper.openGui(id, player, x, y, z)
+    }
+
+    if (!player.world.isRemote)
+      player.world.asInstanceOf[WorldServer].addScheduledTask(doOpen)
+    else
+      GuiHelper.openGui(id, player, x, y, z)
+  }
 }
