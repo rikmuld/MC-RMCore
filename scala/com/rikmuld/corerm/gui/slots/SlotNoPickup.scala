@@ -4,6 +4,6 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.Slot
 
 trait SlotNoPickup extends Slot {
-  override def canTakeStack(par1EntityPlayer: EntityPlayer): Boolean =
+  override def canTakeStack(player: EntityPlayer): Boolean =
     false
 }

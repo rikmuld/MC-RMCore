@@ -56,9 +56,13 @@ class BoundsStructure(bounds: AxisAlignedBB) {
       world.getBlockState(relPos).getBlock.isReplaceable(world, relPos)
     })
 
-  def destroyStructure(world: World, pos: BlockPos): Unit =
-    for (i <- allIds)
-      world.setBlockToAir(getPos(pos, i))
+  def destroyStructure(world: World, pos: BlockPos, destroyMain: Boolean = false): Unit =
+    for (i <- allIds) {
+      val boundsPos = getPos(pos, i)
+
+      if(destroyMain || !boundsPos.equals(pos))
+        world.setBlockToAir(boundsPos)
+    }
 
   def createStructure(fillWith: IBlockState, world: World, pos: BlockPos): Unit =
     if(!exists(fillWith, world, pos) && fillWith.getBlock.isInstanceOf[BlockBounds])

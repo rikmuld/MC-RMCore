@@ -1,7 +1,7 @@
 package com.rikmuld.corerm
 
-import com.rikmuld.corerm.Library.ModInfo._
 import com.rikmuld.corerm.Library.TileEntities
+import com.rikmuld.corerm.RMMod._
 import com.rikmuld.corerm.gui.GuiHandler
 import com.rikmuld.corerm.registry.{RMRegistry, Registry}
 import com.rikmuld.corerm.tileentity.{TileEntityBounds, TileEntitySimple}
@@ -15,6 +15,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry
 
 @Mod.EventBusSubscriber@Mod(modid = MOD_ID, name = MOD_NAME, version = MOD_VERSION, dependencies = MOD_DEPENDENCIES, modLanguage = MOD_LANUAGE)
 object RMMod {
+  final val MOD_ID = "corerm"
+  final val MOD_NAME = "RikMuld's Core"
+  final val MOD_VERSION = "1.3.3"
+  final val MOD_LANUAGE = "scala"
+  final val MOD_DEPENDENCIES = "required-after:forge@[v13.20.1.2386,)"
+  final val PACKET_CHANEL = MOD_ID
 
   @EventHandler
   def init(event: FMLInitializationEvent) {

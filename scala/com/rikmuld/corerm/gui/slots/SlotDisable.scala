@@ -8,14 +8,14 @@ trait SlotDisable extends Slot {
   val xFlag:Int = xPos
   val yFlag:Int = yPos
 
-  def disable() = {
+  def disable(): Unit = {
     xPos = -500
     yPos = -500
 
     enabled = false
   }
 
-  def enable() = {
+  def enable(): Unit = {
     xPos = xFlag
     yPos = yFlag
 

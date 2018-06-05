@@ -1,6 +1,6 @@
 package com.rikmuld.corerm.network
 
-import com.rikmuld.corerm.Library.ModInfo._
+import com.rikmuld.corerm.RMMod._
 import com.rikmuld.corerm.network.packets.PacketBasic
 import com.rikmuld.corerm.registry.Registry
 import net.minecraft.entity.player.EntityPlayerMP

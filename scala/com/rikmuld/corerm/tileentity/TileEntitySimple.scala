@@ -2,6 +2,7 @@ package com.rikmuld.corerm.tileentity
 
 import com.rikmuld.corerm.network.PacketSender
 import com.rikmuld.corerm.network.packets.PacketTileData
+import com.rikmuld.corerm.objs.blocks.BlockSimple
 import net.minecraft.entity.player.{EntityPlayer, EntityPlayerMP}
 import net.minecraft.item.ItemStack
 import net.minecraft.nbt.NBTTagCompound
@@ -26,6 +27,9 @@ class TileEntitySimple extends TileEntity {
 
   def setTileData(id: Int, data: Seq[Int]): Unit =
     Unit
+
+  def getBlock: BlockSimple =
+    getBlockType.asInstanceOf[BlockSimple]
 
   def sendTileData(id: Int, toClient: Boolean, data: Int*): Unit =
     if (!toClient && world.isRemote)

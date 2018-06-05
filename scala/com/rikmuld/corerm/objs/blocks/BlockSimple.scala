@@ -136,7 +136,7 @@ trait BlockSimple extends Block {
     getInfo.get(classOf[RenderType]).fold(BlockRenderLayer.SOLID)(_.layer)
 
   override def getCollisionBoundingBox(state: IBlockState, world: IBlockAccess, pos: BlockPos): AxisAlignedBB =
-    if(getInfo.has(Air) || getInfo.has(NoCollision)) BlockSimple.BOUNDS_EMPTY
+    if(getInfo.has(Air) || getInfo.has(NoCollision)) null // (ノ°Д°）ノ︵ ┻━┻
     else super.getCollisionBoundingBox(state, world, pos)
 
   override def getBoundingBox(state: IBlockState, source: IBlockAccess, pos: BlockPos): AxisAlignedBB =
